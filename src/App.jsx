@@ -66,7 +66,7 @@ function App() {
           <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)' }}>
             <div className='page-header-common justify-content-between'>
               <div className="animated-text-container">
-                <h4 className="animated-text mb-0">{(usertype && usertype === "AD" && path === "Dashboard") ? "Admin " + path: path}</h4>
+                <h4 className="animated-text mb-0">{path}</h4>
               </div>
               <div className="d-flex align-items-center gap-2">
                 <div className='notify-tb'>

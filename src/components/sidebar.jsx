@@ -4,17 +4,36 @@ import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
 import configModule from '../../config.js';
-import { useAuth } from '../components/context/Authcontext.jsx'; 
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Sidebar() {
   const [openSubMenu, setOpenSubMenu] = useState(false);
   const [menuItems, setMenuItems] = useState(false);
   const config = configModule.config();
-  const { user } = useAuth();
-  const usertype_id = user?.usertype_id;
-  
-  const toggleSubMenu = () => {
-    setOpenSubMenu(!openSubMenu);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const userData = location.state;
+  const usertype_id = userData?.user_id || localStorage.getItem("usertype_id");
+
+  const handleSubMenuClick = (path) => {
+    const clickedMenu = menuItems.find(item => item.path === path);
+
+    if (!clickedMenu || !clickedMenu.subMenu || clickedMenu.subMenu.length === 0) {
+      return; // No submenu to open
+    }
+
+    // If it's already open, close it
+    if (openSubMenu === path) {
+      setOpenSubMenu(null);
+    } else {
+      setOpenSubMenu(path);
+
+      // Navigate to first sub-item if current path isn't already a sub-item
+      const firstSubPath = clickedMenu.subMenu[0].path;
+      if (location.pathname !== firstSubPath) {
+        navigate(firstSubPath);
+      }
+    }
   };
 
   const getSidebarList = async () => {
@@ -41,7 +60,7 @@ function Sidebar() {
 
   useEffect(() => {
     getSidebarList();
-  }, [getSidebarList]);
+  }, [usertype_id]);
 
   const formatSidebarMenu = (mainList, subList) => {
     return mainList.map(main => {
@@ -81,37 +100,38 @@ function Sidebar() {
           <div key={name}>
             {subMenu ? (
               <div className="submenu-header">
-              <NavLink to={path} end={exact} onClick={toggleSubMenu}>
-                <SvgContent svg_name={icon} />
-                <span className="sbnone-title ">{name}</span>
-            
-                <span className={`submenu-arrow sbsubitem-title ${openSubMenu ? 'open' : ''}`}>
-                  {openSubMenu ? (
-                    <SvgContent svg_name="dropdownUp" />
-                  ) : (
-                    <SvgContent svg_name="dropdownDown" />
-                  )}
-                </span>
-              </NavLink>
-            
-              {openSubMenu && (
-                <div className='open-submenu'>
-                  {subMenu.map((item) => (
-                    <NavLink
-                      key={item.name}
-                      to={item.path}
-                      className={({ isActive }) =>
-                        `submenu-item ${isActive ? 'submenu-item-active' : ''}`
-                      }
-                      style={{ paddingLeft: "0px" }}
-                    >
-                      {item.name}
-                    </NavLink>
-                  ))}
-                </div>
-              )}
-            </div>
-            
+                <NavLink to={path} end={exact} onClick={() => handleSubMenuClick(path)}>
+                  <SvgContent svg_name={icon} />
+                  <span className="sbnone-title ">{name}</span>
+
+                  <span className={`submenu-arrow sbsubitem-title ${openSubMenu === path ? 'open' : ''}`}>
+                    {openSubMenu === path ? (
+                      <SvgContent svg_name="dropdownUp" />
+                    ) : (
+                      <SvgContent svg_name="dropdownDown" />
+                    )}
+                  </span>
+
+                </NavLink>
+
+                {openSubMenu && (
+                  <div className='open-submenu'>
+                    {subMenu.map((item) => (
+                      <NavLink
+                        key={item.name}
+                        to={item.path}
+                        className={({ isActive }) =>
+                          `submenu-item ${isActive ? 'submenu-item-active' : ''}`
+                        }
+                        style={{ paddingLeft: "0px" }}
+                      >
+                        {item.name}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+
 
             ) : (
               <NavLink to={path} end={exact}>
