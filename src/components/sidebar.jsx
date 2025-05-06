@@ -4,16 +4,15 @@ import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
 import configModule from '../../config.js';
-import { useLocation } from 'react-router-dom';
+import { useAuth } from '../components/context/Authcontext.jsx'; 
 
 function Sidebar() {
   const [openSubMenu, setOpenSubMenu] = useState(false);
   const [menuItems, setMenuItems] = useState(false);
   const config = configModule.config();
-  const location = useLocation();
-  const userData = location.state;
-  const usertype_id = userData?.user_id || localStorage.getItem("usertype_id");
-
+  const { user } = useAuth();
+  const usertype_id = user?.usertype_id;
+  
   const toggleSubMenu = () => {
     setOpenSubMenu(!openSubMenu);
   };

@@ -28,9 +28,10 @@ function Dashboard() {
   const { user } = useAuth();
   const user_typecode = user?.user_typecode;
   const userId = user?.user_id;
-
+  const loginTime = user?.loginTime;
+  const formattedLoginTime = loginTime ? new Date(loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
   let cardData = [];
-
+  
   if (user_typecode === "AD") {
     cardData = [
       { name: "Today’s leads", img: lead_dbc, count: 45 },
@@ -119,7 +120,7 @@ function Dashboard() {
       {(initialPopup && user_typecode !== "AD") && (<ModalPopup userId={userId} closeModal={closeInitialModal} />)}
       <div className='header-container-db w-100'>
         <h2 className='welcome-st mb-0'>Welcome!</h2>
-        <p className='mb-0'>{formattedDate} / Login- 08.59 am</p>
+        <p className='mb-0'>{formattedDate} / Login - {formattedLoginTime}</p>
       </div>
       <div className='body-container-db'>
         <div className="container-db display-flex">

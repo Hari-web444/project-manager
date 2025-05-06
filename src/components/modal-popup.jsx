@@ -3,13 +3,16 @@ import '../assets/styles/modal-popup.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import configModule from '../../config.js';
-
-function ModalPopup({ userId , closeModal}) {
+import PropTypes from 'prop-types';
+import { useAuth } from '../components/context/Authcontext.jsx'; 
+function ModalPopup({ userId }) {
   const modalRef = useRef(null);
   const [count, setCount] = useState("");
   const today = new Date();
   const config = configModule.config();
-
+  const { user } = useAuth();
+  const loginTime = user?.loginTime;
+  const formattedLoginTime = loginTime ? new Date(loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
   const formattedDate = `${today.toLocaleDateString("en-US", { weekday: "long" })}, ${today
     .toLocaleDateString("en-GB")
     .split("/")
@@ -30,7 +33,6 @@ function ModalPopup({ userId , closeModal}) {
       toast.warning("Please enter a valid number.");
       return;
     }
-
     try {
       const response = await fetch(`${config.apiBaseUrl}SaveLeadCount`, {
         method: "POST",
@@ -91,7 +93,7 @@ function ModalPopup({ userId , closeModal}) {
         <div className="modal-content">
           <div className="modal-header modal-header-cust">
             <h5 className="modal-title" id="exampleModalLabel">Welcome!</h5>
-            <p className='mb-0'>{formattedDate} / Login- 08.59 am</p>
+            <p className='mb-0'>{formattedDate} / Login- {formattedLoginTime}</p>
           </div>
           <div className="modal-body modal-body-cust">
             <input
@@ -114,4 +116,7 @@ function ModalPopup({ userId , closeModal}) {
   );
 }
 
+ModalPopup.propTypes = {
+  userId: PropTypes.string.isRequired,  
+};
 export default ModalPopup;

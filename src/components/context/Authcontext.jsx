@@ -20,7 +20,8 @@ export const AuthProvider = ({ children }) => {
           userType: decodedToken.user_type,
           mobile_number: decodedToken.mobile_number,
           usertype_id: decodedToken.usertype_id,
-          user_typecode:decodedToken.user_typecode
+          user_typecode:decodedToken.user_typecode,
+          loginTime:decodedToken.loginTime
         });
     }
   }, []);
@@ -34,7 +35,8 @@ export const AuthProvider = ({ children }) => {
         userType: decodedToken.user_type,
         mobile_number: decodedToken.mobile_number,
         usertype_id: decodedToken.usertype_id,
-        user_typecode:decodedToken.user_typecode
+        user_typecode:decodedToken.user_typecode,
+        loginTime:decodedToken.loginTime
     });
   };
 

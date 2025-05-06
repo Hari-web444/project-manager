@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from 'prop-types';
 const SvgContent = ({ svg_name, width = 24, height = 24, color = "transparent", stroke = "#121212" }) => {
     const svg_element = {
         dashboard: (
@@ -252,4 +252,12 @@ const SvgContent = ({ svg_name, width = 24, height = 24, color = "transparent", 
     return svg_element[svg_name] || null;
 };
 
+
+SvgContent.propTypes = {
+    svg_name: PropTypes.string.isRequired,  
+    width: PropTypes.number,                
+    height: PropTypes.number,               
+    color: PropTypes.string,                
+    stroke: PropTypes.string,               
+  };
 export default SvgContent;
