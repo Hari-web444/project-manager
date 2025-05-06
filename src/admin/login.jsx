@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import configModule from '../../config.js';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from '../components/context/Authcontext.jsx'; 
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -12,7 +13,7 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const config = configModule.config();
-
+    const { login } = useAuth();
     const isSubmitting = useRef(false);
 
     const handleLogin = async (e) => {
@@ -39,16 +40,12 @@ const LoginPage = () => {
 
             const result = await response.json();
 
-            if (response.ok && result.data && result.data[0]) {
+            if (response.ok && result.data ) {
                 toast.success(result.message);
-                localStorage.setItem("token", result.data[0]);
-                localStorage.setItem("user_typecode", result.data[0].user_typecode);
-                localStorage.setItem("userId", result.data[0].user_id);
-                localStorage.setItem("usertype_id", result.data[0].usertype_id);
-
+                login(result.token)
+                localStorage.setItem("authToken", result.token);
                 setTimeout(() => {
-                    navigate('/dashboard', { state: result.data[0] });
-                    
+                    navigate('/dashboard');
                     setUsername('');
                     setPassword('');
                 }, 3000);
@@ -67,7 +64,7 @@ const LoginPage = () => {
 
     return (
         <form onSubmit={handleLogin}>
-            <div className="mb-5">
+            <div className="mb-4">
                 <label htmlFor="user" className="form-label mb-3 admin-label">Username</label>
                 <input
                     type="text"
@@ -90,14 +87,13 @@ const LoginPage = () => {
                     required
                     autoComplete="new-password"
                 />
-                <span
+              <button
                     className="toggle-password"
-                    role="button"
-                    tabIndex={0}
+                    aria-label="Toggle password visibility"
                     onClick={() => setShowPassword(!showPassword)}
                 >
                     {showPassword ? <SvgContent svg_name="eyeclose" /> : <SvgContent svg_name="eyeopen" />}
-                </span>
+                </button>
             </div>
 
             <button

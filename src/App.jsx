@@ -4,7 +4,7 @@ import Sidebar from './components/sidebar.jsx';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
-
+import { AuthProvider } from '../src/components/context/Authcontext.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -55,7 +55,7 @@ function App() {
 
   return (
     <>
-      {/* ✅ Always mount ToastContainer */}
+      <AuthProvider>
       <ToastContainer position="top-right" autoClose={2000} />
 
       {authPaths.includes(location.pathname) ? (
@@ -103,6 +103,7 @@ function App() {
           </div>
         </div>
       )}
+       </AuthProvider>
     </>
   );
 }

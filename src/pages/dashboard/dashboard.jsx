@@ -5,6 +5,7 @@ import '../../assets/styles/dashboard.css';
 import AnimatedCounter from '../../components/AnimatedCounter.jsx';
 import ModalPopup from '../../components/modal-popup.jsx';
 import configModule from '../../../config.js';
+import { useAuth } from '../../components/context/Authcontext.jsx'; 
 
 import lead_dbc from '../../assets/images/lead_dbc.svg';
 import revenue_dbc from '../../assets/images/revenue_dbc.svg';
@@ -12,7 +13,6 @@ import expense_dbc from '../../assets/images/expense_dbc.svg';
 import orders from '../../assets/images/orders.svg';
 import req_pending from '../../assets/images/req_pending.svg';
 import permission from '../../assets/images/permission.svg';
-import { useLocation } from 'react-router-dom';
 
 import call_back from '../../assets/images/call_back.svg';
 import total_sales from '../../assets/images/total_sales.svg';
@@ -23,12 +23,11 @@ import register from '../../assets/images/register.svg';
 
 function Dashboard() {
   const today = new Date();
-  const location = useLocation();
-  const userData = location.state;
-  const user_typecode = userData?.user_typecode || localStorage.getItem("user_typecode");
-  const userId = userData?.user_id || localStorage.getItem("userId");
   const [initialPopup, setInitialPopup] = useState(false);
   const config = configModule.config();
+  const { user } = useAuth();
+  const user_typecode = user?.user_typecode;
+  const userId = user?.user_id;
 
   let cardData = [];
 

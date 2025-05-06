@@ -15,15 +15,16 @@ const LoginPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showCnfmPassword, setShowCnfmPassword] = useState(false);
+    const [loading, setLoading] = useState({ otp: false, verify: false, reset: false });
+
 
     const checkMailIsCorrect = async (e) => {
         e.preventDefault();
-
         if (!email) {
             toast.warning("Enter admin's mail ID.");
             return;
         }
-
+        setLoading(prevState => ({ ...prevState, otp: true }));
         try {
             const response = await fetch(`${config.apiBaseUrl}checkMail`, {
                 method: 'POST',
@@ -51,6 +52,8 @@ const LoginPage = () => {
         } catch (error) {
             console.error(error);
             toast.error('An error occurred');
+        }    finally {
+            setLoading(prevState => ({ ...prevState, otp: false })); 
         }
     };
 
@@ -73,7 +76,7 @@ const LoginPage = () => {
 
         if (verifyform.otp[0] !== "" && verifyform.otp[1] !== "" && verifyform.otp[2] !== "" && verifyform.otp[3] !== "") {
             const otpValue = verifyform.otp[0] + verifyform.otp[1] + verifyform.otp[2] + verifyform.otp[3];
-
+            setLoading(prevState => ({ ...prevState, verify: true })); 
             try {
                 const response = await fetch(`${config.apiBaseUrl}verifyOTP`, {
                     method: 'POST',
@@ -95,6 +98,8 @@ const LoginPage = () => {
             } catch (error) {
                 console.error(error);
                 toast.error('An error occurred');
+            }finally {
+                setLoading(prevState => ({ ...prevState, verify: false })); 
             }
         }
         else {
@@ -114,6 +119,7 @@ const LoginPage = () => {
         } else if (password.length < 6) {
             toast.warning("Password should be at least 6 characters long.");
         } else {
+            setLoading(prevState => ({ ...prevState, reset: true }));
             try {
                 const response = await fetch(`${config.apiBaseUrl}SetPassword`, {
                     method: 'POST',
@@ -133,6 +139,8 @@ const LoginPage = () => {
                 }
             } catch (error) {
                 console.error(error);
+            }finally {
+                setLoading(prevState => ({ ...prevState, reset: false })); 
             }
         }
     };
@@ -167,7 +175,7 @@ const LoginPage = () => {
                     <div className='d-flex justify-content-end align-items-end mb-5 gap-2'>
                         <p className='mb-0' style={{ fontSize: "12px" }}>Back to login</p><button className='backtologin' onClick={() => navigate('/login')} >Login</button>
                     </div>
-                    <button type="submit" className="btn btn-primary admin-button" onClick={checkMailIsCorrect}>Send OTP</button>
+                    <button type="submit" className="btn btn-primary admin-button"  disabled={loading.otp}  onClick={checkMailIsCorrect}>{loading.otp ? "Sending..." : "Send OTP"}</button>
                 </>
             )}
 
@@ -192,7 +200,7 @@ const LoginPage = () => {
                         </div>
                     </div>
                     <button className='forgot' style={{ marginRight: "60px" }} onClick={checkMailIsCorrect} >Resend OTP</button>
-                    <button type="submit" className="btn btn-primary admin-button" onClick={verifyOTP}>Verify OTP</button>
+                    <button type="submit" className="btn btn-primary admin-button" disabled={loading.verify}  onClick={verifyOTP}> {loading.verify ? "Verifing..." : "Verify OTP"}</button>
                 </>
             )}
 
@@ -237,7 +245,7 @@ const LoginPage = () => {
                             {showCnfmPassword ? <SvgContent svg_name="eyeclose" /> : <SvgContent svg_name="eyeopen" />}
                         </span>
                     </div>
-                    <button type="submit" className="btn btn-primary admin-button" onClick={ResetPassword} >Reset</button>
+                    <button type="submit" className="btn btn-primary admin-button"  disabled={loading.reset} onClick={ResetPassword} > {loading.reset ? "Reseting..." : "Reset"}</button>
                 </>
             )}
         </form>

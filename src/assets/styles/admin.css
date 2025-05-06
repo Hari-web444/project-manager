@@ -20,7 +20,7 @@
 
 .login-div-main {
     width: 100%;
-    max-width: 402px;
+    max-width: 440px;
     border-radius: 50px;    
     backdrop-filter: blur(10px);
     border: 1px solid #daf2e4;
@@ -151,30 +151,6 @@
     animation: typing 2s steps(20) 1s forwards;
   }
 
-/* .dot-flash::after {
-    content: '';
-    display: inline-block;
-    animation: dots 1.2s steps(3, end) infinite;
-}
-
-@keyframes dots {
-    0% {
-        content: '';
-    }
-
-    33% {
-        content: '.';
-    }
-
-    66% {
-        content: '..';
-    }
-
-    100% {
-        content: '...';
-    }
-} */
-
 @keyframes pulseGlow {
     0% {
         box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
@@ -189,9 +165,13 @@
     }
 }
 
-
 @media (max-width: 1024px) {
     .login-container-ad {
         padding: 12px 62px !important;
+    }
+}
+@media (max-width: 768px) {
+    .login-container-ad {
+        padding: 12px 10px !important;
     }
 }
