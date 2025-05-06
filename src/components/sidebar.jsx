@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
 import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
 import configModule from '../../config.js';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate ,NavLink} from 'react-router-dom';
+import { useAuth } from '../components/context/Authcontext.jsx';
 
 function Sidebar() {
   const [openSubMenu, setOpenSubMenu] = useState(false);
@@ -12,8 +12,10 @@ function Sidebar() {
   const config = configModule.config();
   const location = useLocation();
   const navigate = useNavigate();
-  const userData = location.state;
-  const usertype_id = userData?.user_id || localStorage.getItem("usertype_id");
+
+  const { user } = useAuth();
+  const usertype_id = user?.usertype_id;
+  
 
   const handleSubMenuClick = (path) => {
     const clickedMenu = menuItems.find(item => item.path === path);
