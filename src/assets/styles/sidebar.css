@@ -1,0 +1,129 @@
+.sidebar {
+  width: 250px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0px 18px 18px;
+  box-shadow: 0px 0px 10px -4px #969696;
+}
+
+.logo {
+  text-align: center;
+}
+
+.sidebar-nav {
+  scroll-behavior: smooth;
+}
+
+.sub-main-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+nav a,
+.submenu-wrapper {
+  display: block;
+  color: #121212;
+  padding: 8px 16px;
+  border-radius: 12px 0px 0px 12px;
+  text-decoration: none;
+  margin: 5px 0;
+  font-weight: 300;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+}
+
+nav a:hover {
+  background: rgb(240 245 242);
+  color: #0B622F;
+}
+
+nav a.active {
+  background: linear-gradient(3deg, #0B622F, #18934b);
+  color: white;
+  font-weight: 500;
+  width: 100%;
+}
+
+nav a.active svg path {
+  stroke: white !important;
+}
+
+nav a.active .search-bar-sb {
+  fill: white;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-logo-sb {
+  width: 62%;
+  max-width: 62%;
+}
+
+.sbsubitem-title {
+  color: #121212;
+}
+
+.submenu-header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  cursor: pointer;
+  padding-right: 0px !important;
+}
+
+.submenu-item {
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.open-submenu  {
+  margin: 0px 18px;
+  border: 1px solid #e5f0e7;
+  border-top: 0px;
+  padding: 0px 10px;
+  margin-right: 0px;
+  border-radius: 0px 0px 10px 10px;
+  background: #f7fffb;
+  box-shadow: 0px 2px 3px -2px #00712d;
+}
+
+.submenu-item-active {
+  color: #0B622F;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.submenu-item:hover {
+  background: transparent !important;
+}
+
+
+@media (max-width: 820px) {
+  .sidebar {
+    width: 72px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 0px 18px 18px;
+    box-shadow: 0px 0px 10px -4px #969696;
+  }
+
+  .main-logo-sb {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .sbnone-title {
+    display: none;
+  }
+}

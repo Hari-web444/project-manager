@@ -1,0 +1,72 @@
+:root {
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+a {
+  font-weight: 500;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #e4ede6;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  max-width: 100%;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 14px !important;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #e4ede6;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Works in Chrome, Edge, and Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* optional */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #0B622F;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1; /* Optional border to match track */
+}
+
+/* Works in Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #0B622F #f1f1f1; /* thumb color and track color */
+}
