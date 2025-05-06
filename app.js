@@ -1,29 +1,46 @@
-require('dotenv').config();
-
+require('dotenv-flow').config();
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const nodemailer = require('nodemailer');
 const fs = require('fs');
+
+const PORT = process.env.PORT || 3001;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 const app = express();
 
-app.use(cors());
-app.use(express.json({ limit: '8mb' }));
-app.use(express.urlencoded({ limit: '8mb', extended: true }));
+// Load allowed origins from .env
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  : [];
+
+console.log('🌍 Environment:', NODE_ENV);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('❌ Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(cookieParser());
 
-//APIs
+// API routes
 const admin = require('./src/routes/adminroute.js');
-
 app.use('/', admin);
 
+// Health check
 app.get('/', (req, res) => {
-  res.send('API is running >>>');
+  res.send('✅ Vaithiyar Poova API is running!');
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Server is running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

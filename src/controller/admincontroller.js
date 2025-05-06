@@ -1,128 +1,87 @@
 const db = require('../database/db');
-const nodemailer = require("nodemailer");
-
+const { sendEmail } = require("../appMiddlewares/sendMail");
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 function generateOtp() {
     return Math.floor(1000 + Math.random() * 9000).toString();
 }
 
-async function sendOtpEmail(email, otp) {
-    try {
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'info@neurolinkai.ai',
-                pass: 'jeni krmv vawt hvfg'
-            }
-        });
-        let mailOptions = {
-            from: '"NeuroLink" <info@neurolinkai.ai>',
-            to: email,
-            subject: 'Email verification code',
-            html: `
-              <!DOCTYPE html>
-              <html lang="en">
-              <head>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Email Verification Code</title>
-                  <style>
-                      body { font-family: 'Montserrat', sans-serif; background-color: #F4F4F4; margin: 0; padding: 0; }
-                      .email-container { max-width: 550px; margin: 0 auto; background-color: #FFFFFF; padding: 15px; border-radius: 7px; border: 1px solid rgb(214, 214, 214); box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px; }
-                      .email-header { text-align: center; padding: 10px 0; }
-                      .email-header img { height: 40px; }
-                      .email-body { padding: 15px; }
-                      .otp { font-size: 2em; background-color: #b1e0c4; padding: 18px; border-radius: 8px; display: inline-block; margin: 12px; text-align: center; letter-spacing: 0.9em; }
-                      .email-footer { text-align: center; font-size: 14px; color: #0B622F; padding: 10px 0 0; border-top: 1px solid #EEEEEE; }
-                      .custom-color { color: #0B622F; margin: 0px 0px 0px 0px; }
-                  </style>
-              </head>
-              <body>
-                  <div class="email-container">
-                      <div class="email-header">
-                          <img src="https://neurolinkai.s3.ap-south-1.amazonaws.com/nl_client_doc/Frame%20logo.png" alt="neuronestai">
-                      </div>
-                      <div class="email-body">
-                          <p>Here is your One Time Password (OTP).</p>
-                          <p>Please enter this code to verify your OTP  of Vaithiyar Poova </p>
-                          <div class="otp"><strong>${otp}</strong></div>
-                          <p class="no-margin">Best Regards,</p>
-                          <p  class="custom-color">Vaithiyar Poova  team.</p>
-                      </div>
-                      <div class="email-footer">
-                          &copy; ${new Date().getFullYear()} Vaithiyar Poova . All rights reserved.
-                      </div>
-                  </div>
-              </body>
-              </html>`
-        };
-        let info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-    } catch (error) {
-        console.error('Error sending email:', error);
-    }
-}
 
 exports.logins = async (req, res) => {
     const { username, password } = req.body;
-
     try {
         const sql = 'CALL SP_LoggedInUser(?, ?)';
-
         db.execute(sql, [username, password], (err, result) => {
             if (err) {
                 console.error('Error executing stored procedure:', err);
                 return res.status(500).json({ message: 'Server error' });
             }
-
             const rows = result[0];
-
-            res.status(200).json({ message: 'Login successful', data: rows });
-
+            if (rows.length > 0) {
+                const user = rows[0]; 
+                const loginTime = new Date().toISOString();
+                console.log("Login Time: ", loginTime);
+                const payload = {
+                    userId: user.user_id,
+                    username: user.name,
+                    userType: user.user_type,
+                    mobile_number: user.mobile_number,
+                    usertype_id: user.usertype_id,
+                    user_typecode:user.user_typecode,
+                    loginTime: loginTime 
+                };
+                const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+                return res.status(200).json({
+                    message: 'Login successful',
+                    data: {  user_id: user.user_id,  name: user.name, mobile_number: user.mobile_number, user_type: user.user_type,  usertype_id: user.usertype_id,user_typecode:user.user_typecode,loginTime: loginTime },
+                    token: token
+                });
+            } else {
+                return res.status(401).json({ message: 'Invalid credentials' });
+            }
         });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error during login:', error);
+        return res.status(500).json({ message: 'Server error' });
     }
 };
 
 exports.checkmail = async (req, res) => {
     const { mail } = req.body;
-
-    if (!mail) {
-        return res.status(400).json({ message: 'All fields are required' });
-    }
-
+    if (!mail) {  return res.status(400).json({ message: 'All fields are required' });}
     try {
         const sql = `CALL SP_CheckMail('${mail}')`;
-
-        db.query(sql, (err, results) => {
+        db.query(sql, async (err, results) => {
             if (err) {
                 console.error('Error fetching data:', err);
                 return res.status(500).json({ message: 'Database error' });
             }
-
             if (results[0][0].status === 200) {
                 const otp = generateOtp();
-
-                db.query('UPDATE users SET otp = ? WHERE email = ?', [otp, mail], (err) => {
+                db.query('UPDATE users SET otp = ? WHERE email = ?', [otp, mail], async (err) => {
                     if (err) {
                         console.error('Database update error:', err);
                         return res.status(500).json({ error: true, message: 'Failed to update OTP' });
                     }
-                    sendOtpEmail(mail, otp);
-                    return res.json([{ message: 'OTP sent to your email.', status: 200 }]);
+                    try {
+                        await sendEmail(mail, {
+                            template: "otp_template",
+                            otp: otp,
+                        });
+                        return res.json([{ message: 'OTP sent to your email.', status: 200 }]);
+                    } catch (error) {
+                        console.error('Error sending OTP email:', error);
+                        return res.status(500).json({ message: 'Failed to send OTP email' });
+                    }
                 });
-            }
-            else {
-                res.status(200).json(results[0]);
-            }
-
+            } else {   return res.status(200).json(results[0]); }
         });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Unexpected error:', error);
+        return res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 exports.verifyOTP = async (req, res) => {
     const { otpValue } = req.body;

@@ -11,14 +11,12 @@ const db = mysql.createPool({
   queueLimit: 0,
   connectTimeout: 20000
 });
-
 db.getConnection((err, connection) => {
   if (err) {
     console.error('Error connecting to MySQL:', err.message);
     return;
   }
-  console.log('Connected to MySQL database');
+  console.log('✅ Connected to MySQL database');
   connection.release();
 });
-
 module.exports = db;
