@@ -138,7 +138,7 @@ function App() {
               <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
               <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
-              <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
+              <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} /> 
               <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
               <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
