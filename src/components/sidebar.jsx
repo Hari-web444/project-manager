@@ -4,36 +4,17 @@ import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
 import configModule from '../../config.js';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/context/Authcontext.jsx';
 
 function Sidebar() {
   const [openSubMenu, setOpenSubMenu] = useState(false);
   const [menuItems, setMenuItems] = useState(false);
   const config = configModule.config();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const userData = location.state;
-  const usertype_id = userData?.user_id || localStorage.getItem("usertype_id");
+  const { user } = useAuth();
+  const usertype_id = user?.usertype_id;
 
   const handleSubMenuClick = (path) => {
-    const clickedMenu = menuItems.find(item => item.path === path);
-
-    if (!clickedMenu || !clickedMenu.subMenu || clickedMenu.subMenu.length === 0) {
-      return; // No submenu to open
-    }
-
-    // If it's already open, close it
-    if (openSubMenu === path) {
-      setOpenSubMenu(null);
-    } else {
-      setOpenSubMenu(path);
-
-      // Navigate to first sub-item if current path isn't already a sub-item
-      const firstSubPath = clickedMenu.subMenu[0].path;
-      if (location.pathname !== firstSubPath) {
-        navigate(firstSubPath);
-      }
-    }
+    setOpenSubMenu((prev) => (prev === path ? null : path));
   };
 
   const getSidebarList = async () => {

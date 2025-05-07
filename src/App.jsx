@@ -83,7 +83,7 @@ function App() {
               <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
               <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
               <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
-              <Route path="/employee" element={<PrivateRoute><Employee /></PrivateRoute>} />
+              <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
               <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
               <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
