@@ -1,0 +1,82 @@
+.header-container-products {  
+    padding: 0px 22px;
+}
+.product-header-text{
+    font-size: 18px;
+    font-weight: 500;
+    color: #000000;
+
+}
+
+.product-Addnew-btn{
+    background-color: rgba(11, 98, 47, 1);
+    width: 100%;
+    max-width: 110px;
+    border: solid 1px rgba(11, 98, 47, 1);
+    outline: none;
+    color: #ffffff;
+    font-weight: 400;
+    border-radius: 5px;
+    padding: 8px 10px;
+}
+.product-search-input{
+    padding: 8px 10px; 
+    border: solid 1.5px rgba(11, 98, 47, 1);
+    outline: none;
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    font-family: sans-serif;
+  }
+  
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .custom-checkbox {
+    display: none;
+  }
+  
+  .box {
+    width: 20px;
+    height: 20px;
+    border: 1.8px solid #0b622f;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    background-color: #0b622f;
+    border-radius: 50%;
+  }
+  
+  .body-container-products {
+    height: calc(100vh - 180px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    font-family: sans-serif; 
+  }
+  .product-no-items-txt{
+    font-weight: 400;
+    color: rgba(64, 64, 64, 0.774);
+    font-size: 18px;
+    letter-spacing: 1px;
+  }

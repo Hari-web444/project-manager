@@ -61,7 +61,9 @@ function Sidebar() {
   };
 
   useEffect(() => {
-    getSidebarList();
+    if(user){ 
+        getSidebarList();
+      }
   }, [usertype_id]);
 
   const formatSidebarMenu = (mainList, subList) => {

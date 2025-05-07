@@ -26,17 +26,19 @@ import EmployeeList from './pages/employee/employee-list.jsx';
 import EmployeeAssign from './pages/employee/employee-assign.jsx';
 import EmployeeAttendance from './pages/employee/employee-attendance.jsx';
 import EmployeeLeavePermission from './pages/employee/employee-leavepermission.jsx';
+import AddProducts from './pages/products/AddProducts.jsx';
 
 function App() {
   const location = useLocation();
   const authPaths = ['/', '/login', '/forgot-password','/notfound'];
-  const usertype = localStorage.getItem("user_typecode");
+
 
   const pathTitles = {
     '/dashboard': 'Dashboard',
     '/leads': 'Leads',
     '/todo': 'To do list',
     '/products': 'Products',
+    '/products/add': 'addproducts',
     '/clients': 'Clients',
     '/tracking': 'Tracking',
     '/user-profile': 'UserProfile',
@@ -83,6 +85,7 @@ function App() {
               <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
               <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
               <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
+              <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} />
               <Route path="/employee" element={<PrivateRoute><Employee /></PrivateRoute>} />
               <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
@@ -90,7 +93,7 @@ function App() {
               <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
               <Route path="/clients" element={<PrivateRoute><Clients /></PrivateRoute>} />
               <Route path="/tracking" element={<PrivateRoute><Tracking /></PrivateRoute>} />
-              <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+              <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>}/>
 
               {/*  Employee's sub-items */}
               <Route path="/employee/list" element={<PrivateRoute><EmployeeList /></PrivateRoute>} />

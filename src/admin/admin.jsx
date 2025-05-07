@@ -4,7 +4,7 @@ import main_logo from '../assets/images/main_logo.png';
 import LoginPage from './login.jsx';
 import ForgotPwd from './forgot-pwd.jsx';
 import { ToastContainer } from 'react-toastify';
-
+import PropTypes from 'prop-types';
 const AdminPage = ({ pathURL }) => {
 
     return (
@@ -29,5 +29,9 @@ const AdminPage = ({ pathURL }) => {
         </div>
     );
 };
+
+AdminPage.propTypes = {
+    pathURL: PropTypes.string.isRequired, 
+  };
 
 export default AdminPage;
