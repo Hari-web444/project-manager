@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from './components/sidebar.jsx';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
-import { AuthProvider } from '../src/components/context/Authcontext.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from './components/context/Authcontext.jsx';
+import configModule from '../config.js';
 
 import SvgContent from './components/svgcontent.jsx';
 import AdminPage from './admin/admin.jsx';
@@ -21,7 +22,6 @@ import Accounts from './pages/accounts/accounts.jsx';
 import Inventory from './pages/inventory/inventory.jsx';
 import Orders from './pages/orders/orders.jsx';
 import Branches from './pages/branches/branches.jsx';
-import Employee from './pages/employee/employee.jsx';
 import EmployeeList from './pages/employee/employee-list.jsx';
 import EmployeeAssign from './pages/employee/employee-assign.jsx';
 import EmployeeAttendance from './pages/employee/employee-attendance.jsx';
@@ -29,8 +29,11 @@ import EmployeeLeavePermission from './pages/employee/employee-leavepermission.j
 
 function App() {
   const location = useLocation();
-  const authPaths = ['/', '/login', '/forgot-password','/notfound'];
-  const usertype = localStorage.getItem("user_typecode");
+  const authPaths = ['/', '/login', '/forgot-password', '/notfound'];
+  const [menuItems, setMenuItems] = useState(false);
+  const config = configModule.config();
+  const { user } = useAuth();
+  const usertype_id = user?.usertype_id;
 
   const pathTitles = {
     '/dashboard': 'Dashboard',
@@ -40,7 +43,6 @@ function App() {
     '/clients': 'Clients',
     '/tracking': 'Tracking',
     '/user-profile': 'UserProfile',
-    '/employee': 'Employee',
     '/orders': 'Orders',
     '/inventory': 'Inventory',
     '/accounts': 'Accounts',
@@ -53,16 +55,70 @@ function App() {
 
   const path = pathTitles[location.pathname] || 'Dashboard';
 
+  const getSidebarList = async () => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}GetSidebarList`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ usertype_id: parseInt(usertype_id) })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        const sidebarMenu = formatSidebarMenu(result.mainList, result.subList);
+        setMenuItems(sidebarMenu);
+      } else {
+        console.error("Server error:" + result.message);
+      }
+    } catch (error) {
+      console.error("Server error:" + error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user.usertype_id) {
+      getSidebarList();
+    }
+  }, [usertype_id]);
+
+  const formatSidebarMenu = (mainList, subList) => {
+    return mainList.map(main => {
+      const subMenuItems = subList
+        .filter(sub => sub.menu_id === main.menu_id)
+        .map(sub => ({
+          path: sub.path,
+          name: sub.name
+        }));
+
+      const menuItem = {
+        path: main.path,
+        name: main.name,
+        icon: main.icon,
+      };
+
+      if (main.exact === 1) {
+        menuItem.exact = true;
+      }
+
+      if (subMenuItems.length > 0) {
+        menuItem.subMenu = subMenuItems;
+      }
+
+      return menuItem;
+    });
+  };
+
   return (
     <>
-      <AuthProvider>
       <ToastContainer position="top-right" autoClose={2000} />
 
       {authPaths.includes(location.pathname) ? (
         <AdminPage pathURL={location.pathname === '/' ? '/login' : location.pathname} />
       ) : (
         <div className='d-flex w-100 h-100'>
-          <Sidebar />
+          <Sidebar menuItems={menuItems} />
           <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)' }}>
             <div className='page-header-common justify-content-between'>
               <div className="animated-text-container">
@@ -103,7 +159,6 @@ function App() {
           </div>
         </div>
       )}
-       </AuthProvider>
     </>
   );
 }

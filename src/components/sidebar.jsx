@@ -1,75 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
 import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
-import configModule from '../../config.js';
-import { useAuth } from '../components/context/Authcontext.jsx';
+import { NavLink} from 'react-router-dom';
 
-function Sidebar() {
-  const [openSubMenu, setOpenSubMenu] = useState(false);
-  const [menuItems, setMenuItems] = useState(false);
-  const config = configModule.config();
-  const { user } = useAuth();
-  const usertype_id = user?.usertype_id;
+function Sidebar({ menuItems }) {
+  const savedOpenSubMenu = localStorage.getItem('openSubMenu');
+  const [openSubMenu, setOpenSubMenu] = useState(savedOpenSubMenu || false);
 
   const handleSubMenuClick = (path) => {
     setOpenSubMenu((prev) => (prev === path ? null : path));
+
+    localStorage.setItem('openSubMenu', openSubMenu || false);
   };
-
-  const getSidebarList = async () => {
-    try {
-      const response = await fetch(`${config.apiBaseUrl}GetSidebarList`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ usertype_id: parseInt(usertype_id) })
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        const sidebarMenu = formatSidebarMenu(result.mainList, result.subList);
-        setMenuItems(sidebarMenu);
-      } else {
-        console.error("Server error:" + result.message);
-      }
-    } catch (error) {
-      console.error("Server error:" + error.message);
-    }
-  };
-
-  useEffect(() => {
-    getSidebarList();
-  }, [usertype_id]);
-
-  const formatSidebarMenu = (mainList, subList) => {
-    return mainList.map(main => {
-      const subMenuItems = subList
-        .filter(sub => sub.menu_id === main.menu_id)
-        .map(sub => ({
-          path: sub.path,
-          name: sub.name
-        }));
-
-      const menuItem = {
-        path: main.path,
-        name: main.name,
-        icon: main.icon,
-      };
-
-      if (main.exact === 1) {
-        menuItem.exact = true;
-      }
-
-      if (subMenuItems.length > 0) {
-        menuItem.subMenu = subMenuItems;
-      }
-
-      return menuItem;
-    });
-  };
-
 
   return (
     <div className="sidebar">
