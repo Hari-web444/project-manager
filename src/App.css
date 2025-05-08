@@ -29,6 +29,20 @@ button {
     justify-content: center;
 }
 
+.commonst-select {
+    padding: 0px !important;
+}
+
+.common-select-st {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+    min-width: 250px;
+    margin-bottom: 12px;
+}
+
 .animated-text-container {
     letter-spacing: 0.5em;
     display: inline-block;
