@@ -25,8 +25,18 @@
     justify-content: center;
 }
 
+.comm-select-wd {
+    width: calc(100% - 172px);
+}
+
 .add-new-hdr {
     font-weight: 600;
+}
+
+.commonst-select {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .header-titlecount-el {

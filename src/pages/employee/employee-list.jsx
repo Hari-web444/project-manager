@@ -103,13 +103,16 @@ function EmployeeList() {
 
             <div className="modal-body">
               <div className="container commonst-select">
-                <CommonSelect
-                  header="Select designation"
-                  name="role"
-                  value={role}
-                  onChange={setRole}
-                  options={roleOptions}
-                />
+               <h6>Select designation</h6>
+                <div className="comm-select-wd">
+                  <CommonSelect
+                    header="Select designation"
+                    name="role"
+                    value={role}
+                    onChange={setRole}
+                    options={roleOptions}
+                  />
+                </div>
               </div>
             </div>
 
