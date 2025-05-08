@@ -210,11 +210,15 @@ box-shadow: none !important;
 
 .product-form-input{
   width: 100%;
-  padding: 14px 15px;
-  border-radius: 6px;
-  border: solid 1px #E6E6E6;
+  padding: 2px 12px;
+  border-radius: 8px;
+  border: solid 1px #E5E5E5;
   background-color: #ffffff;
   outline: none;
   margin-top: 5px;
+  min-height: 48px;
 }
+
+
+
 

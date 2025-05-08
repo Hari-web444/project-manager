@@ -108,15 +108,18 @@ function AddProducts() {
               <div className="row mb-4">
               <div className=" col-6">
                 <label htmlFor="brand" className="product-form-label">Select brand</label>
+                <div className="mt-1">
                  <CommonSelect
                   name="role"
                   value={role}
                   onChange={setRole}
+                  placeholder="Select brand"
                   options={roleOptions}
                 />
               </div> 
+              </div>
               <div className=" col-6">
-                <label htmlFor="productCategory" className="product-form-label">Select product category</label>
+                <label htmlFor="productCategory" className="product-form-label">Product category</label>
                 <select
                 className="product-form-input"
                   id="productCategory"
