@@ -10,7 +10,7 @@
 .product-Addnew-btn{
     background: linear-gradient(3deg, #0B622F, #18934B) !important;
     width: 100%;
-    max-width: 110px;
+    max-width: 120px;
     border: none;
     outline: none;
     color: #ffffff;
@@ -28,7 +28,7 @@
 
 .product-search-input{
     padding: 8px 10px; 
-    border: solid 1.5px rgba(11, 98, 47, 1);
+    border: solid 1px rgba(11, 98, 47, 1);
     outline: none;
     background-color: #ffffff;
     border-radius: 5px;
