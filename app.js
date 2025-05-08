@@ -9,7 +9,6 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 const app = express();
 
-// Load allowed origins from .env
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
   : [];
@@ -33,7 +32,9 @@ app.use(cookieParser());
 
 // API routes
 const admin = require('./src/routes/adminroute.js');
+const employee = require('./src/routes/employeeroute.js');
 app.use('/', admin);
+app.use('/', employee);
 
 // Health check
 app.get('/', (req, res) => {

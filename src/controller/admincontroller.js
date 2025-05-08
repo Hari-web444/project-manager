@@ -11,7 +11,7 @@ exports.logins = async (req, res) => {
     const { username, password } = req.body;
     try {
         const sql = 'CALL SP_LoggedInUser(?, ?)';
-        db.execute(sql, [username, password], (err, result) => {
+        db.query(sql, [username, password], (err, result) => {
             if (err) {
                 console.error('Error executing stored procedure:', err);
                 return res.status(500).json({ message: 'Server error' });
@@ -136,7 +136,7 @@ exports.putLeadCount = async (req, res) => {
     try {
         const sql = 'CALL SP_PutLeadCount(?, ?)';
 
-        db.execute(sql, [count, userId], (err, result) => {
+        db.query(sql, [count, userId], (err, result) => {
             if (err) {
                 console.error('Error executing stored procedure:', err);
                 return res.status(500).json({ message: 'Server error' });
@@ -157,7 +157,8 @@ exports.checkLeadCount = async (req, res) => {
     const { userId } = req.body;
     try {
         const sql = 'CALL SP_CheckLeadCount(?)';
-        db.execute(sql, [userId], (err, result) => {
+
+        db.query(sql, [userId], (err, result) => {
             if (err) {
                 console.error('Error executing stored procedure:', err);
                 return res.status(500).json({ message: 'Server error' });
