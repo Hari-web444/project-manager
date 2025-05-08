@@ -4,8 +4,6 @@ import Sidebar from './components/sidebar.jsx';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from './components/context/Authcontext.jsx';
 import configModule from '../config.js';
 
@@ -114,8 +112,6 @@ function App() {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={2000} />
-
       {authPaths.includes(location.pathname) ? (
         <AdminPage pathURL={location.pathname === '/' ? '/login' : location.pathname} />
       ) : (
