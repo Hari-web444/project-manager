@@ -159,10 +159,28 @@
     animation: zoomOut 0.5s forwards;
 }
 
-.nav-btn-top:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 1px;
+
+
+.nav-btn-top {
+    text-decoration: none !important;
+    color: rgb(90, 90, 90) !important;
+    position: relative;
+    display: inline-block;
+}
+
+.nav-btn-top::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #0b622f;
+    transition: width 0.3s ease;
+}
+
+.nav-btn-top:hover::after {
+    width: 100%;
 }
 
 .right-container-el {
