@@ -2,16 +2,13 @@ import React, { useState } from 'react';
 import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
-import { NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function Sidebar({ menuItems }) {
-  const savedOpenSubMenu = localStorage.getItem('openSubMenu');
-  const [openSubMenu, setOpenSubMenu] = useState(savedOpenSubMenu || false);
+  const [openSubMenu, setOpenSubMenu] = useState(false);
 
   const handleSubMenuClick = (path) => {
     setOpenSubMenu((prev) => (prev === path ? null : path));
-
-    localStorage.setItem('openSubMenu', !openSubMenu);
   };
 
   return (
@@ -24,10 +21,11 @@ function Sidebar({ menuItems }) {
           <div key={name}>
             {subMenu ? (
               <div className="submenu-header">
-                <NavLink to={path} end={exact} onClick={() => handleSubMenuClick(path)}>
-                  <SvgContent svg_name={icon} />
-                  <span className="sbnone-title ">{name}</span>
-
+                <NavLink to={path} end={exact} className="justify-content-between" onClick={() => handleSubMenuClick(path)}>
+                  <div className='dropdown-st-sb'>
+                    <SvgContent svg_name={icon} />
+                    <span className="sbnone-title ">{name}</span>
+                  </div>
                   <span className={`submenu-arrow sbsubitem-title ${openSubMenu === path ? 'open' : ''}`}>
                     {openSubMenu === path ? (
                       <SvgContent svg_name="dropdownUp" />
