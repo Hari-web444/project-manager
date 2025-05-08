@@ -7,6 +7,7 @@ import CommonSelect from "../../components/common-select.jsx";
 function AddProducts() {
 
   const [file, setFile] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -77,7 +78,13 @@ function AddProducts() {
         </div>
         <div className="col-12 col-md-7 col-lg-7">
           <div className="p-4 product-uplode-img">
+            <div className="d-flex justify-content-between align-items-center">
             <h5>General details</h5>
+            <div className="progress-step-wrapper d-flex justify-content-end mb-2">
+              <div className={`progress-step ${currentStep === 1 ? 'active' : ''}`}></div>
+              <div className={`progress-step ${currentStep === 2 ? 'active' : ''}`}></div>
+            </div>
+            </div>
             <div className="product-card-form">
             <form className='mt-3'> 
               <div className="row  mb-4">
@@ -120,78 +127,79 @@ function AddProducts() {
               </div>
               <div className=" col-6">
                 <label htmlFor="productCategory" className="product-form-label">Product category</label>
-                <select
-                className="product-form-input"
-                  id="productCategory"
-                  name="productCategory"
-                  value={formData.productCategory}
-                  onChange={handleChange}
-                >
-                  <option value="">Select product category</option>
-                  <option value="category1">Category 1</option>
-                  <option value="category2">Category 2</option>
-                </select>
+                <div className="mt-1">
+                 <CommonSelect
+                  name="role"
+                  value={role}
+                  onChange={setRole}
+                  placeholder="Product category"
+                  options={roleOptions}
+                />
+              </div> 
               </div>
               </div>
               <div className='row mb-4'>
               <div className=" col-6">
                 <label htmlFor="formFactor" className="product-form-label">Form factor</label>
-                <select
-                  className="product-form-input"
-                  id="formFactor"
-                  name="formFactor"
-                  value={formData.formFactor}
-                  onChange={handleChange}
-                >
-                  <option value="">Select package type</option>
-                  <option value="type1">Type 1</option>
-                  <option value="type2">Type 2</option>
-                </select>
+                <div className="mt-1">
+                 <CommonSelect
+                  name="role"
+                  value={role}
+                  onChange={setRole}
+                  placeholder="Form factor"
+                  options={roleOptions}
+                />
+              </div> 
               </div>
               <div className=" col-6">
                 <label htmlFor="packageQuantity" className="product-form-label">Product type</label>
-                <input
-                  type="number"
-                  className="product-form-input"
-                  id="packageQuantity"
-                  name="packageQuantity"
-                  value={formData.packageQuantity}
-                  onChange={handleChange}
-                  placeholder="Enter package quantity"
+                <div className="mt-1">
+                 <CommonSelect
+                  name="role"
+                  value={role}
+                  onChange={setRole}
+                  placeholder="Product type"
+                  options={roleOptions}
                 />
+              </div> 
               </div>
               </div>
               <div className='row mb-4'>
               <div className=" col-6">
                 <label htmlFor="formFactor" className="product-form-label">Package quantity </label>
-                <select
+                <input
+                  type="text"
                   className="product-form-input"
-                  id="formFactor"
-                  name="formFactor"
-                  value={formData.formFactor}
+                  id="productName"
+                  name="productName"
+                  value={formData.productName}
                   onChange={handleChange}
-                >
-                  <option value="">Select package type</option>
-                  <option value="type1">Type 1</option>
-                  <option value="type2">Type 2</option>
-                </select>
+                  placeholder="Enter Package quantity"
+                />
               </div>
               <div className=" col-6 ">
                 <label htmlFor="packageQuantity" className="product-form-label">Units</label>
-                <input
-                  type="number"
-                  className="product-form-input"
-                  id="packageQuantity"
-                  name="packageQuantity"
-                  value={formData.packageQuantity}
-                  onChange={handleChange}
-                  placeholder="Enter package quantity"
+                <div className="mt-1">
+                 <CommonSelect
+                  name="role"
+                  value={role}
+                  onChange={setRole}
+                  placeholder="Select Units"
+                  options={roleOptions}
                 />
+              </div> 
               </div>
               </div>
-              <div className="d-flex justify-content-end gap-3 ">
-              <button type="button" className="btn btn-secondary">Cancel</button>
-              <button type="submit" className="btn btn-primary">Next</button>
+              <div className="d-flex justify-content-end gap-3 ">            
+                 <button type="button" className="cancel-button">Cancel</button>
+                {currentStep > 1 && (
+                  <button type="button" className="cancel-button" onClick={() => setCurrentStep((prev) => prev - 1)}>Previous</button>
+                 )}
+                {currentStep < 2 ? (
+                  <button type="button" className="next-button" onClick={() => setCurrentStep(2)}>Next</button>
+                 ) : (
+                 <button type="button" className="next-button" >Save</button>
+                 )}
             </div>
             </form>
           </div>

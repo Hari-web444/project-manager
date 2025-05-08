@@ -148,7 +148,7 @@
   width: 100%;
   border-radius: 8px;
   background: white;
-  height: calc(100vh - 285px);
+  /* height: calc(100vh - 285px); */
 }
 
 
@@ -158,7 +158,7 @@
   width: 100%;
   border-radius: 8px;
   background: white;
-  height: calc(100vh - 355px);
+  /* height: calc(100vh - 355px); */
 }
 
 .upload-area {
@@ -168,7 +168,7 @@
   cursor: pointer;
   border-radius: 6px;
   margin-bottom: 16px;
-  height: calc(100vh - 382px);
+  /* height: calc(100vh - 382px); */
 }
 
 .upload-content {
@@ -218,6 +218,7 @@ box-shadow: none !important;
   margin-top: 5px;
   min-height: 48px;
 }
+
 
 
 

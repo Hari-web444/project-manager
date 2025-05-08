@@ -106,3 +106,19 @@ select:-webkit-autofill:focus {
         background-position: 100% 50%;
     }
 }
+
+.progress-step-wrapper {
+    gap: 5px;
+  }
+  
+  .progress-step {
+    width: 25px;
+    height: 8px;
+    border-radius: 20px;
+    background-color: #8dc3a7; 
+    transition: background-color 0.3s ease;
+  }
+  
+  .progress-step.active {
+    background-color: #015f31; 
+  }
