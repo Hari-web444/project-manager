@@ -23,6 +23,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
 }
 
 .comm-select-wd {
@@ -163,6 +164,15 @@
     text-decoration-thickness: 1px;
     text-underline-offset: 1px;
 }
+
+.right-container-el {
+    width: 60%;
+}
+
+.left-container-el {
+    width: 40%;
+}
+
 
 @keyframes zoomIn {
     from {
