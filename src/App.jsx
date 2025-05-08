@@ -27,6 +27,7 @@ import EmployeeAssign from './pages/employee/employee-assign.jsx';
 import EmployeeAttendance from './pages/employee/employee-attendance.jsx';
 import EmployeeLeavePermission from './pages/employee/employee-leavepermission.jsx';
 import AddProducts from './pages/products/AddProducts.jsx';
+import Employee from './pages/employee/employee.jsx';
 
 function App() {
   const location = useLocation();

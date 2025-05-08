@@ -39,7 +39,7 @@ button {
   border-radius: 8px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: border-color 0.25s;
+
 }
 button:hover {
   border-color: #e4ede6;

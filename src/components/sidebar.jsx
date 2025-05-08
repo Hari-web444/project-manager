@@ -3,6 +3,7 @@ import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
 import { NavLink} from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 function Sidebar({ menuItems }) {
   const savedOpenSubMenu = localStorage.getItem('openSubMenu');
@@ -69,5 +70,7 @@ function Sidebar({ menuItems }) {
     </div>
   );
 }
-
+Sidebar.propTypes = {
+  menuItems: PropTypes.string.isRequired,  
+};
 export default Sidebar;
