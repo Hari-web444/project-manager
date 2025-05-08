@@ -3,6 +3,7 @@ import './product.css';
 import graterthen from '../../assets/images/graterthen.svg';
 import commanuplodeicon from '../../assets/images/commanuplodeicon.svg'
 import { Link } from 'react-router-dom';
+import CommonSelect from "../../components/common-select.jsx";
 function AddProducts() {
 
   const [file, setFile] = useState(null);
@@ -33,14 +34,29 @@ function AddProducts() {
           [name]: value
         });
       };
+
+
+  const [role, setRole] = useState(null);
+
+  const roleOptions = [
+    { value: "Manager", label: "Manager" },
+    { value: "Developer", label: "Developer" },
+    { value: "Designer", label: "Designer" },
+  ];
+
+
   return (
     <div className='common-body-st'>
-      <div className='header-container-products mt-4'>
-       <h6 className="mt-0 mb-0 product-header-text">Add new product</h6>
-       <div className="breadcrumb-container">
-         <span className="breadcrumb-item"><Link className='productbacklink' to='/products'>Products</Link></span> <span className="breadcrumb-separator"> <img src={graterthen} alt='then'/> </span><span className="breadcrumb-item">Add new</span>
+      <div className='header-container-products '>
+        <div className=' header-product-el '>
+         <div className="header-product-pvt">
+          <h6 className="mt-0 mb-0 product-header-text">Add new product</h6>
+          <div className="breadcrumb-container">
+           <span className="breadcrumb-item"><Link className='productbacklink' to='/products'>Products</Link></span> <span className="breadcrumb-separator"> <img src={graterthen} alt='then'/> </span><span className="breadcrumb-item">Add new</span>
+          </div>
+        </div>
        </div>
-       <div className=" mt-4">
+       <div className="body-container-products-add ">
       <div className="row">
         <div className="col-12 col-md-5 col-lg-5 ">
           <div className="p-4  product-uplode-img">
@@ -92,17 +108,12 @@ function AddProducts() {
               <div className="row mb-4">
               <div className=" col-6">
                 <label htmlFor="brand" className="product-form-label">Select brand</label>
-                <select
-                    className="product-form-input"
-                  id="brand"
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleChange}
-                >
-                  <option value="">Select brand</option>
-                  <option value="brand1">Brand 1</option>
-                  <option value="brand2">Brand 2</option>
-                </select>
+                 <CommonSelect
+                  name="role"
+                  value={role}
+                  onChange={setRole}
+                  options={roleOptions}
+                />
               </div> 
               <div className=" col-6">
                 <label htmlFor="productCategory" className="product-form-label">Select product category</label>
@@ -175,10 +186,10 @@ function AddProducts() {
                 />
               </div>
               </div>
-              <div className="d-flex justify-content-end gap-3 mt-2">
-                <button type="button" className="btn btn-secondary">Cancel</button>
-                <button type="submit" className="btn btn-primary">Next</button>
-              </div>
+              <div className="d-flex justify-content-end gap-3 ">
+              <button type="button" className="btn btn-secondary">Cancel</button>
+              <button type="submit" className="btn btn-primary">Next</button>
+            </div>
             </form>
           </div>
         </div>

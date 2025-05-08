@@ -1,37 +1,49 @@
 .header-container-products {  
     padding: 0px 18px;
+    height: 100%;
 }
-.product-header-text{
-    font-size: 18px;
-    font-weight: 500;
-    color: #000000;
+.header-product-el {
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0px !important;
+}
+.header-product-pvt{
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
 }
 
+.product-header-text{
+    font-weight: 500;
+    color: #121212;
+}
 .product-Addnew-btn{
     background: linear-gradient(3deg, #0B622F, #18934B) !important;
-    width: 100%;
-    max-width: 120px;
     border: none;
     outline: none;
     color: #ffffff;
     border-radius: 6px;
-    padding: 8px 10px;
+    padding: 8px 16px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
     box-shadow: 0px 3px 3px -2px gray;
 }
-
 .product-Addnew-btn:hover {
   box-shadow: none !important;
 }
 
 
 .product-search-input{
-    padding: 8px 10px; 
-    border: solid 1px rgba(11, 98, 47, 1);
-    outline: none;
-    background-color: #ffffff;
-    border-radius: 5px;
+  padding: 8px 12px;
+  border: 1px solid #06823a;
+  border-radius: 6px;
+  outline: none;
+  background: transparent;
+  color: #121212;
 }
 
 .checkbox-group {
@@ -45,7 +57,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 15px;
     letter-spacing: 1px;
     font-weight: 500;
     color: #333;
@@ -74,20 +85,23 @@
   }
   
   .body-container-products {
-    height: calc(100vh - 180px);
+    height: calc(100% - 62px);
+    padding: 10px 0px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    overflow: auto;
-    font-family: sans-serif; 
+    justify-content: center;
   }
   .product-no-items-txt{
     color: rgba(64, 64, 64, 1);
-    font-size: 16px;
     letter-spacing: 1px;
   }
+
+  .body-container-products-add {
+    height: calc(100% - 62px);
+    padding: 10px 0px;
+  }
+
   .breadcrumb-container {
-    font-size: 15px;
     color: #333;
     display: flex;
     align-items: center;
@@ -134,7 +148,7 @@
   width: 100%;
   border-radius: 8px;
   background: white;
-  height: calc(100vh - 309px);
+  height: calc(100vh - 285px);
 }
 
 
@@ -144,7 +158,7 @@
   width: 100%;
   border-radius: 8px;
   background: white;
-  height: calc(100vh - 379px);
+  height: calc(100vh - 355px);
 }
 
 .upload-area {
@@ -196,10 +210,11 @@ box-shadow: none !important;
 
 .product-form-input{
   width: 100%;
-  padding: 12px 15px;
+  padding: 14px 15px;
   border-radius: 6px;
   border: solid 1px #E6E6E6;
   background-color: #ffffff;
   outline: none;
   margin-top: 5px;
 }
+

@@ -19,7 +19,6 @@ const DropdownIndicator = (props) => {
 };
 
 const CommonSelect = ({
-  header,
   name,
   options,
   value,
@@ -30,7 +29,7 @@ const CommonSelect = ({
   const customStyles = {
     container: (provided) => ({
       ...provided,
-      width: "calc(100% - 172px)",
+      width: "100%",
     }),
     control: (provided) => ({
       ...provided,
@@ -76,7 +75,6 @@ const CommonSelect = ({
 
   return (
     <div className="common-select-st mb-3">
-      {header && <h6 className="form-label mb-2">{header}</h6>}
       <Select
         name={name}
         value={options.find((opt) => opt.value === value)}
@@ -94,7 +92,6 @@ const CommonSelect = ({
 };
 
 CommonSelect.propTypes = {
-  header: PropTypes.string,
   name: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(
     PropTypes.shape({

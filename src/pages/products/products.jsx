@@ -10,22 +10,13 @@ function Products() {
   };
     return (
     <div className='common-body-st'>
-      <div className='header-container-products mt-4'>
-      <div className='row'>
+      <div className='header-container-products'>
+      <div className='d-flex header-product-el '>
       <div className="col-lg-6 col-4 d-flex  align-items-center">
-        <div className="d-flex justify-content-center align-items-center">
+        <div className="header-product-pvt">
           <h6 className="mt-0 mb-0 product-header-text">Total Products: 10</h6>
-        </div>
-      </div>
-        <div className='col-lg-6  col-8 d-flex flex-wrap justify-content-end gap-3' >
-          <div className=''>
-            <input type='search' className='product-search-input' placeholder='Search ' />
-          </div>
-        <div><Link to='/products/add'><button type='button' className='product-Addnew-btn '>Add new</button></Link></div>  
-        </div>
-      </div>
-      <div className="checkbox-group mt-1">
-      <label className="checkbox-item">
+          <div className="checkbox-group ">
+         <label className="checkbox-item mt-1">
         <input
           type="checkbox"
           name="product"
@@ -48,8 +39,18 @@ function Products() {
         <span className="box"> {selected === 'Gramiyam' && <span className="dot" />}</span> Gramiyam : 0
       </label>
     </div>
+        </div>
+      </div>
+        <div className='col-lg-6  col-8 d-flex flex-wrap justify-content-end gap-3' >
+          <div className=''>
+            <input type='search' className='product-search-input' placeholder='Search ' />
+          </div>
+        <div><Link to='/products/add'><button type='button' className='product-Addnew-btn '>Add new</button></Link></div>  
+        </div>
+      </div>
+     
       <div className='body-container-products'>
-        <p className='product-no-items-txt'> No items found</p>
+        <p className='product-no-items-txt'>  No records found</p>
       </div>
       </div>
       </div>
