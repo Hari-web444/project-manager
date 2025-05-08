@@ -112,8 +112,8 @@ select:-webkit-autofill:focus {
   }
   
   .progress-step {
-    width: 25px;
-    height: 8px;
+    width: 18px;
+    height: 5px;
     border-radius: 20px;
     background-color: #8dc3a7; 
     transition: background-color 0.3s ease;

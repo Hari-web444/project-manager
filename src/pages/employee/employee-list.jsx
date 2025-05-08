@@ -83,10 +83,10 @@ function EmployeeList() {
           </div>
         ) : (
           <div className="w-100 h-100 inner-body-st">
-            <div>
+            <div className="left-container-el">
               A
             </div>
-            <div>
+            <div className="right-container-el">
               B
             </div>
           </div>
