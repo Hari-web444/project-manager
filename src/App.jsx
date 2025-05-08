@@ -27,7 +27,6 @@ import EmployeeAssign from './pages/employee/employee-assign.jsx';
 import EmployeeAttendance from './pages/employee/employee-attendance.jsx';
 import EmployeeLeavePermission from './pages/employee/employee-leavepermission.jsx';
 import AddProducts from './pages/products/AddProducts.jsx';
-import Employee from './pages/employee/employee.jsx';
 
 function App() {
   const location = useLocation();
@@ -142,8 +141,8 @@ function App() {
               <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
               <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
               <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
-              <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} />
-              <Route path="/employee" element={<PrivateRoute><Employee /></PrivateRoute>} />
+              <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} /> 
+              <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
               <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
               <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />

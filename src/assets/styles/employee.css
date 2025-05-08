@@ -1,0 +1,17 @@
+.header-div-el {
+    height: 62px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px 15px;
+    gap: 2px;
+}
+
+.body-div-el {
+    height: calc(100% - 62px);
+}
+
+.header-titlecount-el {
+    font-weight: 500;
+}

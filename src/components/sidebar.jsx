@@ -12,7 +12,7 @@ function Sidebar({ menuItems }) {
   const handleSubMenuClick = (path) => {
     setOpenSubMenu((prev) => (prev === path ? null : path));
 
-    localStorage.setItem('openSubMenu', openSubMenu || false);
+    localStorage.setItem('openSubMenu', !openSubMenu);
   };
 
   return (
