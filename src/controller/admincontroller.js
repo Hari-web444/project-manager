@@ -155,18 +155,14 @@ exports.putLeadCount = async (req, res) => {
 
 exports.checkLeadCount = async (req, res) => {
     const { userId } = req.body;
-
     try {
         const sql = 'CALL SP_CheckLeadCount(?)';
-
         db.execute(sql, [userId], (err, result) => {
             if (err) {
                 console.error('Error executing stored procedure:', err);
                 return res.status(500).json({ message: 'Server error' });
             }
-
             const rows = result[0];
-
             res.status(200).json({ data: rows });
 
         });
