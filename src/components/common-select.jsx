@@ -74,7 +74,7 @@ const CommonSelect = ({
   };
 
   return (
-    <div className="common-select-st mb-3">
+    <div className="common-select-st mb-0">
       <Select
         name={name}
         value={options.find((opt) => opt.value === value)}
