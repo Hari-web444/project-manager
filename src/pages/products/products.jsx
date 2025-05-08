@@ -12,7 +12,7 @@ function Products() {
     <div className='common-body-st'>
       <div className='header-container-products'>
       <div className='d-flex header-product-el '>
-      <div className="col-lg-6 col-4 d-flex  align-items-center">
+      <div className="col-lg-6 col-6 d-flex  align-items-center">
         <div className="header-product-pvt">
           <h6 className="mt-0 mb-0 product-header-text">Total Products: 10</h6>
           <div className="checkbox-group ">
@@ -41,7 +41,7 @@ function Products() {
     </div>
         </div>
       </div>
-        <div className='col-lg-6  col-8 d-flex flex-wrap justify-content-end gap-3' >
+        <div className='col-lg-6  col-6 d-flex flex-wrap justify-content-end gap-3' >
           <div className=''>
             <input type='search' className='product-search-input' placeholder='Search ' />
           </div>

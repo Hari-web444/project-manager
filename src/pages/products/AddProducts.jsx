@@ -63,7 +63,7 @@ function AddProducts() {
           <div className="p-4  product-uplode-img">
             <h5>Product image</h5>
             <div className="upload-card mt-4">
-              <label htmlFor='uplode-img' className="upload-area">
+              <label htmlFor='uplode-img' className="upload-area" aria-label="Upload Image">
                 <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} hidden />
                <div className="upload-content">
                 <span className="upload-icon"><img src={commanuplodeicon} alt='uplode'/></span>
