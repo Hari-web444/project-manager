@@ -23,7 +23,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 22px;
 }
 
 .comm-select-wd {
@@ -159,8 +159,6 @@
     animation: zoomOut 0.5s forwards;
 }
 
-
-
 .nav-btn-top {
     text-decoration: none !important;
     color: rgb(90, 90, 90) !important;
@@ -182,15 +180,6 @@
 .nav-btn-top:hover::after {
     width: 100%;
 }
-
-.right-container-el {
-    width: 60%;
-}
-
-.left-container-el {
-    width: 40%;
-}
-
 
 @keyframes zoomIn {
     from {

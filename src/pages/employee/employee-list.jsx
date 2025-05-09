@@ -4,13 +4,14 @@ import CommonSelect from "../../components/common-select.jsx";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import configModule from '../../../config.js';
+import {  useNavigate } from 'react-router-dom';
 
 function EmployeeList() {
   const [showModal, setShowModal] = useState(false);
   const [roleOptions, setRoleOptions] = useState([]);
-  const [addEmployeeModal, setAddEmployeeModal] = useState(false);
   const [role, setRole] = useState(null);
   const config = configModule.config();
+  const navigate = useNavigate();
 
   const getDesignationList = async () => {
     try {
@@ -43,8 +44,8 @@ function EmployeeList() {
       return;
     }
 
-    setAddEmployeeModal(true);
     setShowModal(false);
+    navigate("/employee/list/add");
   };
 
   return (
@@ -53,44 +54,26 @@ function EmployeeList() {
         <div className='header-divpart-el'>
           <p className='mb-0 header-titlecount-el'>Total Employee : 0</p>
           <div className="d-flex align-items-center">
-            <button onClick={() => { setAddEmployeeModal(false); setShowModal(false); }}>
+            <button onClick={() => { setShowModal(false); }}>
               <p className='mb-0 nav-btn-top'>
                 Employee &gt; List
-              </p>
-            </button> &nbsp;
-            <button>
-              <p className="mb-0 nav-btn-top">
-                {addEmployeeModal ? ' > Add new' : ''}
               </p>
             </button>
           </div>
         </div>
-        {!addEmployeeModal && (
-          <div className="search-add-wrapper">
-            <input
-              type="text"
-              placeholder="Search"
-              className="search-input"
-            />
-            <button className="add-button" onClick={() => setShowModal(true)}>Add new</button>
-          </div>
-        )}
+        <div className="search-add-wrapper">
+          <input
+            type="text"
+            placeholder="Search"
+            className="search-input"
+          />
+          <button className="add-button" onClick={() => setShowModal(true)}>Add new</button>
+        </div>
       </div>
       <div className='body-div-el'>
-        {!addEmployeeModal ? (
           <div className="w-100 h-100 inner-body-st">
  <p className='product-no-items-txt'>  No records found</p>
           </div>
-        ) : (
-          <div className="w-100 h-100 inner-body-st">
-            <div className="left-container-el">
-              A
-            </div>
-            <div className="right-container-el">
-              B
-            </div>
-          </div>
-        )}
       </div>
 
       {showModal && (
@@ -103,7 +86,7 @@ function EmployeeList() {
 
             <div className="modal-body">
               <div className="container commonst-select">
-               <h6>Select designation</h6>
+                <h6>Select designation</h6>
                 <div className="comm-select-wd">
                   <CommonSelect
                     header="Select designation"
