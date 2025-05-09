@@ -21,6 +21,7 @@ import Inventory from './pages/inventory/inventory.jsx';
 import Orders from './pages/orders/orders.jsx';
 import Branches from './pages/branches/branches.jsx';
 import EmployeeList from './pages/employee/employee-list.jsx';
+import AddEmployee from './pages/employee/addemployee-list.jsx';
 import EmployeeAssign from './pages/employee/employee-assign.jsx';
 import EmployeeAttendance from './pages/employee/employee-attendance.jsx';
 import EmployeeLeavePermission from './pages/employee/employee-leavepermission.jsx';
@@ -48,6 +49,7 @@ function App() {
     '/accounts': 'Accounts',
     '/branches': 'Branches',
     '/employee/list': 'Employee List',
+    '/employee/list/add': 'Employee Add List',
     '/employee/assign': 'Employee Assign',
     '/employee/attendance': 'Employee Attendance',
     '/employee/leave-permissions': 'Leave and Permission',
@@ -149,6 +151,7 @@ function App() {
 
               {/*  Employee's sub-items */}
               <Route path="/employee/list" element={<PrivateRoute><EmployeeList /></PrivateRoute>} />
+              <Route path="/employee/list/add" element={<PrivateRoute><AddEmployee /></PrivateRoute>} />
               <Route path="/employee/assign" element={<PrivateRoute><EmployeeAssign /></PrivateRoute>} />
               <Route path="/employee/attendance" element={<PrivateRoute><EmployeeAttendance /></PrivateRoute>} />
               <Route path="/employee/leave-permissions" element={<PrivateRoute><EmployeeLeavePermission /></PrivateRoute>} />
