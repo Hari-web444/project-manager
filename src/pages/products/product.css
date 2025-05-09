@@ -3,7 +3,7 @@
     height: 100%;
 }
 .header-product-el {
-  height: 65px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -23,13 +23,12 @@
 }
 .product-Addnew-btn{
     background: linear-gradient(3deg, #0B622F, #18934B) !important;
-    border: none;
+    border: none !important;
     outline: none;
     color: #ffffff;
     border-radius: 6px;
     padding: 8px 16px;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
     box-shadow: 0px 3px 3px -2px gray;
 }
 .product-Addnew-btn:hover {
@@ -85,11 +84,8 @@
   }
   
   .body-container-products {
-    height: calc(100% - 65px);
+    height: calc(100% - 70px);
     padding: 10px 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   .product-no-items-txt{
     color: rgba(64, 64, 64, 1);
@@ -97,7 +93,7 @@
   }
 
   .body-container-products-add {
-    height: calc(100% - 65px);
+    height: calc(100% - 70px);
     padding: 10px 0px;
   }
 
@@ -142,23 +138,27 @@
     background-color: #ffffff !important;
     border-radius: 7px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+    height: calc(100% - 40px);
 }
 
 .product-card-form{
   width: 100%;
   border-radius: 8px;
   background: white;
+  height: calc(100% - 90px);
+  overflow-y: auto;
+  overflow-x: hidden;
 
 }
 
 
 .upload-card {
-  border: 2px dashed #0b622fd2;
+  border: 1.5px dashed #0b622fd2;
   padding: 0px;
   width: 100%;
   border-radius: 8px;
   background: white;
-  
+  height: calc(100% - 124px);  
 }
 
 .upload-area {
@@ -167,19 +167,22 @@
   align-items: center;
   cursor: pointer;
   border-radius: 6px;
+   height: calc(100vh - 401px);
   margin-bottom: 16px;
-
 }
 
 .upload-content {
   text-align: center;
   color: #6b6b6b;
+  display: flex;
+ 
 }
 
 .upload-icon {
   font-size: 24px;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
+   margin-right: 15px;
 }
 
 
@@ -220,6 +223,117 @@ box-shadow: none !important;
 }
 
 
+.product-next-btn{
+  background: linear-gradient(3deg, #0B622F, #18934B) !important;
+  border: none !important;
+  outline: none;
+  color: #ffffff;
+  border-radius: 6px;
+  max-width: 100px;
+  font-weight: 500;
+  width: 100%;
+  padding: 8px 16px;
+  cursor: pointer;
+  box-shadow: 0px 3px 3px -2px gray;
+}
+.product-next-btn:hover {
+box-shadow: none !important;
+}
 
 
+.product-Previous-btn{
+  padding: 7px 25px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #121212;
+  font-weight: 500;
+
+  &:hover {
+    box-shadow: none !important;
+    background: linear-gradient(3deg, #6c757d, #939da5) !important;
+  }
+}
+.product-cancel-button {
+  padding: 6px 25px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #121212;
+
+  &:hover {
+      background-color: rgb(228, 65, 65);
+      color: white;
+  }
+}
+
+.product-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.product-modal-container {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 500px;
+    animation: zoomIn 0.5s forwards;
+    transform-origin: center;
+}
+
+.product-modal-container.zoom-out {
+    animation: zoomOut 0.5s forwards;
+}
+.product-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 32px;
+}
+.product-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.product-modal-body {
+    margin-bottom: 24px;
+}
+
+
+
+.common-overall-container{
+  background-color: #ffff;
+  border-radius: 10px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 6px 0px;
+  overflow: hidden;
+  height: calc(100% - 50px);
+  margin-bottom: 5px;
+}
+.common-overall-container .table-responsive tr th {
+   font-size: 16px;
+  vertical-align: middle;
+}
+
+.tbody-responsive tr {
+  width: 100%;
+  table-layout: fixed;
+}
+.table-responsive {
+  height: 100%;
+  overflow-y: scroll;    
+  overflow-x: auto;      
+  scrollbar-width: auto; 
+}
+.table-responsive::-webkit-scrollbar:vertical {
+  display: none;
+}
 

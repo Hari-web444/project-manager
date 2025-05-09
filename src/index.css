@@ -53,24 +53,20 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* Works in Chrome, Edge, and Safari */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; /* optional */
+  background: #f1f1f1; 
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #0B622F;
   border-radius: 10px;
-  border: 2px solid #f1f1f1; /* Optional border to match track */
+  border: 1px solid #f1f1f1; 
 }
 
-/* Works in Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #0B622F #f1f1f1; /* thumb color and track color */
-}
+
+

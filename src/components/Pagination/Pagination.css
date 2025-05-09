@@ -14,6 +14,7 @@
 
 .page_number_btn.active_page {
     background: rgba(11, 98, 47, 1);
+    color: white;
 }
 
 .page_arrow {
@@ -22,6 +23,7 @@
     padding: 0.4rem 0.2rem;
     display: inline-flex;
     justify-content: center;
+    border-radius: 5px;
     align-items: center;
     column-gap: 0.7rem;
     border: 0.5px solid rgba(128, 128, 128, 0.384); 

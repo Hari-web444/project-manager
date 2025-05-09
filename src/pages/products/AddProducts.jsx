@@ -1,23 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './product.css';
 import graterthen from '../../assets/images/graterthen.svg';
 import commanuplodeicon from '../../assets/images/commanuplodeicon.svg'
 import { Link } from 'react-router-dom';
 import CommonSelect from "../../components/common-select.jsx";
+import configModule from '../../../config.js';
 function AddProducts() {
-
   const [file, setFile] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [productTypes, setProductTypes] = useState([]);
+  const config = configModule.config();
+
+    const fetchProductTypes = async () => {
+     try {
+       const response = await fetch(`${config.apiBaseUrl}getAllProductTypes`, {
+         method: "GET",
+         headers: {  "Content-Type": "application/json" }
+       });
+       const result = await response.json();
+       if (response.ok) {
+         setProductTypes(result.data?.length > 0 ? result.data : []);
+       } else {
+         toast.error("Failed to fetch designation list: " + result.message);
+       }
+     } catch (error) {
+       toast.error("Error fetching designation list: " + error.message);
+     }
+   };
+  useEffect(() => {
+    fetchProductTypes();
+  }, []);
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
+    setPreviewUrl(null);
   };
 
   const handleUpload = () => {
     if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewUrl(imageUrl);
       console.log('Uploading:', file);
-    };
-  }
+    }
+  };
+
   const [formData, setFormData] = useState({
     productId: 'VPAREGCCAP001',
     productName: '',
@@ -60,24 +88,41 @@ function AddProducts() {
         <div className="body-container-products-add ">
           <div className="row h-100">
             <div className="col-12 col-md-5 col-lg-5 h-100">
-              <div className="p-4  product-uplode-img h-100">
+              <div className=" p-4 product-uplode-img ">
+                <div style={{ height: "60px"}}>
                 <h5>Product image</h5>
-                <div className="upload-card mt-4">
-                  <label htmlFor='uplode-img' className="upload-area">
-                    <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} hidden />
-                    <div className="upload-content">
-                      <span className="upload-icon"><img src={commanuplodeicon} alt='uplode' /></span>
-                      <p>Upload image<br />(JPEG, PNG)</p>
-                    </div>
-                  </label>
                 </div>
-                <div className="d-flex justify-content-end">
-                  <button className="product-upload-btn mt-4" onClick={handleUpload}>Upload image</button>
+                <div className="upload-card ">
+                  <div className=''>
+               <label htmlFor='upload-img' className="upload-area" aria-label="Upload Image">
+                  <input id="upload-img" type="file" accept="image/png, image/jpeg" onChange={handleFileChange} hidden />
+                    {previewUrl ? (
+                      <div className="image-preview text-center">
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '10px' }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="upload-content">
+                        <span className="upload-icon"><img src={commanuplodeicon} alt='uplode' /></span>
+                        <p className='mb-0'>Upload image<br />(JPEG, PNG)</p>
+                      </div>
+                    )}
+                  </label>
+                  </div>
+                </div>
+                <div  style={{ height: "64px"}}>
+                  <div className="d-flex justify-content-end" >
+                   <button className="product-upload-btn mt-4" onClick={handleUpload}>Upload image</button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="col-12 col-md-7 col-lg-7 h-100">
-              <div className="p-4 product-uplode-img h-100">
+          
+            <div className="col-12 col-md-7 col-lg-7 h-100" >
+              <div className="p-4 product-uplode-img ">
                 <div className="d-flex justify-content-between align-items-center" style={{ height: "45px"}}>
                   <h5>General details</h5>
                   <div className="progress-step-wrapper d-flex justify-content-end mb-2">
@@ -85,8 +130,10 @@ function AddProducts() {
                     <div className={`progress-step ${currentStep === 2 ? 'active' : ''}`}></div>
                   </div>
                 </div>
-                <div className="product-card-form" style={{ height: "calc(100% - 90px)" }}>
+                <div className="product-card-form" >
                   <form className='mt-3'>
+                    {currentStep === 1 && (
+                      <>
                     <div className="row  mb-4">
                       <div className="col-6">
                         <label htmlFor="productId" className="product-form-label">Product ID</label>
@@ -159,7 +206,7 @@ function AddProducts() {
                             value={role}
                             onChange={setRole}
                             placeholder="Product type"
-                            options={roleOptions}
+                            options={productTypes}
                           />
                         </div>
                       </div>
@@ -190,18 +237,64 @@ function AddProducts() {
                         </div>
                       </div>
                     </div>
+                    </>
+                    )} 
+                    {currentStep === 2 && (
+                      <>
+                     <div className='row mb-4'>
+                      <div className=" col-12">
+                        <label htmlFor="formFactor" className="product-form-label">Product description</label>                       
+                        <textarea
+                          id="product-description"
+                          className=" product-form-input product-description-textarea"
+                          placeholder="Enter product description"
+                          rows="5"
+                          style={{ resize: 'none' }}
+                        />
+                      </div>
+                      </div>
+                     <div className='row mb-4'>
+                      <div className=" col-6">
+                        <label htmlFor="formFactor" className="product-form-label">Quantity</label>
+                        <input
+                          type="text"
+                          className="product-form-input"
+                          id="productName"
+                          name="productName"
+                          value={formData.productName}
+                          onChange={handleChange}
+                          placeholder="Enter product quantity"
+                        />
+                      </div>
+                      <div className=" col-6 ">
+                        <label htmlFor="packageQuantity" className="product-form-label">Minimum stock quantity</label>
+                        <input
+                          type="text"
+                          className="product-form-input"
+                          id="productName"
+                          name="productName"
+                          value={formData.productName}
+                          onChange={handleChange}
+                          placeholder="Enter Enter minimum stock quantity"
+                        />
+                      </div>
+                    </div>
+                    </>
+                    )}      
                   </form>
                 </div>
-                <div className="d-flex justify-content-end gap-3 " style={{ height: "45px"}}>
-                  <button type="button" className="cancel-button">Cancel</button>
+                <div  style={{ height: "45px"}}>
+                <div className="d-flex justify-content-end gap-3  mt-1" >
+                  <button type="button" className="product-cancel-button">Cancel</button>
                   {currentStep > 1 && (
-                    <button type="button" className="cancel-button" onClick={() => setCurrentStep((prev) => prev - 1)}>Previous</button>
+                    <button type="button" className="product-Previous-btn" onClick={() => setCurrentStep((prev) => prev - 1)}>Previous</button>
                   )}
                   {currentStep < 2 ? (
-                    <button type="button" className="next-button" onClick={() => setCurrentStep(2)}>Next</button>
+                    <button type="button" className="product-next-btn" onClick={() => setCurrentStep(2)}>Next</button>
                   ) : (
-                    <button type="button" className="next-button" >Save</button>
+                    <button type="button" className="product-next-btn" >Save</button>
                   )}
+                </div>
                 </div>
               </div>
             </div>

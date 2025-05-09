@@ -79,7 +79,7 @@ function EmployeeList() {
       <div className='body-div-el'>
         {!addEmployeeModal ? (
           <div className="w-100 h-100 inner-body-st">
-            No records found
+ <p className='product-no-items-txt'>  No records found</p>
           </div>
         ) : (
           <div className="w-100 h-100 inner-body-st">

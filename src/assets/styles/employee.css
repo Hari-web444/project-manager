@@ -1,5 +1,5 @@
 .header-div-el {
-    height: 62px;
+    height: 65px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -15,7 +15,7 @@
 }
 
 .body-div-el {
-    height: calc(100% - 62px);
+    height: calc(100% - 65px);
     padding: 10px 18px;
 }
 
@@ -131,7 +131,7 @@
     background: linear-gradient(3deg, #0B622F, #18934b) !important;
     border: 1px solid #18934b;
     color: white;
-    border: none;
+   
     border-radius: 6px;
     cursor: pointer;
 }

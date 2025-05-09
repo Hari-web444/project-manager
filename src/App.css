@@ -122,3 +122,61 @@ select:-webkit-autofill:focus {
   .progress-step.active {
     background-color: #015f31; 
   }
+.row-per-page-select {
+  padding: 4px 24px 4px 8px; 
+  border-radius: 5px;
+  border: solid 1.5px #0B622F;
+  outline: none;
+  cursor: pointer;
+  width: 60px;
+  font-size: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: white;
+  background-image: url("data:image/svg+xml;utf8,<svg width='25' height='25' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M2.66602 5.33398L7.99935 10.6673L13.3327 5.33398H2.66602Z' fill='%23121212'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+ background-size: 18px;
+}
+
+
+  .table {
+    font-size: 16px;
+    border: none !important;
+    border-collapse:collapse;
+    background-color: transparent ;
+    border-spacing: 0px 0px  !important;
+  }
+   tr ,th,td{
+    border: none !important;
+  }
+
+  .table td{
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap; 
+    color: #303030 !important;
+    font-size: 16px;
+    padding: 17px !important;  
+  }
+  .table th {
+    background-color: #0B622F !important;
+    color: #ffffff!important;
+    padding: 14px !important;
+    font-size: 16px; 
+    font-weight: 600;
+    text-align: center;
+}
+
+.table tr:hover td {
+  background-color: rgb(240 245 242);
+  cursor: pointer;
+}
+.table thead {
+  position: sticky !important;
+  top: 0;
+  max-width: fit-content !important;
+  overflow: clip;
+}
+

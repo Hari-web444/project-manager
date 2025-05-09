@@ -117,7 +117,7 @@ function App() {
       ) : (
         <div className='d-flex w-100 h-100'>
           <Sidebar menuItems={menuItems} />
-          <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)' }}>
+          <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)',width: 'calc(100% - 245px)'}}>
             <div className='page-header-common justify-content-between'>
               <div className="animated-text-container">
                 <h4 className="animated-text mb-0">{path}</h4>
