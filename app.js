@@ -33,7 +33,8 @@ app.use(cookieParser());
 // API routes
 const admin = require('./src/routes/adminroute.js');
 const employee = require('./src/routes/employeeroute.js');
-app.use('/', admin);
+const product = require('./src/routes/productroute');
+app.use('/', admin,product);
 app.use('/', employee);
 
 // Health check
