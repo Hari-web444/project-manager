@@ -45,7 +45,9 @@ function EmployeeList() {
     }
 
     setShowModal(false);
-    navigate("/employee/list/add");
+    navigate('/employee/list/add', {
+      state: { role }
+    });
   };
 
   return (

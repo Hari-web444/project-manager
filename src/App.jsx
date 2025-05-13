@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from './components/sidebar.jsx';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
 import { useAuth } from './components/context/Authcontext.jsx';

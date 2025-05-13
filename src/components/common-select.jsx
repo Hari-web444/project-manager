@@ -79,7 +79,7 @@ const CommonSelect = ({
         name={name}
         value={options.find((opt) => opt.value === value)}
         onChange={(selected) =>
-          onChange({ target: { name, value: selected?.value } })
+          onChange({ target: { name, value: selected?.value , code: selected?.code, id: selected?.designation_id } })
         }
         options={options}
         styles={customStyles}

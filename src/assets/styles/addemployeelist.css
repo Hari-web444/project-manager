@@ -158,3 +158,54 @@
     top: 12px;
     right: 6px;
 }
+
+.form-st-ae {
+    max-height: calc(100% - 84px);
+    overflow: auto;
+    height: calc(100% - 84px);
+}
+
+.footer-addoption-ae , .top-addoption-ae {
+    height: 42px;
+}
+
+.footer-addoption-ae {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 12px;
+}
+
+.save-ae {
+    padding: 10px 35px;
+    background: linear-gradient(3deg, #0B622F, #18934b);
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0px 3px 3px -2px gray;
+    color: white;
+}
+
+.save-ae:hover {
+    box-shadow: none !important;
+}
+
+.close-ae {
+    padding: 10px 35px;
+    font-weight: 500;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #121212;
+}
+
+.close-ae:hover {
+    background: rgb(224, 64, 64);
+    color: #fff;
+    border: none !important;
+}
+
+.form-label {
+    font-weight: 500 !important;
+}

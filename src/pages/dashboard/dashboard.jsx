@@ -27,7 +27,7 @@ function Dashboard() {
   const config = configModule.config();
   const { user } = useAuth();
   const user_typecode = user?.user_typecode;
-  const userId = user?.user_id;
+  const userId = user?.userId;
   const loginTime = user?.loginTime;
   const formattedLoginTime = loginTime ? new Date(loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
   let cardData = [];
