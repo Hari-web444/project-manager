@@ -4,15 +4,16 @@ import closebtn from '../../assets/images/closebtn.svg';
 import CommonSelect from "../../components/common-select.jsx";
 import  Pagination from "../../components/Pagination/index.jsx";
 import configModule from '../../../config.js';
-
 function Products() {
   const [selected, setSelected] = useState('Vaithyar poova');
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(15);
   const [productTypes, setProductTypes] = useState([]);
-   const config = configModule.config();
   const [role, setRole] = useState(null);
+  const [formFactor, setFormFactor] = useState([]);
+  const config = configModule.config();
+
   const handleChange = (event) => {
     setSelected(event.target.value);
   };
@@ -22,7 +23,7 @@ function Products() {
   
   const fetchProductTypes = async () => {
      try {
-       const response = await fetch(`${config.apiBaseUrl}getDesignationList`, {
+       const response = await fetch(`${config.apiBaseUrl}getAllProductTypes`, {
          method: "GET",
          headers: {  "Content-Type": "application/json" }
        });
@@ -41,6 +42,26 @@ function Products() {
     fetchProductTypes();
   }, []);
 
+   const getformfactor = async () => {
+     try {
+       const response = await fetch(`${config.apiBaseUrl}getformfactor`, {
+         method: "GET",
+         headers: {  "Content-Type": "application/json" }
+       });
+       const result = await response.json();
+       if (response.ok) {
+         setFormFactor(result.data?.length > 0 ? result.data : []);
+       } else {
+         toast.error("Failed to fetch designation list: " + result.message);
+       }
+     } catch (error) {
+       toast.error("Error fetching designation list: " + error.message);
+     }
+   };
+
+  useEffect(() => {
+    getformfactor();
+  }, []);
 
 
   const data= [
@@ -54,166 +75,7 @@ function Products() {
     "Date": "2025-05-08",
     "view": "View"
   },
-  {
-    "ProductID": "P1002",
-    "Product": "Mechanical Keyboard",
-    "CreatedDate": "2025-04-28",
-    "Quantity": 20,
-    "Stock": "Low Stock",
-    "Price": 2499.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1003",
-    "Product": "USB-C Hub",
-    "CreatedDate": "2025-04-15",
-    "Quantity": 0,
-    "Stock": "Out of Stock",
-    "Price": 899.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1004",
-    "Product": "Webcam HD",
-    "CreatedDate": "2025-03-10",
-    "Quantity": 75,
-    "Stock": "In Stock",
-    "Price": 1299.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1005",
-    "Product": "Bluetooth Speaker",
-    "CreatedDate": "2025-04-01",
-    "Quantity": 15,
-    "Stock": "Low Stock",
-    "Price": 1999.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-   {
-    "ProductID": "P1014",
-    "Product": "Ergonomic Office Chair",
-    "CreatedDate": "2025-02-22",
-    "Quantity": 12,
-    "Stock": "Low Stock",
-    "Price": 8999.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1006",
-    "Product": "HDMI Cable",
-    "CreatedDate": "2025-02-20",
-    "Quantity": 200,
-    "Stock": "In Stock",
-    "Price": 299.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1007",
-    "Product": "Laptop Stand",
-    "CreatedDate": "2025-03-05",
-    "Quantity": 0,
-    "Stock": "Out of Stock",
-    "Price": 1099.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1008",
-    "Product": "External Hard Drive 1TB",
-    "CreatedDate": "2025-01-30",
-    "Quantity": 10,
-    "Stock": "Low Stock",
-    "Price": 4599.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1009",
-    "Product": "Smart LED Bulb",
-    "CreatedDate": "2025-02-15",
-    "Quantity": 120,
-    "Stock": "In Stock",
-    "Price": 799.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-   {
-    "ProductID": "P1014",
-    "Product": "Ergonomic Office Chair",
-    "CreatedDate": "2025-02-22",
-    "Quantity": 12,
-    "Stock": "Low Stock",
-    "Price": 8999.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1010",
-    "Product": "Power Bank 20000mAh",
-    "CreatedDate": "2025-04-05",
-    "Quantity": 30,
-    "Stock": "In Stock",
-    "Price": 1899.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1011",
-    "Product": "Noise Cancelling Headphones",
-    "CreatedDate": "2025-03-25",
-    "Quantity": 5,
-    "Stock": "Low Stock",
-    "Price": 6499.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1012",
-    "Product": "Smartphone Tripod",
-    "CreatedDate": "2025-03-12",
-    "Quantity": 90,
-    "Stock": "In Stock",
-    "Price": 599.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1013",
-    "Product": "USB Flash Drive 64GB",
-    "CreatedDate": "2025-01-10",
-    "Quantity": 140,
-    "Stock": "In Stock",
-    "Price": 499.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1014",
-    "Product": "Ergonomic Office Chair",
-    "CreatedDate": "2025-02-22",
-    "Quantity": 12,
-    "Stock": "Low Stock",
-    "Price": 8999.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  {
-    "ProductID": "P1015",
-    "Product": "WiFi Range Extender",
-    "CreatedDate": "2025-04-18",
-    "Quantity": 35,
-    "Stock": "In Stock",
-    "Price": 1699.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  }
+  
 ]
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
@@ -352,7 +214,7 @@ function Products() {
                           value={role}
                           onChange={setRole}
                           placeholder="Select Form factor"
-                          options={productTypes}
+                          options={formFactor}
                         /> 
                         </div>                 
                     </div>

@@ -83,7 +83,6 @@ function EmployeeList() {
               <h5 className="mb-0 add-new-hdr">Add new employee</h5>
               <button className="close-button" >×</button>
             </div>
-
             <div className="modal-body">
               <div className="container commonst-select">
                 <h6>Select designation</h6>

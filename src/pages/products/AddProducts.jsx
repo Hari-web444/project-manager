@@ -1,16 +1,28 @@
 import React, { useState,useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './product.css';
 import graterthen from '../../assets/images/graterthen.svg';
-import commanuplodeicon from '../../assets/images/commanuplodeicon.svg'
+import SvgContent from '../../components/svgcontent.jsx';
 import { Link } from 'react-router-dom';
 import CommonSelect from "../../components/common-select.jsx";
 import configModule from '../../../config.js';
+
 function AddProducts() {
-  const [file, setFile] = useState(null);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
   const [productTypes, setProductTypes] = useState([]);
+  const [productBrand, setProductBrand] = useState([]);
+  const [formFactor, setFormFactor] = useState([]);
+  const [productUnits, setProductUnits] = useState([]);
+  const [productCategory, setProductCategory] = useState([]);
   const config = configModule.config();
+  const [brand, setBrand] = useState(null);
+  const [units, setUnits] = useState(null);
+  const [ptype, setPtype]= useState(null);
+  const [factor, setFactor] = useState(null);
+  const [category, setCategory] = useState(null);
 
     const fetchProductTypes = async () => {
      try {
@@ -21,6 +33,23 @@ function AddProducts() {
        const result = await response.json();
        if (response.ok) {
          setProductTypes(result.data?.length > 0 ? result.data : []);
+       }
+     } catch (error) {
+       toast.error("Error fetching designation list: " + error.message);
+     }
+   };
+  useEffect(() => { fetchProductTypes();}, []);
+
+  
+  const getformfactor = async () => {
+     try {
+       const response = await fetch(`${config.apiBaseUrl}getformfactor`, {
+         method: "GET",
+         headers: {  "Content-Type": "application/json" }
+       });
+       const result = await response.json();
+       if (response.ok) {
+         setFormFactor(result.data?.length > 0 ? result.data : []);
        } else {
          toast.error("Failed to fetch designation list: " + result.message);
        }
@@ -28,23 +57,86 @@ function AddProducts() {
        toast.error("Error fetching designation list: " + error.message);
      }
    };
+
   useEffect(() => {
-    fetchProductTypes();
+    getformfactor();
   }, []);
 
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-    setPreviewUrl(null);
-  };
+  const productUints = async () => {
+     try {
+       const response = await fetch(`${config.apiBaseUrl}productUints`, {
+         method: "GET",
+         headers: {  "Content-Type": "application/json" }
+       });
+       const result = await response.json();
+       if (response.ok) {
+         setProductUnits(result.data?.length > 0 ? result.data : []);
+       }
+     } catch (error) {
+       toast.error("Error fetching designation list: " + error.message);
+     }
+   };
+  useEffect(() => {
+    productUints();
+  }, []);
 
-  const handleUpload = () => {
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewUrl(imageUrl);
-      console.log('Uploading:', file);
-    }
-  };
+    const ProductCategory = async () => {
+     try {
+       const response = await fetch(`${config.apiBaseUrl}productCategory`, {
+         method: "GET",
+         headers: {  "Content-Type": "application/json" }
+       });
+       const result = await response.json();
+       if (response.ok) {
+         setProductCategory(result.data?.length > 0 ? result.data : []);
+       }
+     } catch (error) {
+       toast.error("Error fetching designation list: " + error.message);
+     }
+   };
+  useEffect(() => {
+    ProductCategory();
+  }, []);
+
+      const ProductBrand = async () => {
+     try {
+       const response = await fetch(`${config.apiBaseUrl}productBrand`, {
+         method: "GET",
+         headers: {  "Content-Type": "application/json" }
+       });
+       const result = await response.json();
+       if (response.ok) {
+         setProductBrand(result.data?.length > 0 ? result.data : []);
+       }
+     } catch (error) {
+       toast.error("Error fetching designation list: " + error.message);
+     }
+   };
+  useEffect(() => {
+    ProductBrand();
+  }, [])
+
+
+ 
+
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+            setImage(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        } else {
+            toast.error('Please upload a valid JPEG or PNG image.');
+        }
+    };
+
+  
+
+    const handleRemoveImage = () => {
+        setImage(null);
+        setPreviewUrl(null);
+    };
 
   const [formData, setFormData] = useState({
     productId: 'VPAREGCCAP001',
@@ -53,7 +145,8 @@ function AddProducts() {
     productCategory: '',
     formFactor: '',
     packageQuantity: '',
-    units: ''
+    units: '',
+    image
   });
 
   const handleChange = (e) => {
@@ -65,17 +158,12 @@ function AddProducts() {
   };
 
 
-  const [role, setRole] = useState(null);
 
-  const roleOptions = [
-    { value: "Manager", label: "Manager" },
-    { value: "Developer", label: "Developer" },
-    { value: "Designer", label: "Designer" },
-  ];
 
 
   return (
     <div className='common-body-st'>
+      <ToastContainer />
       <div className='header-container-products '>
         <div className=' header-product-el '>
           <div className="header-product-pvt">
@@ -92,30 +180,39 @@ function AddProducts() {
                 <div style={{ height: "60px"}}>
                 <h5>Product image</h5>
                 </div>
-                <div className="upload-card ">
-                  <div className=''>
-               <label htmlFor='upload-img' className="upload-area" aria-label="Upload Image">
-                  <input id="upload-img" type="file" accept="image/png, image/jpeg" onChange={handleFileChange} hidden />
+              <div className="product-upload-container">
+                <label className="upload-box w-100 h-100">
                     {previewUrl ? (
-                      <div className="image-preview text-center">
-                        <img
-                          src={previewUrl}
-                          alt="Preview"
-                          style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '10px' }}
-                        />
-                      </div>
+                        <>
+                            <img src={previewUrl} alt="Preview" className="preview-image" />
+                            <button className="remove-image-btn" onClick={handleRemoveImage}>
+                            <SvgContent svg_name="Trash" />
+                            </button>
+                        </>
                     ) : (
-                      <div className="upload-content">
-                        <span className="upload-icon"><img src={commanuplodeicon} alt='uplode' /></span>
-                        <p className='mb-0'>Upload image<br />(JPEG, PNG)</p>
-                      </div>
+                        <div className='not-getimage-st' >
+                            <SvgContent svg_name="upload" width="45 " height="45" />
+                            <div>
+                                <p className='mb-0 text-upload-st'>Upload image</p>
+                                <span style={{ color: "#404040", fontSize: "12px" }}>(JPEG, PNG)</span>
+                            </div>
+                        </div>
                     )}
-                  </label>
-                  </div>
-                </div>
+                </label>
+            </div>
                 <div  style={{ height: "64px"}}>
-                  <div className="d-flex justify-content-end" >
-                   <button className="product-upload-btn mt-4" onClick={handleUpload}>Upload image</button>
+                  <div className='d-flex justify-content-end'>
+                  <label htmlFor="imageUpload" className="product-upload-btn display-flex">
+                      Upload image{''}
+                      <input
+                          type="file"
+                          id="imageUpload"
+                          accept="image/jpeg, image/png"
+                          onChange={handleImageChange}
+                          className="upload-input"
+                          hidden
+                      />
+                  </label>
                   </div>
                 </div>
               </div>
@@ -164,11 +261,11 @@ function AddProducts() {
                         <label htmlFor="brand" className="product-form-label">Select brand</label>
                         <div className="mt-1">
                           <CommonSelect
-                            name="role"
-                            value={role}
-                            onChange={setRole}
+                            name="brand"
+                            value={brand}
+                            onChange={setBrand}
                             placeholder="Select brand"
-                            options={roleOptions}
+                            options={productBrand}
                           />
                         </div>
                       </div>
@@ -176,11 +273,11 @@ function AddProducts() {
                         <label htmlFor="productCategory" className="product-form-label">Product category</label>
                         <div className="mt-1">
                           <CommonSelect
-                            name="role"
-                            value={role}
-                            onChange={setRole}
+                            name="category"
+                            value={category}
+                            onChange={setCategory}
                             placeholder="Product category"
-                            options={roleOptions}
+                            options={productCategory}
                           />
                         </div>
                       </div>
@@ -190,11 +287,11 @@ function AddProducts() {
                         <label htmlFor="formFactor" className="product-form-label">Form factor</label>
                         <div className="mt-1">
                           <CommonSelect
-                            name="role"
-                            value={role}
-                            onChange={setRole}
+                            name="factor"
+                            value={factor}
+                            onChange={setFactor}
                             placeholder="Form factor"
-                            options={roleOptions}
+                            options={formFactor}
                           />
                         </div>
                       </div>
@@ -202,9 +299,9 @@ function AddProducts() {
                         <label htmlFor="packageQuantity" className="product-form-label">Product type</label>
                         <div className="mt-1">
                           <CommonSelect
-                            name="role"
-                            value={role}
-                            onChange={setRole}
+                            name="ptype"
+                            value={ptype}
+                            onChange={setPtype}
                             placeholder="Product type"
                             options={productTypes}
                           />
@@ -228,11 +325,11 @@ function AddProducts() {
                         <label htmlFor="packageQuantity" className="product-form-label">Units</label>
                         <div className="mt-1">
                           <CommonSelect
-                            name="role"
-                            value={role}
-                            onChange={setRole}
+                            name="units"
+                            value={units}
+                            onChange={setUnits}
                             placeholder="Select Units"
-                            options={roleOptions}
+                            options={productUnits}
                           />
                         </div>
                       </div>

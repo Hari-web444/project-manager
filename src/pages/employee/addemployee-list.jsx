@@ -45,7 +45,7 @@ function AddEmployee() {
                             <p className='mb-0 nav-btn-top'>
                                 Employee &gt; List
                             </p>
-                        </button>&nbsp;&gt;&nbsp;
+                        </button>&nbsp;&gt;&nbsp;{''}
                         <button>
                             <p className='mb-0 nav-btn-top'>
                                 Add new
@@ -82,8 +82,8 @@ function AddEmployee() {
                         </div>
                         <div className='left-footer-st'>
                             <label htmlFor="imageUpload" className="upload-btn display-flex">
-                                Upload image
-                                <input
+                                Upload image {''}
+                                <input 
                                     type="file"
                                     id="imageUpload"
                                     accept="image/jpeg, image/png"

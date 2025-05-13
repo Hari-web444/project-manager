@@ -97,6 +97,7 @@ CommonSelect.propTypes = {
     PropTypes.shape({
       label: PropTypes.string,
       value: PropTypes.any,
+      type_name: PropTypes.any,
     })
   ).isRequired,
   value: PropTypes.any,
