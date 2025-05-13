@@ -15,8 +15,8 @@ export const AuthProvider = ({ children }) => {
     if (token) {
         const decodedToken = jwtDecode(token); 
         setUser({
-          userId: decodedToken.user_id,
-          username: decodedToken.name,
+          userId: decodedToken.userId,
+          username: decodedToken.username,
           userType: decodedToken.user_type,
           mobile_number: decodedToken.mobile_number,
           usertype_id: decodedToken.usertype_id,
@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("authToken", token);
     const decodedToken = jwtDecode(token);  
     setUser({
-        userId: decodedToken.user_id,
-        username: decodedToken.name,
+        userId: decodedToken.userId,
+        username: decodedToken.username,
         userType: decodedToken.user_type,
         mobile_number: decodedToken.mobile_number,
         usertype_id: decodedToken.usertype_id,

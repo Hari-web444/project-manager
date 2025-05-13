@@ -109,16 +109,41 @@ select:-webkit-autofill:focus {
 
 .progress-step-wrapper {
     gap: 5px;
-  }
-  
-  .progress-step {
+}
+
+.progress-step {
     width: 18px;
     height: 5px;
     border-radius: 20px;
-    background-color: #8dc3a7; 
+    background-color: #8dc3a7;
     transition: background-color 0.3s ease;
-  }
-  
-  .progress-step.active {
-    background-color: #015f31; 
-  }
+}
+
+.progress-step.active {
+    background-color: #015f31;
+}
+
+textarea::placeholder,
+input::placeholder {
+    font-size: 14px !important;
+    outline: none;
+}
+
+.form-control:focus {
+    border-color: #18934b !important;
+    box-shadow: none !important
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
