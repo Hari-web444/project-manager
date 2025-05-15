@@ -95,6 +95,7 @@ nav a.active .search-bar-sb {
   border-radius: 0px 0px 10px 10px;
   background: #f7fffb;
   box-shadow: 0px 2px 3px -2px #00712d;
+  z-index: 999;
 }
 
 .submenu-item-active {

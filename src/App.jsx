@@ -50,7 +50,7 @@ function App() {
     '/accounts': 'Accounts',
     '/branches': 'Branches',
     '/employee/list': 'Employee List',
-    '/employee/list/add': 'Employee Add List',
+    '/employee/list/add-edit': 'Employee Add/Edit List',
     '/employee/assign': 'Employee Assign',
     '/employee/attendance': 'Employee Attendance',
     '/employee/leave-permissions': 'Leave and Permission',
@@ -152,7 +152,7 @@ function App() {
 
               {/*  Employee's sub-items */}
               <Route path="/employee/list" element={<PrivateRoute><EmployeeList /></PrivateRoute>} />
-              <Route path="/employee/list/add" element={<PrivateRoute><AddEmployee /></PrivateRoute>} />
+              <Route path="/employee/list/add-edit" element={<PrivateRoute><AddEmployee /></PrivateRoute>} />
               <Route path="/employee/assign" element={<PrivateRoute><EmployeeAssign /></PrivateRoute>} />
               <Route path="/employee/attendance" element={<PrivateRoute><EmployeeAttendance /></PrivateRoute>} />
               <Route path="/employee/leave-permissions" element={<PrivateRoute><EmployeeLeavePermission /></PrivateRoute>} />
