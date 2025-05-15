@@ -423,7 +423,7 @@ box-shadow: none !important;
 
 .product-modal-view-img {
   width: 100%;
-  height: calc(100vh - 685px);
+  height: calc(100vh - 653px);
   border-radius: 3px;
   margin-right: 16px;
 }
@@ -431,18 +431,21 @@ box-shadow: none !important;
   font-weight:600;
   color: #121212;
   font-size: 16px;
+  margin-bottom: 13px;
 }
 
 .product-view-headtext1{
-  font-weight:500;
-  color: #121212;
+  color: #0f0f0f;
+  margin-bottom: 13px;
 }
 .product-form-view{
   color: #404040;
+  margin-bottom: 13px;
 } 
 .product-form-view-kg{
   color: #404040;
   font-weight: 400;
+  margin-bottom: 13px;
 }
 .product-view-textarea{
   width: 100%;

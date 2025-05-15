@@ -7,7 +7,7 @@ function Viewproduct({onClose,products}) {
       <div className="product-modal-overlay">
         <div className="product-modal-view">
             <div className="product-modal-header mb-3">
-            <h5 className="mb-3 product-view-header">Products <span className="breadcrumb-separator"> <img src={graterthen} alt='then' /> </span>{products?.brand}</h5>
+            <h5 className="mb-2 product-view-header">Products <span className="breadcrumb-separator"> <img src={graterthen} alt='then' /> </span>{products?.brand}</h5>
             <button className="close-button" onClick={onClose} ><img src={closebtn} alt="close"/></button>
             </div>
             <div className="">
