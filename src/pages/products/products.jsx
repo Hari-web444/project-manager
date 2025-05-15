@@ -1,25 +1,57 @@
 import React,{useState,useEffect} from 'react';
 import './product.css'
 import closebtn from '../../assets/images/closebtn.svg';
+import Actionbtn from '../../assets/images/actionbtn.svg';
+import Actioneditebtn from '../../assets/images/actionedit.svg';
 import CommonSelect from "../../components/common-select.jsx";
 import  Pagination from "../../components/Pagination/index.jsx";
 import configModule from '../../../config.js';
+import {  useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { format } from 'date-fns';
+
+import axios from 'axios';
+import Viewproduct from './viewproduct.jsx';
 function Products() {
   const [selected, setSelected] = useState('Vaithyar poova');
   const [showModal, setShowModal] = useState(false);
+   const [viewproduct, setViewproduct] = useState(false);
+   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(15);
   const [productTypes, setProductTypes] = useState([]);
-  const [role, setRole] = useState(null);
   const [formFactor, setFormFactor] = useState([]);
+  const [products, setProducts] = useState([]);
   const config = configModule.config();
-
-  const handleChange = (event) => {
-    setSelected(event.target.value);
+  const [ptype, setPtype]= useState(null);
+  const [factor, setFactor] = useState(null);
+  const navigate = useNavigate();
+  const [menuIndex, setMenuIndex] = useState(null);
+    const toggleMenu = (index) => {
+    setMenuIndex(menuIndex === index ? null : index); 
   };
+
   const openmodel = () => { setShowModal(true);}
   const closemodel = () => { setShowModal(false);}
- 
+  const openviewmodel = () => { setViewproduct(true);}
+  const closviewemodel = () => { setViewproduct(false);}
+
+ const fetchProducts = async () => {
+    try {
+      const response = await axios.post(`${config.apiBaseUrl}getProduct`, {
+        brand: selected, 
+      });
+      setProducts(response.data); 
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+ useEffect(() => {
+    fetchProducts();
+  }, [selected]); 
+
   
   const fetchProductTypes = async () => {
      try {
@@ -63,28 +95,29 @@ function Products() {
     getformfactor();
   }, []);
 
-
-  const data= [
-  {
-    "ProductID": "P1001",
-    "Product": "Wireless Mouse",
-    "CreatedDate": "2025-05-01",
-    "Quantity": 50,
-    "Stock": "In Stock",
-    "Price": 599.00,
-    "Date": "2025-05-08",
-    "view": "View"
-  },
-  
-]
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
 
+    const AddProduct = () => {
+      if (!ptype) {
+        toast.error("You need to Select Product type.");
+        return;
+      }
+       if (!factor) {
+        toast.error("You need to Select Form factor.");
+        return;
+      }
+      setShowModal(false);
+      navigate('/products/add', {
+        state: { ptype,factor }
+      });
+    };
 
     return (
     <div className='common-body-st'>
+       <ToastContainer />
       <div className='header-container-products'>
       <div className='d-flex header-product-el '>
       <div className="col-lg-6 col-6 d-flex  align-items-center">
@@ -98,7 +131,7 @@ function Products() {
             value="Vaithyar poova"
             className="custom-checkbox"
             checked={selected === 'Vaithyar poova'}
-            onChange={handleChange}
+             onChange={(e) => setSelected(e.target.value)}
           />
         <span className="box">{selected === 'Vaithyar poova' && <span className="dot" />}</span> Vaithyar poova : 0
       </label>
@@ -109,7 +142,7 @@ function Products() {
           value="Gramiyam"
           className="custom-checkbox"
           checked={selected === 'Gramiyam'}
-          onChange={handleChange}
+          onChange={(e) => setSelected(e.target.value)}
         />
         <span className="box"> {selected === 'Gramiyam' && <span className="dot" />}</span> Gramiyam : 0
       </label>
@@ -119,8 +152,7 @@ function Products() {
         <div className='col-lg-6  col-6 d-flex flex-wrap justify-content-end search-add-wrapper ' >
           <div className=''>
             <input type='search' className='product-search-input' placeholder='Search ' />
-          </div>
-        {/* <div><Link to='/products/add'><button type='button' className='product-Addnew-btn '>Add new</button></Link></div>   */}
+          </div>      
         <div><button type='button' className='product-Addnew-btn ' onClick={openmodel}>Add new</button></div> 
         </div>
       </div>
@@ -130,28 +162,47 @@ function Products() {
          <div className="table-responsive">
            <table className="table table-bordered">
              <thead className="table-th">
-               <tr>
+               <tr className=' table-th-row'>
                 <th>ProductID</th>
                 <th>Product</th>
-                <th>CreatedDate</th>
                 <th>Quantity</th>
                 <th>Stock</th>
                 <th>Price</th>
-                <th>Date</th>
-                <th>view</th>
+                <th>CreatedDate</th>
+                <th><img src={Actionbtn} alt="Act"/></th>
                </tr>
              </thead>
              <tbody className="tbody-responsive">
-               {data.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.ProductID}</td>
-                  <td>{item.Product}</td>
-                  <td>{item.CreatedDate}</td>
-                  <td>{item.Quantity}</td>
-                  <td>{item.Stock}</td>
-                  <td>₹{item.Price.toFixed(2)}</td>
-                  <td>{item.Date}</td>
-                  <td><button className="view-btn">👁️ {item.view}</button></td>
+               {products.map((item, index) => (
+                <tr key={index} onClick={() => {  if (menuIndex === null) { 
+                  openviewmodel();
+                  setSelectedProduct(item);
+                } }}>
+                 <td>{item.product_id}</td>
+                 <td className="product-cell">
+                  <div className="product-card">
+                    <div className="product-status">
+                    <img src={item.product_img} alt={item.product_name} className="product-img" />
+                    </div>
+                    <div className="product-details">
+                      <h6 className="product-name">{item.product_name}</h6>
+                      <p className="product-category">{item.product_category}</p>
+                      <p className="product-form-factor">{item.form_factor} /<span> {item.product_type}</span></p>
+                    </div>
+                  </div>
+                </td>
+                  <td>{item.package_quantity}{' '}{item.units}</td>
+                  <td>{item.stock_status}</td>
+                  <td>₹{item.selling_price}</td>
+                  <td>{format(new Date(item.created_at), 'dd-MM-yyyy')}</td>                
+                  <td><button onClick={(e) => { e.stopPropagation(); toggleMenu(index); }}> <img src={Actioneditebtn} alt="Act"/> </button>
+                   {menuIndex === index && (
+                    <div className="action-menu">
+                     <div><button className="menu-item-product " >Edit</button></div> 
+                      <div><button className="menu-item-product1">Delete</button></div>
+                    </div>
+                    )}
+                  </td>
                 </tr>
               ))}
              </tbody>
@@ -168,15 +219,15 @@ function Products() {
               className="row-per-page-select"
               style={{ width: "60px" }}
             >
-              <option value={15}>15</option>
+              <option value={10}>10</option>
               <option value={20}>20</option>
               <option value={30}>30</option>
               <option value={50}>50</option>
             </select>
           </label>
-          {data.length > itemsPerPage && (
+          {products.length > itemsPerPage && (
             <Pagination
-              count={data.length}
+              count={products.length}
               page={currentPage}
               pageSize={itemsPerPage}
               onChange={(pageNo) => setCurrentPage(pageNo)}
@@ -198,9 +249,9 @@ function Products() {
                      <div className='col-5 d-flex  align-items-center'> <h6 className=''>Select Product type</h6>  </div>
                     <div className='col-7'> 
                        <CommonSelect
-                          name="role"
-                          value={role}
-                          onChange={setRole}
+                          name="ptype"
+                          value={ptype}
+                          onChange={setPtype}
                           placeholder="Select Product type"
                           options={productTypes}
                         /> 
@@ -210,9 +261,9 @@ function Products() {
                     <div className='col-5 d-flex  align-items-center'> <h6 className=''>Select Form factor</h6>  </div>
                     <div className='col-7'> 
                        <CommonSelect
-                          name="role"
-                          value={role}
-                          onChange={setRole}
+                          name="factor"
+                          value={factor}
+                          onChange={setFactor}
                           placeholder="Select Form factor"
                           options={formFactor}
                         /> 
@@ -221,11 +272,14 @@ function Products() {
                   </div>     
                   <div className="product-modal-footer">
                     <button className="cancel-button" onClick={closemodel}>Cancel</button>
-                    <button className="next-button"  >Next</button>
+                    <button className="next-button" onClick={AddProduct}  >Next</button>
                   </div>
                 </div>
               </div>
             )}
+            {viewproduct && (
+             <Viewproduct onClose={closviewemodel}   products={selectedProduct}/> )
+          }
       </div>
     );
   }

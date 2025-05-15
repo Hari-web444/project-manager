@@ -72,12 +72,15 @@ const CommonSelect = ({
       display: "none",
     }),
   };
+  const selectedOption = value
+    ? options.find((opt) => opt.value === value)
+    : null;
 
   return (
     <div className="common-select-st mb-0">
       <Select
         name={name}
-        value={options.find((opt) => opt.value === value)}
+        value={selectedOption}
         onChange={(selected) =>
           onChange({ target: { name, value: selected?.value , code: selected?.code, id: selected?.designation_id } })
         }

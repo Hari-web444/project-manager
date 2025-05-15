@@ -82,7 +82,6 @@ function AddEmployee() {
                     },
                     body: JSON.stringify({ userId: parseInt(userId), value: desValue || '' })
                 });
-
                 const result = await response.json();
                 if (response.ok) {
                     if (result.data.length === 0) {
@@ -90,7 +89,6 @@ function AddEmployee() {
                     } else {
                         lastEmpId = [result.data[0].emp_id];
                     }
-
                     generateCode(lastEmpId);
                 } else {
                     console.error("Failed to fetch designation list: " + result.message);

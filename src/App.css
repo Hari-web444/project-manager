@@ -155,12 +155,14 @@ select:-webkit-autofill:focus {
     text-align: center;
     vertical-align: middle;
     white-space: nowrap; 
-    color: #303030 !important;
-    font-size: 16px;
-    padding: 17px !important;  
+    color: #121212 !important;
+    padding: 10px !important;  
+  }
+  .table-th-row{
+   background: linear-gradient(3deg, #0B622F, #18934B) !important;
   }
   .table th {
-    background-color: #0B622F !important;
+     background-color: transparent !important;
     color: #ffffff!important;
     padding: 14px !important;
     font-size: 16px; 

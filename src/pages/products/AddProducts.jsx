@@ -7,9 +7,10 @@ import SvgContent from '../../components/svgcontent.jsx';
 import { Link } from 'react-router-dom';
 import CommonSelect from "../../components/common-select.jsx";
 import configModule from '../../../config.js';
-
+import {  useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../components/context/Authcontext.jsx';
+import axios from 'axios';
 function AddProducts() {
-  const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [productTypes, setProductTypes] = useState([]);
@@ -20,144 +21,250 @@ function AddProducts() {
   const config = configModule.config();
   const [brand, setBrand] = useState(null);
   const [units, setUnits] = useState(null);
-  const [ptype, setPtype]= useState(null);
+  const [pt, setPt]= useState(null);
   const [factor, setFactor] = useState(null);
   const [category, setCategory] = useState(null);
-
-    const fetchProductTypes = async () => {
-     try {
-       const response = await fetch(`${config.apiBaseUrl}getAllProductTypes`, {
-         method: "GET",
-         headers: {  "Content-Type": "application/json" }
-       });
-       const result = await response.json();
-       if (response.ok) {
-         setProductTypes(result.data?.length > 0 ? result.data : []);
-       }
-     } catch (error) {
-       toast.error("Error fetching designation list: " + error.message);
-     }
-   };
-  useEffect(() => { fetchProductTypes();}, []);
-
-  
-  const getformfactor = async () => {
-     try {
-       const response = await fetch(`${config.apiBaseUrl}getformfactor`, {
-         method: "GET",
-         headers: {  "Content-Type": "application/json" }
-       });
-       const result = await response.json();
-       if (response.ok) {
-         setFormFactor(result.data?.length > 0 ? result.data : []);
-       } else {
-         toast.error("Failed to fetch designation list: " + result.message);
-       }
-     } catch (error) {
-       toast.error("Error fetching designation list: " + error.message);
-     }
-   };
-
-  useEffect(() => {
-    getformfactor();
-  }, []);
-
-
-  const productUints = async () => {
-     try {
-       const response = await fetch(`${config.apiBaseUrl}productUints`, {
-         method: "GET",
-         headers: {  "Content-Type": "application/json" }
-       });
-       const result = await response.json();
-       if (response.ok) {
-         setProductUnits(result.data?.length > 0 ? result.data : []);
-       }
-     } catch (error) {
-       toast.error("Error fetching designation list: " + error.message);
-     }
-   };
-  useEffect(() => {
-    productUints();
-  }, []);
-
-    const ProductCategory = async () => {
-     try {
-       const response = await fetch(`${config.apiBaseUrl}productCategory`, {
-         method: "GET",
-         headers: {  "Content-Type": "application/json" }
-       });
-       const result = await response.json();
-       if (response.ok) {
-         setProductCategory(result.data?.length > 0 ? result.data : []);
-       }
-     } catch (error) {
-       toast.error("Error fetching designation list: " + error.message);
-     }
-   };
-  useEffect(() => {
-    ProductCategory();
-  }, []);
-
-      const ProductBrand = async () => {
-     try {
-       const response = await fetch(`${config.apiBaseUrl}productBrand`, {
-         method: "GET",
-         headers: {  "Content-Type": "application/json" }
-       });
-       const result = await response.json();
-       if (response.ok) {
-         setProductBrand(result.data?.length > 0 ? result.data : []);
-       }
-     } catch (error) {
-       toast.error("Error fetching designation list: " + error.message);
-     }
-   };
-  useEffect(() => {
-    ProductBrand();
-  }, [])
-
-
- 
-
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-            setImage(file);
-            setPreviewUrl(URL.createObjectURL(file));
-        } else {
-            toast.error('Please upload a valid JPEG or PNG image.');
-        }
-    };
-
-  
-
-    const handleRemoveImage = () => {
-        setImage(null);
-        setPreviewUrl(null);
-    };
-
+  const location = useLocation();
+  const pyCode = location.state?.ptype?.target?.code;
+  const ffCode = location.state?.factor?.target?.code;
+  const [vpapCode, setVpapCode] = useState("XXXXXX");
+  const { user } = useAuth();
+  const userId = user?.userId;
+   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    productId: 'VPAREGCCAP001',
+    productId: vpapCode,  
     productName: '',
     brand: '',
     productCategory: '',
     formFactor: '',
-    packageQuantity: '',
+    pt: '',
+    package_quantity: '',
     units: '',
-    image
+    price: '',
+    product_dsc: '',
+    quantity: '',
+    min_stock: '',
+    image: null  
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    const { name, value } = e.target; 
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value 
+    }));
+  };
+   const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+      setFormData(prevState => ({
+        ...prevState,
+        image: file
+      }));
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      toast.error('Please upload a valid JPEG or PNG image.');
+    }
+  };
+  
+  const handleRemoveImage = () => {
+    setFormData(prevState => ({
+      ...prevState,
+      image: null  
+    }));
+    setPreviewUrl(null);  
   };
 
+    const getNextNumber = (lastProductid) => {
+        let numbers = lastProductid || [];
+        numbers = numbers.map(code => {
+            const match = code.match(/(\d+)$/);
+            return match ? parseInt(match[1], 10) : 0;
+        });
+        const max = numbers.length > 0 ? Math.max(...numbers) : 0;
+        return (max + 1).toString().padStart(3, '0'); 
+    };
 
+    const generateCode = (lastProductid) => {
+        const prefix = "VPA";
+        const number = getNextNumber(lastProductid);
+        setVpapCode(`${prefix}${pyCode}${ffCode}${number}`);
+        setFormData((prev) => ({
+            ...prev,
+            productId: `${prefix}${pyCode}${ffCode}${number}`,
+        }));
+    };
+
+
+  const getLastProductid = async () => {
+      let lastProductid= [];
+          try {
+              const value = `${pyCode}${ffCode}`;
+              const response = await axios.post(`${config.apiBaseUrl}getLastProductid`, { value: value } );       
+              const result = response.data;
+              if (response.status === 200) {
+                  if (result.data.length === 0) {
+                      lastProductid = result.data;
+                  } else {
+                      lastProductid = [result.data[0].product_id];
+                  }
+                  generateCode(lastProductid);
+              } else {
+                  console.error("Failed to : " + result.message);
+                  toast.error("Failed to fetch : " + result.message);
+              }
+          } catch (error) {
+              console.error("Error fetching  " + error.message);
+              toast.error("Error fetching: " + error.message);
+         }     
+  };
+
+  useEffect(() => {
+    getLastProductid();
+  }, []);
+
+  const fetchData = async (endpoint, setterFunction) => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}${endpoint}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      const result = await response.json();
+      if (response.ok) {
+        setterFunction(result.data || []);
+      } else {
+        toast.error(`Failed to fetch data: ${result.message}`);
+      }
+    } catch (error) {
+      toast.error(`Error fetching data: ${error.message}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchData('getAllProductTypes', setProductTypes);
+    fetchData('getformfactor', setFormFactor);
+    fetchData('productUints', setProductUnits);
+    fetchData('productCategory', setProductCategory);
+    fetchData('productBrand', setProductBrand);
+  }, []);
+
+
+ const handleBrandChange = (selectedOption) => {
+    setBrand(selectedOption);
+    setFormData(prevState => ({
+      ...prevState,
+      brand: selectedOption.target.value
+    }));
+  };
+
+ const handleCategoryChange = (selectedOption) => {
+    setCategory(selectedOption);
+    setFormData(prevState => ({
+      ...prevState,
+      productCategory: selectedOption.target.value
+    }));
+  };
+
+  const handleFormFactorChange = (selectedOption) => {
+    setFactor(selectedOption);
+    setFormData(prevState => ({
+      ...prevState,
+      formFactor: selectedOption.target.value
+    }));
+  };
+
+  const handleProductTypeChange = (selectedOption) => {
+    setPt(selectedOption);
+    setFormData(prevState => ({
+      ...prevState,
+      pt: selectedOption.target.value
+    }));
+  };
+
+  const handleUnitsChange = (selectedOption) => {
+    setUnits(selectedOption);
+    setFormData(prevState => ({
+      ...prevState,
+      units: selectedOption.target.value
+    }));
+  };
+
+const handleCancel = () => {
+  setFormData({
+    productId: vpapCode,  
+    productName: '',
+    brand: '',
+    productCategory: '',
+    formFactor: '',
+    pt: '',
+    package_quantity: '',
+    units: '',
+    price: '',
+    product_dsc: '',
+    quantity: '',
+    min_stock: '',
+    image: null  
+  });
+  
+  setPreviewUrl(null);  
+  setBrand(null);       
+  setUnits(null);       
+  setFactor(null);       
+  setCategory(null);    
+  setPt(null);           
+};
+
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.productName || !formData.productCategory || !formData.formFactor || !formData.pt || !formData.package_quantity || !formData.units || !formData.price || !formData.product_dsc || !formData.quantity || !formData.min_stock ) {
+    toast.error("Please fill in all the required fields.");
+    return;
+    }
+    if (!formData.image) {
+        toast.error("Product image is mandatory!");
+        return;
+    }
+
+    const formDataToSendAsFormData = new FormData();
+    formDataToSendAsFormData.append('productId', formData.productId);
+    formDataToSendAsFormData.append('productName', formData.productName);
+    formDataToSendAsFormData.append('productBrand', formData.brand);
+    formDataToSendAsFormData.append('productCategory', formData.productCategory);
+    formDataToSendAsFormData.append('formFactor', formData.formFactor);
+    formDataToSendAsFormData.append('ptype', formData.pt);
+    formDataToSendAsFormData.append('package_quantity', formData.package_quantity);
+    formDataToSendAsFormData.append('units', formData.units);
+    formDataToSendAsFormData.append('price', formData.price);
+    formDataToSendAsFormData.append('product_dsc', formData.product_dsc);
+    formDataToSendAsFormData.append('quantity', formData.quantity);
+    formDataToSendAsFormData.append('min_stock', formData.min_stock);
+    formDataToSendAsFormData.append('image', formData.image);
+    formDataToSendAsFormData.append('userId', userId);
+
+    try {
+        const response = await fetch(`${config.apiBaseUrl}addProduct`, {
+            method: "POST",
+            body: formDataToSendAsFormData, 
+        });
+
+        const result = await response.json();
+
+        if (response.status === 200) {
+            toast.success("Product added successfully!");
+                handleRemoveImage();
+                handleBrandChange();
+                handleCancel();
+                navigate("/employee/list");
+        } else {
+            toast.error("Failed to add product: " + result.message);
+        }
+    } catch (error) {
+        console.error("Error adding product: ", error);
+        toast.error("Error adding product: " + error.message);
+    }
+};
 
 
 
@@ -184,7 +291,7 @@ function AddProducts() {
                 <label className="upload-box w-100 h-100">
                     {previewUrl ? (
                         <>
-                            <img src={previewUrl} alt="Preview" className="preview-image" />
+                            <img src={previewUrl} alt="Preview" className="product-preview-image" />
                             <button className="remove-image-btn" onClick={handleRemoveImage}>
                             <SvgContent svg_name="Trash" />
                             </button>
@@ -236,8 +343,7 @@ function AddProducts() {
                         <label htmlFor="productId" className="product-form-label">Product ID</label>
                         <input
                           type="text"
-                          className="product-form-input"
-                          id="productId"
+                          className="product-form-input text-success fw-bold"
                           name="productId"
                           value={formData.productId}
                           disabled
@@ -248,11 +354,11 @@ function AddProducts() {
                         <input
                           type="text"
                           className="product-form-input"
-                          id="productName"
                           name="productName"
                           value={formData.productName}
                           onChange={handleChange}
                           placeholder="Enter product name"
+                          required
                         />
                       </div>
                     </div>
@@ -263,7 +369,7 @@ function AddProducts() {
                           <CommonSelect
                             name="brand"
                             value={brand}
-                            onChange={setBrand}
+                            onChange={handleBrandChange}
                             placeholder="Select brand"
                             options={productBrand}
                           />
@@ -275,8 +381,8 @@ function AddProducts() {
                           <CommonSelect
                             name="category"
                             value={category}
-                            onChange={setCategory}
-                            placeholder="Product category"
+                            onChange={handleCategoryChange}
+                            placeholder="Select category"
                             options={productCategory}
                           />
                         </div>
@@ -289,19 +395,19 @@ function AddProducts() {
                           <CommonSelect
                             name="factor"
                             value={factor}
-                            onChange={setFactor}
+                            onChange={handleFormFactorChange}
                             placeholder="Form factor"
                             options={formFactor}
                           />
                         </div>
                       </div>
                       <div className=" col-6">
-                        <label htmlFor="packageQuantity" className="product-form-label">Product type</label>
+                        <label htmlFor="Product type" className="product-form-label">Product type</label>
                         <div className="mt-1">
                           <CommonSelect
-                            name="ptype"
-                            value={ptype}
-                            onChange={setPtype}
+                            name="pt"
+                            value={pt}
+                            onChange={handleProductTypeChange}
                             placeholder="Product type"
                             options={productTypes}
                           />
@@ -310,13 +416,12 @@ function AddProducts() {
                     </div>
                     <div className='row mb-4'>
                       <div className=" col-6">
-                        <label htmlFor="formFactor" className="product-form-label">Package quantity </label>
+                        <label htmlFor="package_quantity" className="product-form-label">Package quantity </label>
                         <input
                           type="text"
                           className="product-form-input"
-                          id="productName"
-                          name="productName"
-                          value={formData.productName}
+                          name="package_quantity"
+                          value={formData.package_quantity}
                           onChange={handleChange}
                           placeholder="Enter Package quantity"
                         />
@@ -327,52 +432,69 @@ function AddProducts() {
                           <CommonSelect
                             name="units"
                             value={units}
-                            onChange={setUnits}
+                            onChange={handleUnitsChange}
                             placeholder="Select Units"
                             options={productUnits}
                           />
                         </div>
-                      </div>
+                      </div>                      
                     </div>
+                    <div className='row mb-4'>
+                      <div className=" col-6">
+                        <label htmlFor="price" className="product-form-label">Selling price </label>
+                        <input
+                          type="text"
+                          className="product-form-input"
+                          name="price"
+                          value={formData.price}
+                          onChange={handleChange}
+                          placeholder="Enter Selling price"
+                          required
+                        />
+                      </div>
+                      </div>
                     </>
                     )} 
                     {currentStep === 2 && (
                       <>
                      <div className='row mb-4'>
                       <div className=" col-12">
-                        <label htmlFor="formFactor" className="product-form-label">Product description</label>                       
+                        <label htmlFor="product_dsc" className="product-form-label">Product description</label>                       
                         <textarea
-                          id="product-description"
+                          name='product_dsc'
                           className=" product-form-input product-description-textarea"
                           placeholder="Enter product description"
                           rows="5"
+                          value={formData.product_dsc}
+                          onChange={handleChange}
                           style={{ resize: 'none' }}
+                          required
                         />
                       </div>
                       </div>
                      <div className='row mb-4'>
                       <div className=" col-6">
-                        <label htmlFor="formFactor" className="product-form-label">Quantity</label>
+                        <label htmlFor="quantity" className="product-form-label">Quantity</label>
                         <input
                           type="text"
                           className="product-form-input"
-                          id="productName"
-                          name="productName"
-                          value={formData.productName}
+                          name="quantity"
+                          value={formData.quantity}
                           onChange={handleChange}
                           placeholder="Enter product quantity"
+                          required
                         />
                       </div>
                       <div className=" col-6 ">
-                        <label htmlFor="packageQuantity" className="product-form-label">Minimum stock quantity</label>
+                        <label htmlFor="min_stock" className="product-form-label">Minimum stock quantity</label>
                         <input
                           type="text"
                           className="product-form-input"
-                          id="productName"
-                          name="productName"
-                          value={formData.productName}
+                          name="min_stock"
+                          value={formData.min_stock}
                           onChange={handleChange}
                           placeholder="Enter Enter minimum stock quantity"
+                          required
                         />
                       </div>
                     </div>
@@ -382,14 +504,14 @@ function AddProducts() {
                 </div>
                 <div  style={{ height: "45px"}}>
                 <div className="d-flex justify-content-end gap-3  mt-1" >
-                  <button type="button" className="product-cancel-button">Cancel</button>
+                  <button type="button" className="product-cancel-button" onClick={handleCancel}>Cancel</button>
                   {currentStep > 1 && (
                     <button type="button" className="product-Previous-btn" onClick={() => setCurrentStep((prev) => prev - 1)}>Previous</button>
                   )}
                   {currentStep < 2 ? (
                     <button type="button" className="product-next-btn" onClick={() => setCurrentStep(2)}>Next</button>
                   ) : (
-                    <button type="button" className="product-next-btn" >Save</button>
+                    <button type="button" className="product-next-btn"  onClick={handleSubmit}>Save</button>
                   )}
                 </div>
                 </div>
