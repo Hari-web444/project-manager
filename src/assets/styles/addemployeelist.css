@@ -163,6 +163,7 @@
     max-height: calc(100% - 84px);
     overflow: auto;
     height: calc(100% - 84px);
+    padding: 0px 5px;
 }
 
 .footer-addoption-ae , .top-addoption-ae {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -6,30 +6,34 @@ import '../../assets/styles/addemployeelist.css';
 import SvgContent from '../../components/svgcontent.jsx';
 import DatePicker from 'react-datepicker';
 import { useAuth } from '../../components/context/Authcontext.jsx';
-import { useEffect } from 'react';
 import configModule from '../../../config.js';
+import { MutatingDots } from 'react-loader-spinner';
+
 
 function AddEmployee() {
     const config = configModule.config();
     const [vpaCode, setVpaCode] = useState("XXXXXX");
+    const [needLoading, setNeedLoading] = useState(false);
     const navigate = useNavigate();
     const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const location = useLocation();
     const desCode = location.state?.role?.target?.code;
     const desValue = location.state?.role?.target?.value;
+    const objEditsItem = location.state?.item;
+    const actionType = location.state?.type;
     const { user } = useAuth();
     const user_typecode = user?.user_typecode;
     const userId = user?.userId;
     const [formData, setFormData] = useState({
-        empId: vpaCode,
-        empName: '',
+        emp_id: vpaCode,
+        emp_name: '',
         designation: desValue,
         email: '',
-        mobile: '',
-        dateOfJoining: null,
+        mobile_number: '',
+        date_of_joining: null,
         salary: '',
-        incentive: '',
+        incentive_percentage: '',
         address: '',
     });
 
@@ -46,14 +50,37 @@ function AddEmployee() {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
+    useEffect(() => {
+        if (actionType === "Edit" && objEditsItem) {
+            // Make sure objEditsItem is fully populated
+            setFormData({
+                emp_id: objEditsItem.emp_id || 'VPA001', // Fallback to default value if emp_id is undefined
+                emp_name: objEditsItem.emp_name || '',
+                designation: objEditsItem.designation || '',
+                email: objEditsItem.email || '',
+                mobile_number: objEditsItem.mobile_number || '',
+                date_of_joining: objEditsItem.date_of_joining
+                    ? new Date(objEditsItem.date_of_joining)
+                    : '',
+                salary: objEditsItem.salary || '',
+                incentive_percentage: objEditsItem.incentive_percentage || '',
+                address: objEditsItem.address || '',
+            });
+            setPreviewUrl(objEditsItem.image_url || '');
+        }
+    }, [actionType, objEditsItem]); // Ensure the effect reruns when objEditsItem or actionType changes
+
+
+
     const getNextNumber = (lastEmpId) => {
         let numbers = lastEmpId || [];
 
-        numbers.map(code => {
+        const parsedNumbers = numbers.map(code => {
             const match = code.match(/^VPA(\d{3})/);
             return match ? parseInt(match[1], 10) : 0;
         });
-        const max = numbers.length > 0 ? Math.max(...numbers) : 0;
+
+        const max = parsedNumbers.length > 0 ? Math.max(...parsedNumbers) : 0;
         return (max + 1).toString().padStart(3, '0');
     };
 
@@ -66,7 +93,7 @@ function AddEmployee() {
 
             setFormData((prev) => ({
                 ...prev,
-                empId: `${prefix}${number}${desCode}${locationCode}`,
+                emp_id: `${prefix}${number}${desCode}${locationCode}`,
             }));
         }
     };
@@ -102,7 +129,9 @@ function AddEmployee() {
     };
 
     useEffect(() => {
-        getLastEmpID();
+        if (actionType === "Add") {
+            getLastEmpID();
+        }
     }, [userId]);
 
     const handleChange = (e) => {
@@ -116,64 +145,133 @@ function AddEmployee() {
     const handleDateChange = (date) => {
         setFormData((prev) => ({
             ...prev,
-            dateOfJoining: formatDateTime(date),
+            date_of_joining: formatDateTime(date),
         }));
     };
 
     const handleCancel = () => {
         setFormData({
-            empId: vpaCode,
-            empName: '',
+            emp_id: vpaCode,
+            emp_name: '',
             designation: desValue,
             email: '',
-            mobile: '',
-            dateOfJoining: null,
+            mobile_number: '',
+            date_of_joining: null,
             salary: '',
-            incentive: '',
+            incentive_percentage: '',
             address: '',
         });
     };
 
+    const getChangedFields = () => {
+        return Object.entries(formData)
+            .filter(([key, newValue]) => {
+                // Ignore null values
+                if (newValue === null) return false;
+    
+                let oldValue = objEditsItem[key];
+    
+                if (newValue instanceof Date && oldValue) {
+                    return new Date(oldValue).getTime() !== newValue.getTime();
+                }
+    
+                if (
+                    typeof newValue === "number" ||
+                    (!isNaN(newValue) && newValue !== "")
+                ) {
+                    return Number(oldValue) !== Number(newValue);
+                }
+    
+                if (
+                    (newValue === '' || newValue === undefined) &&
+                    (oldValue === '' || oldValue === null || oldValue === undefined)
+                ) {
+                    return false;
+                }
+    
+                return newValue !== oldValue;
+            })
+            .map(([key, newValue]) => ({
+                key,
+                newValue,
+                emp_recid: objEditsItem.emp_recid,
+            }));
+    };    
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setNeedLoading(true);
 
         if (
-            !formData.empId &&
-            !formData.empName?.trim() ||
+            !formData.emp_id &&
+            !formData.emp_name?.trim() ||
             !formData.designation ||
             !formData.email?.trim() ||
-            !formData.mobile?.trim() ||
-            !formData.dateOfJoining ||
+            !formData.mobile_number?.trim() ||
+            !formData.date_of_joining ||
             !formData.salary?.trim() ||
-            !formData.incentive?.trim() ||
+            !formData.incentive_percentage?.trim() ||
             !formData.address?.trim()
         ) {
             return toast.error("Required all fields.");
         }
 
         try {
-            const response = await fetch(`${config.apiBaseUrl}saveEmpDetails`, {
+            let payload;
+            let api = '';
+
+            if (actionType === "Edit") {
+                const changedFields = getChangedFields();
+
+                if (changedFields.length === 0) {
+                    toast.info("No changes to update.");
+                    setNeedLoading(false);
+                    return;
+                }
+
+                payload = {
+                    userId: userId,
+                    emp_recid: objEditsItem.emp_recid,
+                    updates: changedFields
+                };
+                api = "updateEmpDetails";
+            } else {
+                payload = {
+                    formData: formData,
+                    userId: userId
+                };
+                api = "saveEmpDetails";
+            }
+
+            const response = await fetch(`${config.apiBaseUrl}${api}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ formData: formData, userId: userId })
+                body: JSON.stringify(payload)
             });
 
             const result = await response.json();
             if (response.ok) {
-                console.log(result);
-                handleRemoveImage();
-                handleCancel();
-                navigate("/employee/list");
+                toast.success(result.message);
 
+                setTimeout(() => {
+                    handleRemoveImage();
+                    handleCancel();
+                    navigate("/employee/list");
+
+                    setNeedLoading(false);
+                }, 3000);
             } else {
-                console.error("Failed to fetch designation list: " + result.message);
-                toast.error("Failed to fetch designation list: " + result.message);
+                console.error("Failed to save: " + result.message);
+                toast.error("Failed to save: " + result.message);
+                setNeedLoading(false);
             }
         } catch (error) {
-            console.error("Error fetching designation list: " + error.message);
-            toast.error("Error fetching designation list: " + error.message);
+            console.error("Error saving: " + error.message);
+            toast.error("Error saving: " + error.message);
+            setNeedLoading(false);
         }
     };
 
@@ -209,9 +307,11 @@ function AddEmployee() {
                             </p>
                         </button>&nbsp;&gt;&nbsp;{''}
                         <button>
-                            <p className='mb-0 nav-btn-top'>
+                            {actionType === "Add" ? <p className='mb-0 nav-btn-top'>
                                 Add new
-                            </p>
+                            </p> : <p className='mb-0 nav-btn-top'>
+                                Edit
+                            </p> }
                         </button>
                     </div>
                 </div>
@@ -223,7 +323,7 @@ function AddEmployee() {
                             <h5 className='mb-0'>Employee image</h5>
                         </div>
                         <div className="upload-container">
-                            <label className="upload-box w-100 h-100">
+                            <label htmlFor='Preview' className="upload-box w-100 h-100">
                                 {previewUrl ? (
                                     <>
                                         <img src={previewUrl} alt="Preview" className="preview-image" />
@@ -245,7 +345,7 @@ function AddEmployee() {
                         <div className='left-footer-st'>
                             <label htmlFor="imageUpload" className="upload-btn display-flex">
                                 Upload image {''}
-                                <input 
+                                <input
                                     type="file"
                                     id="imageUpload"
                                     accept="image/jpeg, image/png"
@@ -261,72 +361,72 @@ function AddEmployee() {
                             <h5 className='mb-0'>General details</h5>
                         </div>
                         <form className="w-100 form-st-ae">
-                            <div className='row mb-3'>
-                                <div className='col-6'>
-                                    <label className="form-label">Emp ID</label>
+                            <div className='display-flex mb-3 w-100 gap-3'>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='emp_id' className="form-label">Emp ID</label>
                                     <input
                                         type="text"
                                         className="form-control text-success fw-bold"
-                                        value={formData.empId}
+                                        value={formData.emp_id || ''}
                                         disabled
                                     />
                                 </div>
-                                <div className='col-6'>
-                                    <label className="form-label">Emp name</label>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='emp_name' className="form-label">Emp name</label>
                                     <input
                                         type="text"
-                                        name="empName"
+                                        name="emp_name"
                                         className="form-control"
                                         placeholder="Enter employee name"
-                                        value={formData.empName}
-                                        onChange={handleChange}
+                                        value={formData.emp_name}
+                                        onChange={handleChange || ''}
                                         required
                                     />
                                 </div>
                             </div>
-                            <div className='row mb-3'>
-                                <div className='col-6'>
-                                    <label className="form-label">Designation</label>
+                            <div className='display-flex mb-3 w-100 gap-3'>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='Designation' className="form-label">Designation</label>
                                     <input
                                         type="text"
                                         name="designation"
                                         className="form-control"
                                         placeholder="Designation"
-                                        value={formData.designation}
+                                        value={formData.designation || ''}
                                         onChange={handleChange}
                                         required
                                         disabled
                                     />
                                 </div>
-                                <div className='col-6'>
-                                    <label className="form-label">Mobile number</label>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='MNumber' className="form-label">Mobile number</label>
                                     <input
                                         type="text"
-                                        name="mobile"
+                                        name="mobile_number"
                                         className="form-control"
-                                        placeholder="Enter mobile number"
-                                        value={formData.mobile}
+                                        placeholder="Enter mobile_number number"
+                                        value={formData.mobile_number || ''}
                                         onChange={handleChange}
                                         required
                                     />
                                 </div>
                             </div>
-                            <div className='row mb-3'>
-                                <div className='col-6'>
-                                    <label className="form-label">Email address </label>
+                            <div className='display-flex mb-3 w-100 gap-3'>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='Email' className="form-label">Email address </label>
                                     <input
                                         type="email"
                                         name="email"
                                         className="form-control"
                                         placeholder="Enter mail address"
-                                        value={formData.email}
+                                        value={formData.email || ''}
                                         onChange={handleChange}
                                     />
                                 </div>
-                                <div className='col-6'>
-                                    <label className="form-label">Date of joining</label>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='DataOfJoining' className="form-label">Date of joining</label>
                                     <DatePicker
-                                        selected={formData.dateOfJoining}
+                                        selected={formData.date_of_joining}
                                         onChange={handleDateChange}
                                         placeholderText="Select date of joining"
                                         className="form-control"
@@ -334,40 +434,40 @@ function AddEmployee() {
                                     />
                                 </div>
                             </div>
-                            <div className='row mb-3'>
-                                <div className='col-6'>
-                                    <label className="form-label">Salary</label>
+                            <div className='display-flex mb-3 w-100 gap-3'>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='Salery' className="form-label">Salary</label>
                                     <input
                                         type="number"
                                         name="salary"
                                         className="form-control"
                                         placeholder="Enter emp salary"
-                                        value={formData.salary}
+                                        value={formData.salary || ''}
                                         onChange={handleChange}
                                         required
                                     />
                                 </div>
-                                <div className='col-6'>
-                                    <label className="form-label">Incentive (%)</label>
+                                <div style={{ width: "calc(100% - 12px)" }}>
+                                    <label htmlFor='Incentive' className="form-label">Incentive (%)</label>
                                     <input
                                         type="number"
-                                        name="incentive"
+                                        name="incentive_percentage"
                                         className="form-control"
-                                        placeholder="Enter incentive in percentage"
-                                        value={formData.incentive}
+                                        placeholder="Enter incentive_percentage in percentage"
+                                        value={formData.incentive_percentage || ''}
                                         onChange={handleChange}
                                     />
                                 </div>
                             </div>
-                            <div className='row mb-3'>
+                            <div className='display-flex mb-3 w-100 gap-3'>
                                 <div className='col-12'>
-                                    <label className="form-label">Address</label>
+                                    <label htmlFor='Address' className="form-label">Address</label>
 
                                     <textarea
                                         name="address"
                                         className="form-control"
                                         placeholder="Enter employee address"
-                                        value={formData.address}
+                                        value={formData.address || ''}
                                         onChange={handleChange}
                                         rows={2}
                                         style={{ resize: "none" }}
@@ -385,6 +485,22 @@ function AddEmployee() {
                         </div>
                     </div>
                 </div>
+
+                {needLoading && (
+                    <div className='loading-container w-100 h-100'>
+                        <MutatingDots
+                            visible={true}
+                            height="100"
+                            width="100"
+                            color="#0B9346"
+                            secondaryColor="#0B9346"
+                            radius="10"
+                            ariaLabel="mutating-dots-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                        />
+                    </div>
+                )}
             </div>
 
             <ToastContainer

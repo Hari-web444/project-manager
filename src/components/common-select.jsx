@@ -42,20 +42,38 @@ const CommonSelect = ({
         borderColor: "#E5E5E5",
       },
     }),
-    option: (provided, state) => ({
-      ...provided,
-      backgroundColor: state.isFocused
-        ? "rgb(240 245 242)"
-        : state.isSelected
-        ? "#e6f4ec"
-        : "white",
-      backgroundImage: state.isSelected
+    option: (provided, state) => {
+      let backgroundColor;
+      if (state.isFocused) {
+        backgroundColor = "rgb(240 245 242)";
+      } else if (state.isSelected) {
+        backgroundColor = "#e6f4ec";
+      } else {
+        backgroundColor = "white";
+      }
+  
+      const backgroundImage = state.isSelected
         ? "linear-gradient(3deg, #0B622F, #18934b)"
-        : "none",
-      color: state.isFocused ? "#121212" : state.isSelected ? "#fff" : "#121212",
-      cursor: "pointer",
-      padding: "10px 12px",
-    }),
+        : "none";
+  
+      let color;
+      if (state.isFocused) {
+        color = "#121212";
+      } else if (state.isSelected) {
+        color = "#fff";
+      } else {
+        color = "#121212";
+      }
+  
+      return {
+        ...provided,
+        backgroundColor,
+        backgroundImage,
+        color,
+        cursor: "pointer",
+        padding: "10px 12px",
+      };
+    },
     singleValue: (provided) => ({
       ...provided,
       color: "#333",
@@ -82,7 +100,7 @@ const CommonSelect = ({
         name={name}
         value={selectedOption}
         onChange={(selected) =>
-          onChange({ target: { name, value: selected?.value , code: selected?.code, id: selected?.designation_id } })
+          onChange({ target: { name, value: selected?.value , code: selected?.code, id: selected?.id } })
         }
         options={options}
         styles={customStyles}
