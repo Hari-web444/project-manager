@@ -120,6 +120,7 @@ exports.AddProduct = async (req, res) => {
   upload(req, res, async (err) => {
 
     const { productId,productName,productBrand,productCategory,formFactor,ptype,package_quantity,units,price,product_dsc,quantity,min_stock, userId } = req.body;
+    const stock_status = 'Available';
     const image = req.file ? req.file : null; 
     
     try {
@@ -141,10 +142,11 @@ exports.AddProduct = async (req, res) => {
         quantity,
         min_stock,
         imagePath, 
+        stock_status,
         userId
       ];
 
-      const sql = `CALL SP_AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`;
+      const sql = `CALL SP_AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ? , ?)`;
 
       db.query(sql, values, (err, result) => {
         if (err) {   
