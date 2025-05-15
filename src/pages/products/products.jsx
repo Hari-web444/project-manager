@@ -10,7 +10,6 @@ import {  useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { format } from 'date-fns';
-
 import axios from 'axios';
 import Viewproduct from './viewproduct.jsx';
 function Products() {
@@ -19,7 +18,7 @@ function Products() {
    const [viewproduct, setViewproduct] = useState(false);
    const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(15);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [productTypes, setProductTypes] = useState([]);
   const [formFactor, setFormFactor] = useState([]);
   const [products, setProducts] = useState([]);
@@ -27,6 +26,8 @@ function Products() {
   const [ptype, setPtype]= useState(null);
   const [factor, setFactor] = useState(null);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [menuIndex, setMenuIndex] = useState(null);
     const toggleMenu = (index) => {
     setMenuIndex(menuIndex === index ? null : index); 
@@ -43,6 +44,7 @@ function Products() {
         brand: selected, 
       });
       setProducts(response.data); 
+      setFilteredProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
     }
@@ -97,8 +99,28 @@ function Products() {
 
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1);
+    setCurrentPage(1); 
   };
+
+const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+
+    const filtered = products.filter((product) => {
+      return (
+        product.product_id.toLowerCase().includes(term) ||
+        product.product_name.toLowerCase().includes(term) ||
+        product.product_category.toLowerCase().includes(term)
+      );
+    });
+
+    setFilteredProducts(filtered);
+  };
+
+  // Handle pagination logic
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
     const AddProduct = () => {
       if (!ptype) {
@@ -151,7 +173,7 @@ function Products() {
       </div>
         <div className='col-lg-6  col-6 d-flex flex-wrap justify-content-end search-add-wrapper ' >
           <div className=''>
-            <input type='search' className='product-search-input' placeholder='Search ' />
+            <input type='search' className='product-search-input' placeholder='Search '  value={searchTerm} onChange={handleSearch} />
           </div>      
         <div><button type='button' className='product-Addnew-btn ' onClick={openmodel}>Add new</button></div> 
         </div>
@@ -173,8 +195,8 @@ function Products() {
                </tr>
              </thead>
              <tbody className="tbody-responsive">
-               {products.map((item, index) => (
-                <tr key={index} onClick={() => {  if (menuIndex === null) { 
+               {currentProducts.map((item, index) => (
+                <tr key={index} style={{position:"relative"}} onClick={() => {  if (menuIndex === null) { 
                   openviewmodel();
                   setSelectedProduct(item);
                 } }}>
@@ -182,7 +204,7 @@ function Products() {
                  <td className="product-cell">
                   <div className="product-card">
                     <div className="product-status">
-                    <img src={item.product_img} alt={item.product_name} className="product-img" />
+                    <img src={item.product_img} alt='img' className="product-img" />
                     </div>
                     <div className="product-details">
                       <h6 className="product-name">{item.product_name}</h6>
@@ -195,7 +217,7 @@ function Products() {
                   <td>{item.stock_status}</td>
                   <td>₹{item.selling_price}</td>
                   <td>{format(new Date(item.created_at), 'dd-MM-yyyy')}</td>                
-                  <td><button onClick={(e) => { e.stopPropagation(); toggleMenu(index); }}> <img src={Actioneditebtn} alt="Act"/> </button>
+                  <td className='td-action-menu'><button onClick={(e) => { e.stopPropagation(); toggleMenu(index); }}> <img src={Actioneditebtn} alt="Act"/> </button>
                    {menuIndex === index && (
                     <div className="action-menu">
                      <div><button className="menu-item-product " >Edit</button></div> 

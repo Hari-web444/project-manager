@@ -18,6 +18,7 @@ function AddProducts() {
   const [formFactor, setFormFactor] = useState([]);
   const [productUnits, setProductUnits] = useState([]);
   const [productCategory, setProductCategory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const config = configModule.config();
   const [brand, setBrand] = useState(null);
   const [units, setUnits] = useState(null);
@@ -226,7 +227,7 @@ const handleSubmit = async (e) => {
         toast.error("Product image is mandatory!");
         return;
     }
-
+   setIsLoading(true);
     const formDataToSendAsFormData = new FormData();
     formDataToSendAsFormData.append('productId', formData.productId);
     formDataToSendAsFormData.append('productName', formData.productName);
@@ -254,9 +255,10 @@ const handleSubmit = async (e) => {
         if (response.status === 200) {
             toast.success("Product added successfully!");
                 handleRemoveImage();
-                handleBrandChange();
                 handleCancel();
-                navigate("/employee/list");
+                setTimeout(() => {
+                navigate("/products");  
+              }, 1000);
         } else {
             toast.error("Failed to add product: " + result.message);
         }
@@ -264,6 +266,9 @@ const handleSubmit = async (e) => {
         console.error("Error adding product: ", error);
         toast.error("Error adding product: " + error.message);
     }
+    finally {
+    setIsLoading(false); 
+  }
 };
 
 
@@ -418,12 +423,13 @@ const handleSubmit = async (e) => {
                       <div className=" col-6">
                         <label htmlFor="package_quantity" className="product-form-label">Package quantity </label>
                         <input
-                          type="text"
+                          type="number"
                           className="product-form-input"
                           name="package_quantity"
                           value={formData.package_quantity}
                           onChange={handleChange}
                           placeholder="Enter Package quantity"
+                          min="0"
                         />
                       </div>
                       <div className=" col-6 ">
@@ -476,25 +482,27 @@ const handleSubmit = async (e) => {
                       <div className=" col-6">
                         <label htmlFor="quantity" className="product-form-label">Quantity</label>
                         <input
-                          type="text"
+                          type="number"
                           className="product-form-input"
                           name="quantity"
                           value={formData.quantity}
                           onChange={handleChange}
                           placeholder="Enter product quantity"
                           required
+                          min="0"
                         />
                       </div>
                       <div className=" col-6 ">
                         <label htmlFor="min_stock" className="product-form-label">Minimum stock quantity</label>
                         <input
-                          type="text"
+                          type="number"
                           className="product-form-input"
                           name="min_stock"
                           value={formData.min_stock}
                           onChange={handleChange}
                           placeholder="Enter Enter minimum stock quantity"
                           required
+                          min="0"
                         />
                       </div>
                     </div>
@@ -511,7 +519,7 @@ const handleSubmit = async (e) => {
                   {currentStep < 2 ? (
                     <button type="button" className="product-next-btn" onClick={() => setCurrentStep(2)}>Next</button>
                   ) : (
-                    <button type="button" className="product-next-btn"  onClick={handleSubmit}>Save</button>
+                    <button type="button" className="product-next-btn"  onClick={handleSubmit}  disabled={isLoading}>{isLoading ? "Saving..." : "Save"}</button>
                   )}
                 </div>
                 </div>
