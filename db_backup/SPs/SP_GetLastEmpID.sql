@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------------------------------------------- 
  NAME: Hariharan S
  DATE: 12/05/2025
- DESC: It is used get the employee lasr id
+ DESC: It is used get the employee last id
  ----------------------------------------------------------------------------------------------------------------- */
 DELIMITER //
 
@@ -16,7 +16,7 @@ BEGIN
     SELECT 
         emp_id
     FROM
-        vaithiyar_poova.employees
+        employees
     WHERE
         created_by = userId AND designation = sValue
     ORDER BY created_at DESC
