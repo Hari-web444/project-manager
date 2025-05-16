@@ -219,14 +219,10 @@ function EmployeeList() {
       {needLoading && (
         <div className='loading-container w-100 h-100'>
           <PropagateLoader
-            visible={true}
             height="100"
             width="100"
             color="#0B9346"
-            secondaryColor="#0B9346"
             radius="10"
-            wrapperStyle={{}}
-            wrapperClass=""
           />
         </div>
       )}

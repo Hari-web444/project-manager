@@ -57,21 +57,21 @@ function Branches() {
   }, [user]);
 
   useEffect(() => {
+    setStateOption([]);
+    setState(null);
+
     if (country) {
       fetchStatesByCountry(country.target.id);
-    } else {
-      setStateOption([]);
-      setState(null);
     }
   }, [country]);
 
   useEffect(() => {
+    setCityOption([]);
+    setCity(null);
+
     if (state) {
       fetchCityByState(state.target.id);
-    } else {
-      setCityOption([]);
-      setCity(null);
-    }
+    } 
   }, [state]);
 
   const fetchCityByState = async (id) => {
@@ -127,15 +127,10 @@ function Branches() {
       {needLoading && (
         <div className='loading-container w-100 h-100'>
           <PropagateLoader
-            visible={true}
             height="100"
             width="100"
             color="#0B9346"
-            secondaryColor="#0B9346"
             radius="10"
-            ariaLabel="mutating-dots-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
           />
         </div>
       )}

@@ -493,11 +493,7 @@ function AddEmployee() {
                             height="100"
                             width="100"
                             color="#0B9346"
-                            secondaryColor="#0B9346"
                             radius="10"
-                            ariaLabel="mutating-dots-loading"
-                            wrapperStyle={{}}
-                            wrapperClass=""
                         />
                     </div>
                 )}

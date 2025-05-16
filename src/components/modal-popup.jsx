@@ -73,7 +73,6 @@ function ModalPopup({ userId }) {
       id="exampleModal"
       tabIndex="-1"
       ref={modalRef}
-      aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
       <ToastContainer
