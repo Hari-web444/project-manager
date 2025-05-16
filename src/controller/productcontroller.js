@@ -186,3 +186,78 @@ exports.GetProduct = (req, res) => {
   });
 };
 
+exports.GetProductCount = (req, res) => {
+  const sql = 'CALL SP_GetProductBrandCounts()';
+  db.query(sql, (error, results) => {
+    if (error) {
+      console.error('Error executing stored procedure:', error);
+      return res.status(500).json({ error: 'Database query failed' });
+    }
+    const counts = results[0][0]; 
+    return res.json({
+      totalCount: counts.total_count,
+      vaithyarPoovaCount: counts.vaithyar_poova_count,
+      gramiyamCount: counts.gramiyam_count,
+    });
+  });
+};
+
+
+
+exports.EditeProduct = (req, res) => {
+
+  upload(req, res, (err) => {
+    if (err) {
+      console.error('Upload error:', err);
+      return res.status(500).json({ message: 'Image upload failed' });
+    }
+
+    const { product_recid } = req.params;
+
+    // fallback for image preview url
+    const p_product_img = req.file
+      ? path.join('uploads', req.file.filename)
+      : req.body.image  || null;
+
+  const { productId,productName, productBrand, productCategory, formFactor, ptype, package_quantity,  units,
+          price,product_dsc, quantity,min_stock,
+        } = req.body;
+
+  const sql = 'CALL SP_EditProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+  const values = [ product_recid, productId, productName, productBrand, productCategory, formFactor, ptype,
+                   package_quantity, units, price, product_dsc, quantity, min_stock, p_product_img
+                 ];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Edit failed:', err);
+      return res.status(500).json({ message: 'Internal Server Error', error: err });
+    }
+
+    res.status(200).json({ message: 'Product updated successfully', result });
+  });
+  });
+};
+
+
+
+
+exports.DeleteProduct = (req, res) => {
+  const { product_recid } = req.params;
+
+  if (!product_recid) {
+    return res.status(400).json({ message: 'Product ID (recid) is required in params' });
+  }
+
+  const sql = 'CALL SP_DeleteProduct(?)';
+
+  db.query(sql, [product_recid], (err, result) => {
+    if (err) {
+      console.error('Delete error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+
+    return res.status(200).json({ message: 'Product deleted successfully', result });
+  });
+};
