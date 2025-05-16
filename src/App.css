@@ -126,6 +126,7 @@ select:-webkit-autofill:focus {
 .row-per-page-select {
     padding: 4px 24px 4px 8px;
     border-radius: 5px;
+    color: #121212;
     border: solid 1.5px #0B622F;
     outline: none;
     cursor: pointer;
