@@ -1,0 +1,12 @@
+.comm-select-ba {
+    width: calc(100% - 212px);
+}
+
+.location-ip-br {
+    min-height: 45px;
+}
+
+.location-ip-br::placeholder {
+    color: #aaa;
+    font-size: 15px;
+}

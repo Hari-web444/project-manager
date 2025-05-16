@@ -134,9 +134,9 @@ function EmployeeList() {
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   };
 
-  const confirmDeleteFunc = () => {
-    setAssignPopup(false);
+  const confirmDeleteFunc = (item) => {
     setDelConfirmPopup(true);
+    setSelectedViewValue(item);
   };
 
   const assignTaskToOther = async () => {
@@ -152,7 +152,7 @@ function EmployeeList() {
         toast.success(`Task successfully assigned to "${role.target.value}".`);
 
         setTimeout(() => {
-          confirmDeleteFunc();
+          setAssignPopup(false);
         }, 1000);
 
       } else {
@@ -200,6 +200,7 @@ function EmployeeList() {
           getDesignationList();
           getEmployeeList();
           setDelConfirmPopup(false);
+          assignWorkToOther(item);
         }, 3000);
 
       } else {
@@ -232,7 +233,7 @@ function EmployeeList() {
       )}
       <div className='header-div-el'>
         <div className='header-divpart-el'>
-          <p className='mb-0 header-titlecount-el'>Total Employee : 0</p>
+          <p className='mb-0 header-titlecount-el'>Total Employee : {currentList && currentList.length ? currentList.length : 0 }</p>
           <div className="d-flex align-items-center">
             <button onClick={() => { setShowModal(false); }}>
               <p className='mb-0 nav-btn-top'>
@@ -283,7 +284,7 @@ function EmployeeList() {
           <div className="row current-item-el">
             {filteredList.map((item) => (
               <div key={item.emp_id} className="col-12 col-md-6 col-lg-4 mb-4">
-                <div className="p-3 h-100 item-box-el position-relative">
+                <div className="p-4 h-100 item-box-el position-relative">
                   <button
                     type="button"
                     className="position-absolute top-0 start-0 end-0 bottom-0 w-100 h-100 border-0 bg-transparent"
@@ -308,7 +309,7 @@ function EmployeeList() {
                         <button className="dropdown-item dropdown-item-st dropdown-item-edit" onClick={() => editEmployeeDetails(item)} >Edit</button>
                       </div>
                       <div>
-                        <button className="dropdown-item dropdown-item-st" onClick={() => assignWorkToOther(item)}>Delete</button>
+                        <button className="dropdown-item dropdown-item-st" onClick={() => confirmDeleteFunc(item)}>Delete</button>
                       </div>
                     </div>
                   </div>
@@ -318,7 +319,7 @@ function EmployeeList() {
                     <div className="emp-img-st">
                       <img src={item.image_url} alt="emp_img" className={item.isDeleted === 0 ? "img-emp-el aimg-emp-el" : "img-emp-el dimg-emp-el"} />
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-2" style={{ lineHeight: "25px" }}>
                       <div className="fw-bold">{item.emp_id}</div>
                       <div>{item.emp_name}</div>
                       <div>{item.designation}</div>
@@ -404,7 +405,7 @@ function EmployeeList() {
             </div>
 
             <div className="modal-footer">
-              <button className="cancel-button" onClick={confirmDeleteFunc}>Cancel</button>
+              <button className="cancel-button" onClick={()=>setAssignPopup()}>Cancel</button>
               <button className="next-button" onClick={assignTaskToOther} >Assign</button>
             </div>
           </div>
@@ -442,39 +443,39 @@ function EmployeeList() {
                 <div className="left-body-empview">
                   <div className="w-100 h-100 left-corner-st">
                     <div className="d-flex mb-3" >
-                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Emp ID:</label>
-                      <span id={`doj-${selectedViewValue.emp_id}`}>{selectedViewValue.emp_id}</span>
+                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Emp ID:</label>
+                      <span className="fw-500" id={`doj-${selectedViewValue.emp_id}`}>{selectedViewValue.emp_id}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Name:</label>
+                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Name:</label>
                       <span id={`doj-${selectedViewValue.emp_id}`}>{selectedViewValue.emp_name}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Designation:</label>
+                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Designation:</label>
                       <span id={`doj-${selectedViewValue.emp_id}`}>{selectedViewValue.designation}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Mobile:</label>
+                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Mobile:</label>
                       <span id={`doj-${selectedViewValue.emp_id}`}>{selectedViewValue.mobile_number}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Email:</label>
+                      <label htmlFor={`doj-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Email:</label>
                       <span id={`doj-${selectedViewValue.emp_id}`}>{selectedViewValue.email}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`mobile-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Date of joining:</label>
+                      <label htmlFor={`mobile-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Date of joining:</label>
                       <span id={`mobile-${selectedViewValue.emp_id}`}>{formatDateTime(selectedViewValue.date_of_joining)}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Salery:</label>
+                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Salery:</label>
                       <span id={`email-${selectedViewValue.emp_id}`}>₹&nbsp;{selectedViewValue.salary}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Incentive:</label>
+                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Incentive:</label>
                       <span id={`email-${selectedViewValue.emp_id}`}>{selectedViewValue.incentive_percentage}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-medium" style={{ minWidth: "118px" }}>Address:</label>
+                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Address:</label>
                       <span id={`email-${selectedViewValue.emp_id}`}>{selectedViewValue.address}</span>
                     </div>
                   </div>

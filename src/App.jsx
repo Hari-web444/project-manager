@@ -126,11 +126,11 @@ function App() {
                 <h4 className="animated-text mb-0">{path}</h4>
               </div>
               <div className="d-flex align-items-center gap-2">
-                <div className='notify-tb'>
+                <div className='notify-tb cursor-pointer'>
                   <SvgContent svg_name="Notification" />
                 </div>
-                <div className='notify-tb'>
-                  <SvgContent svg_name="Profile" />
+                <div className='notify-tb cursor-pointer' title={user && user.user_typecode === "AD" ? "Logout" : "Profile"}>
+                  {user && user.user_typecode === "AD" ? (<SvgContent svg_name="logout_ad" />) : ((<SvgContent svg_name="Profile" />))}
                 </div>
               </div>
             </div>
