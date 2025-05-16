@@ -13,21 +13,19 @@ import axios from 'axios';
 function AddProducts() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
-  const [productTypes, setProductTypes] = useState([]);
   const [productBrand, setProductBrand] = useState([]);
-  const [formFactor, setFormFactor] = useState([]);
   const [productUnits, setProductUnits] = useState([]);
   const [productCategory, setProductCategory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const config = configModule.config();
   const [brand, setBrand] = useState(null);
   const [units, setUnits] = useState(null);
-  const [pt, setPt]= useState(null);
-  const [factor, setFactor] = useState(null);
   const [category, setCategory] = useState(null);
   const location = useLocation();
   const pyCode = location.state?.ptype?.target?.code;
   const ffCode = location.state?.factor?.target?.code;
+  const ptyeval = location.state?.ptype?.target?.value;
+  const formfact = location.state?.factor?.target?.value;
   const isEditMode = location.state?.type === "Edit";
   const productData = location.state?.productData;
   const [vpapCode, setVpapCode] = useState("XXXXXX");
@@ -39,8 +37,8 @@ function AddProducts() {
     productName: '',
     brand: '',
     productCategory: '',
-    formFactor: '',
-    pt: '',
+    formFactor: formfact,
+    pt: ptyeval,
     package_quantity: '',
     units: '',
     price: '',
@@ -146,8 +144,6 @@ function AddProducts() {
   };
 
   useEffect(() => {
-    fetchData('getAllProductTypes', setProductTypes);
-    fetchData('getformfactor', setFormFactor);
     fetchData('productUints', setProductUnits);
     fetchData('productCategory', setProductCategory);
     fetchData('productBrand', setProductBrand);
@@ -167,22 +163,6 @@ function AddProducts() {
     setFormData(prevState => ({
       ...prevState,
       productCategory: selectedOption.target.value
-    }));
-  };
-
-  const handleFormFactorChange = (selectedOption) => {
-    setFactor(selectedOption);
-    setFormData(prevState => ({
-      ...prevState,
-      formFactor: selectedOption.target.value
-    }));
-  };
-
-  const handleProductTypeChange = (selectedOption) => {
-    setPt(selectedOption);
-    setFormData(prevState => ({
-      ...prevState,
-      pt: selectedOption.target.value
     }));
   };
 
@@ -213,10 +193,8 @@ const handleCancel = () => {
   
   setPreviewUrl(null);  
   setBrand(null);       
-  setUnits(null);       
-  setFactor(null);       
-  setCategory(null);    
-  setPt(null);           
+  setUnits(null);             
+  setCategory(null);              
 };
 
 useEffect(() => {
@@ -239,8 +217,6 @@ useEffect(() => {
     setPreviewUrl(productData.product_img); 
     setBrand(productData.brand);
     setCategory(productData.product_category );
-    setFactor(productData.form_factor);
-    setPt(productData.product_type );
     setUnits(productData.units);
   }
 }, [isEditMode, productData]);
@@ -296,7 +272,7 @@ const handleSubmit = async (e) => {
                 handleCancel();
                 setTimeout(() => {
                 navigate("/products");  
-              }, 1000);
+              }, 2000);
         } else {
            toast.error(`${isEditMode ? "Update" : "Add"} failed: ${result.message}`);
         }
@@ -429,30 +405,26 @@ const handleSubmit = async (e) => {
                         </div>
                       </div>
                     </div>
-                    <div className='row mb-4'>
-                      <div className=" col-6">
+                    <div className='row mb-4'>                     
+                      <div className="col-6">
                         <label htmlFor="formFactor" className="product-form-label">Form factor</label>
-                        <div className="mt-1">
-                          <CommonSelect
-                            name="factor"
-                            value={factor}
-                            onChange={handleFormFactorChange}
-                            placeholder="Form factor"
-                            options={formFactor}
-                          />
-                        </div>
+                        <input
+                          type="text"
+                          className="product-form-input "
+                          name="formFactor"
+                          value={formData.formFactor || ''}
+                          disabled
+                        />
                       </div>
                       <div className=" col-6">
                         <label htmlFor="Product type" className="product-form-label">Product type</label>
-                        <div className="mt-1">
-                          <CommonSelect
-                            name="pt"
-                            value={pt}
-                            onChange={handleProductTypeChange}
-                            placeholder="Product type"
-                            options={productTypes}
-                          />
-                        </div>
+                        <input
+                          type="text"
+                          className="product-form-input "
+                          name="pt"
+                          value={formData.pt || ''}
+                          disabled
+                        />
                       </div>
                     </div>
                     <div className='row mb-4'>

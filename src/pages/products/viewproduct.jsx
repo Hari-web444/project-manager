@@ -13,7 +13,7 @@ function Viewproduct({onClose,products}) {
             <div className="">
             <div className='d-flex'>
             <div className='col-6 '>
-                <div >
+                <div style={{height: '100%'}}>
                     <img src={products?.product_img} alt="product"  className='product-modal-view-img' />
                 </div>
             </div>
@@ -26,12 +26,12 @@ function Viewproduct({onClose,products}) {
                 <h6 className="product-form-view-kg">{products?.quantity} /<span> {products?.units}</span></h6>
                 <h6 className='product-view-headtext1'>₹ {products?.selling_price}</h6> 
                 <textarea
-                name='product_description'
-                className=" w-100 product-view-textarea"
-                rows="4"
-                value={products?.product_description}
-                style={{ resize: 'none' }}
-                required
+                 name='product_description'
+                 className=" w-100 product-view-textarea"
+                 rows="4"
+                 value={products?.product_description}
+                 style={{ resize: 'none' }}
+                 required
                />
                 </div>
             </div>

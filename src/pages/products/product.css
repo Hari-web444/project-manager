@@ -137,7 +137,7 @@
     background-color: #ffffff !important;
     border-radius: 7px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
-    height: calc(100% - 40px);
+    height: 100%;
 }
 
 .product-card-form{
@@ -198,8 +198,14 @@ box-shadow: none !important;
   border: solid 1px #E5E5E5;
   background-color: #ffffff;
   outline: none;
+  color: #121212;
   margin-top: 5px;
   min-height: 48px;
+}
+.product-form-input:disabled{
+  background-color: #e9ecef;
+  opacity: 1;
+  color: #121212;
 }
 
 
@@ -370,6 +376,7 @@ box-shadow: none !important;
   background-color: #ffffff;
   text-align: center;
   width: 100%;
+  color: #404040;
   cursor: pointer;
   border-radius: 7px;
   font-size: 14px;
@@ -380,32 +387,21 @@ box-shadow: none !important;
   background-color: #ffffff;
   text-align:center;
   width: 100%;
+  color: #404040;
   cursor: pointer;
   border-radius: 7px;
   font-size: 14px;
 }
-
-.menu-item-product:focus{
-  background: linear-gradient(3deg, #0B622F, #18934B) !important;
-  color: #fff; 
-    border-radius: 5px 5px 0px 0px;
-}
-.menu-item-product:active:hover {
+.menu-item-product:hover {
   background: linear-gradient(3deg, #0B622F, #18934B) !important;
   color: #fff; 
   border-radius: 5px 5px 0px 0px;
 }
-.menu-item-product1:focus {
-  background: linear-gradient(3deg, #62180b, #ee2309) !important;
-  color: #fff; 
-  border-radius: 0px 0px 5px 5px;
-}
-.menu-item-product1:active:hover {
+.menu-item-product1:hover {
   background: linear-gradient(3deg, #62180b, #ee2309) !important;
   color: #fff; 
   border-radius: 0px 0px 5px 5px; 
 }
-
 .product-modal-view {
     background: white;
     border-radius: 8px;
@@ -421,7 +417,8 @@ box-shadow: none !important;
 
 .product-modal-view-img {
   width: 100%;
-  height: calc(100vh - 653px);
+  max-height: 100%;
+  height: 100%;
   border-radius: 3px;
   margin-right: 16px;
 }
@@ -449,8 +446,9 @@ box-shadow: none !important;
   width: 100%;
   border: none;
   outline: none;
-   font-size: 16px;
-  color: #363636;
+  font-size: 16px;
+  color: #404040;
+  background-color: #ffffff;
   font-weight: 500;
 }
 .product-view-header{
