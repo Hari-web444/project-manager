@@ -9,7 +9,7 @@ const RightArrow = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     width="24" height="24"
     viewBox="0 0 24 24"
-    fill="gray"
+    fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
@@ -25,7 +25,7 @@ const LeftArrow = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     width="24" height="24"
     viewBox="0 0 24 24"
-    fill="gray"
+    fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
@@ -106,7 +106,7 @@ const Pagination = ({
     pageSize,
   });
 
-  const lastPage = Math.ceil(totalCount / pageSize);
+  const lastPage = useMemo(() => Math.ceil(totalCount / pageSize), [totalCount, pageSize]);
 
   if (currentPage === 0 || paginationRange.length < 2) return null;
 
