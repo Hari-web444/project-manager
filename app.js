@@ -34,8 +34,10 @@ app.use(cookieParser());
 const admin = require('./src/routes/adminroute.js');
 const employee = require('./src/routes/employeeroute.js');
 const product = require('./src/routes/productroute');
+const branch = require('./src/routes/branchroute.js');
 app.use('/', admin,product);
 app.use('/', employee);
+app.use('/', branch);
 
 // Health check
 app.get('/', (req, res) => {
