@@ -227,3 +227,7 @@ input[type="number"] {
 .color-default {
     color: #0B622F !important;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}

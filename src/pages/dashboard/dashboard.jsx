@@ -126,8 +126,8 @@ function Dashboard() {
         <div className="container-db display-flex">
           <div className="row h-100 w-100 db-cards-st justify-content-center">
             {user_typecode === "TCL" ? (
-              cardData.map((item, index) => (
-                <div className="col-12 col-md-6 col-lg-3" style={{ minHeight: "232px", position: "relative" }} key={index}>
+              cardData.map((item) => (
+                <div className="col-12 col-md-6 col-lg-3" style={{ minHeight: "232px", position: "relative" }} key={item.name}>
                   <div className="card text-center bg-light-db p-2 h-100 dbcard-bg position-relative">
                     <img src={item.img} className='card-bgimg' alt={item.name} />
                     <h5 className="pt-4 mb-0">{item.name}</h5>
@@ -158,7 +158,7 @@ function Dashboard() {
               ))
             ) : (
               cardData.map((item, index) => (
-                <div className="col-12 col-md-6 col-lg-4" style={{ minHeight: "232px", position: "relative" }} key={index}>
+                <div className="col-12 col-md-6 col-lg-4" style={{ minHeight: "232px", position: "relative" }} key={item.name}>
                   <div className="card text-center bg-light-db p-2 h-100 dbcard-bg position-relative">
                     <img src={item.img} className='card-bgimg' alt={item.name} />
                     <h5 className="pt-4 mb-0" style={{ fontWeight: "600" }}>{item.name}</h5>
