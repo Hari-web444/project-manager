@@ -28,6 +28,8 @@ function AddProducts() {
   const location = useLocation();
   const pyCode = location.state?.ptype?.target?.code;
   const ffCode = location.state?.factor?.target?.code;
+  const isEditMode = location.state?.type === "Edit";
+  const productData = location.state?.productData;
   const [vpapCode, setVpapCode] = useState("XXXXXX");
   const { user } = useAuth();
   const userId = user?.userId;
@@ -121,7 +123,9 @@ function AddProducts() {
   };
 
   useEffect(() => {
+      if (!isEditMode) {
     getLastProductid();
+      }
   }, []);
 
   const fetchData = async (endpoint, setterFunction) => {
@@ -215,6 +219,34 @@ const handleCancel = () => {
   setPt(null);           
 };
 
+useEffect(() => {
+  if (isEditMode && productData) {
+    setFormData({
+      productId: productData.product_id,
+      productName: productData.product_name,
+      brand: productData.brand,
+      productCategory: productData.product_category,
+      formFactor: productData.form_factor,
+      pt: productData.product_type,
+      package_quantity: productData.package_quantity,
+      units: productData.units,
+      price: productData.selling_price,
+      product_dsc: productData.product_description,
+      quantity: productData.quantity,
+      min_stock: productData.min_stock_quantity,
+      image: null 
+    });
+    setPreviewUrl(productData.product_img); 
+    setBrand(productData.brand);
+    setCategory(productData.product_category );
+    setFactor(productData.form_factor);
+    setPt(productData.product_type );
+    setUnits(productData.units);
+  }
+}, [isEditMode, productData]);
+
+
+
 
 const handleSubmit = async (e) => {
     e.preventDefault();
@@ -223,10 +255,10 @@ const handleSubmit = async (e) => {
     toast.error("Please fill in all the required fields.");
     return;
     }
-    if (!formData.image) {
-        toast.error("Product image is mandatory!");
-        return;
-    }
+   if (!formData.image && !isEditMode) {
+    toast.error("Product image is mandatory!");
+    return;
+  }
    setIsLoading(true);
     const formDataToSendAsFormData = new FormData();
     formDataToSendAsFormData.append('productId', formData.productId);
@@ -241,26 +273,32 @@ const handleSubmit = async (e) => {
     formDataToSendAsFormData.append('product_dsc', formData.product_dsc);
     formDataToSendAsFormData.append('quantity', formData.quantity);
     formDataToSendAsFormData.append('min_stock', formData.min_stock);
-    formDataToSendAsFormData.append('image', formData.image);
+    if (formData.image) {
+      formDataToSendAsFormData.append('image', formData.image);
+    } else if (isEditMode && previewUrl?.startsWith('http')) {
+      formDataToSendAsFormData.append('image', previewUrl);
+    }
+
     formDataToSendAsFormData.append('userId', userId);
 
     try {
-        const response = await fetch(`${config.apiBaseUrl}addProduct`, {
-            method: "POST",
-            body: formDataToSendAsFormData, 
-        });
+       const endpoint = isEditMode
+        ? `${config.apiBaseUrl}editproduct/${productData.product_recid}`
+        : `${config.apiBaseUrl}addProduct`;
+       const method = isEditMode ? "PUT" : "POST";
+       const response = await fetch(endpoint, { method, body: formDataToSendAsFormData, });
 
         const result = await response.json();
 
         if (response.status === 200) {
-            toast.success("Product added successfully!");
+             toast.success(isEditMode ? "Product updated successfully!" : "Product added successfully!");
                 handleRemoveImage();
                 handleCancel();
                 setTimeout(() => {
                 navigate("/products");  
               }, 1000);
         } else {
-            toast.error("Failed to add product: " + result.message);
+           toast.error(`${isEditMode ? "Update" : "Add"} failed: ${result.message}`);
         }
     } catch (error) {
         console.error("Error adding product: ", error);
@@ -270,8 +308,6 @@ const handleSubmit = async (e) => {
     setIsLoading(false); 
   }
 };
-
-
 
   return (
     <div className='common-body-st'>
@@ -373,7 +409,7 @@ const handleSubmit = async (e) => {
                         <div className="mt-1">
                           <CommonSelect
                             name="brand"
-                            value={brand}
+                            value={brand || ''}
                             onChange={handleBrandChange}
                             placeholder="Select brand"
                             options={productBrand}

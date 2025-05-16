@@ -1,10 +1,11 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useRef} from 'react';
 import './product.css'
 import closebtn from '../../assets/images/closebtn.svg';
+import filtericon from '../../assets/images/filtericon.svg';
 import Actionbtn from '../../assets/images/actionbtn.svg';
 import Actioneditebtn from '../../assets/images/actionedit.svg';
 import CommonSelect from "../../components/common-select.jsx";
-import  Pagination from "../../components/Pagination/index.jsx";
+import Pagination from "../../components/Pagination/index.jsx";
 import configModule from '../../../config.js';
 import {  useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -12,11 +13,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import { format } from 'date-fns';
 import axios from 'axios';
 import Viewproduct from './viewproduct.jsx';
+import { useAuth } from '../../components/context/Authcontext.jsx'; 
+
+
 function Products() {
   const [selected, setSelected] = useState('Vaithyar poova');
   const [showModal, setShowModal] = useState(false);
-   const [viewproduct, setViewproduct] = useState(false);
-   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [viewproduct, setViewproduct] = useState(false);
+  const [delConfirmPopup, setDelConfirmPopup] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [productTypes, setProductTypes] = useState([]);
@@ -28,7 +33,15 @@ function Products() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
+   const [counts, setCounts] = useState(null);
+  const { user } = useAuth();
+  const user_typecode = user?.user_typecode;
   const [menuIndex, setMenuIndex] = useState(null);
+  const [productTypeFilter, setProductTypeFilter] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
     const toggleMenu = (index) => {
     setMenuIndex(menuIndex === index ? null : index); 
   };
@@ -37,6 +50,8 @@ function Products() {
   const closemodel = () => { setShowModal(false);}
   const openviewmodel = () => { setViewproduct(true);}
   const closviewemodel = () => { setViewproduct(false);}
+  const openDetetemodel = () => { setDelConfirmPopup(true);}
+  const closDetetemodel = () => { setDelConfirmPopup(false);}
 
  const fetchProducts = async () => {
     try {
@@ -50,11 +65,18 @@ function Products() {
     }
   };
 
- useEffect(() => {
-    fetchProducts();
-  }, [selected]); 
 
-  
+  async function fetchCounts() {
+    try {
+      const response = await axios.post(`${config.apiBaseUrl}getProductcount`); 
+      setCounts(response.data);
+    } catch (err) {
+      toast.error('Failed to fetch product counts');
+      console.error(err);
+    } 
+  }
+
+
   const fetchProductTypes = async () => {
      try {
        const response = await fetch(`${config.apiBaseUrl}getAllProductTypes`, {
@@ -71,10 +93,6 @@ function Products() {
        toast.error("Error fetching designation list: " + error.message);
      }
    };
-
-  useEffect(() => {
-    fetchProductTypes();
-  }, []);
 
    const getformfactor = async () => {
      try {
@@ -93,7 +111,13 @@ function Products() {
      }
    };
 
+ useEffect(() => {
+    fetchProducts();
+  }, [selected]);
+
   useEffect(() => {
+    fetchCounts();
+    fetchProductTypes();
     getformfactor();
   }, []);
 
@@ -102,26 +126,28 @@ function Products() {
     setCurrentPage(1); 
   };
 
-const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
+  useEffect(() => {
+    let filtered = products;
 
-    const filtered = products.filter((product) => {
-      return (
+    if (productTypeFilter) {
+      filtered = filtered.filter(product => product.product_type === productTypeFilter);
+    }
+
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(product =>
         product.product_id.toLowerCase().includes(term) ||
         product.product_name.toLowerCase().includes(term) ||
         product.product_category.toLowerCase().includes(term)
       );
-    });
+    }
 
     setFilteredProducts(filtered);
-  };
+  }, [productTypeFilter, searchTerm, products]);
 
-  // Handle pagination logic
   const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-
     const AddProduct = () => {
       if (!ptype) {
         toast.error("You need to Select Product type.");
@@ -137,14 +163,53 @@ const handleSearch = (e) => {
       });
     };
 
-    return (
+    const editProduct = (item) => {
+    if (!item) {
+      toast.error("No value found.");
+      return;
+    }
+    navigate('/products/add', {
+      state: { productData: item ,type: "Edit"}
+    });
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+        setMenuIndex(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleDelete = async () => {
+    setDelConfirmPopup(false);
+    setLoading(true);
+    const product_recid = selectedProduct?.product_recid;
+    try {
+      await axios.delete(`${config.apiBaseUrl}product/${product_recid}`);
+      toast.success('Product deleted successfully!');
+      await fetchProducts();
+      await fetchCounts();
+    } catch (err) {
+      console.error('Delete failed:', err);
+      toast.error('Failed to delete product.');
+    }
+    finally {
+    setLoading(false); 
+  }
+  };
+
+  return (
     <div className='common-body-st'>
        <ToastContainer />
       <div className='header-container-products'>
       <div className='d-flex header-product-el '>
       <div className="col-lg-6 col-6 d-flex  align-items-center">
         <div className="header-product-pvt">
-          <h6 className="mt-0 mb-0 product-header-text">Total Products: 10</h6>
+          <h6 className="mt-0 mb-0 product-header-text">Total Products : {counts?.totalCount}</h6>
           <div className="checkbox-group mt-2 ">
          <label className="checkbox-item ">
           <input
@@ -155,7 +220,7 @@ const handleSearch = (e) => {
             checked={selected === 'Vaithyar poova'}
              onChange={(e) => setSelected(e.target.value)}
           />
-        <span className="box">{selected === 'Vaithyar poova' && <span className="dot" />}</span> Vaithyar poova : 0
+        <span className="box">{selected === 'Vaithyar poova' && <span className="dot" />}</span> Vaithyar poova : {counts?.vaithyarPoovaCount}
       </label>
       <label className="checkbox-item">
         <input
@@ -166,16 +231,32 @@ const handleSearch = (e) => {
           checked={selected === 'Gramiyam'}
           onChange={(e) => setSelected(e.target.value)}
         />
-        <span className="box"> {selected === 'Gramiyam' && <span className="dot" />}</span> Gramiyam : 0
+        <span className="box"> {selected === 'Gramiyam' && <span className="dot" />}</span> Gramiyam : {counts?.gramiyamCount}
       </label>
     </div>
         </div>
       </div>
         <div className='col-lg-6  col-6 d-flex flex-wrap justify-content-end search-add-wrapper ' >
           <div className=''>
-            <input type='search' className='product-search-input' placeholder='Search '  value={searchTerm} onChange={handleSearch} />
-          </div>      
-        <div><button type='button' className='product-Addnew-btn ' onClick={openmodel}>Add new</button></div> 
+            <input type='search' className='product-search-input' placeholder='Search '  value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          </div>
+          {(user_typecode === "TSL" || user_typecode === "TCL") && (   
+          <div className="product-filter-dropdowns" ref={dropdownRef}>
+            <button className="product-filter-btns"  type="button" onClick={() => setIsOpen(!isOpen)} ><img src={filtericon} alt="img" /> Filter</button>
+            {isOpen && (
+             <ul className="product-dropdown-menus" role="menu">
+                <li className='product-fileters-header'>Filter</li>
+                {productTypes.map((option) => (
+                  <li key={option.value ?? option.label} className="product-dropdown-items" onClick={() => {  setProductTypeFilter(option.label); setIsOpen(false); }} > {option.label} </li>
+                ))}
+                <li className="product-dropdown-items" onClick={() => { setProductTypeFilter(null); setIsOpen(false); }}>Clear filter</li>
+             </ul>
+            )}
+          </div> 
+          )}
+          {(user_typecode === "AD" || user_typecode === "BH") && (      
+           <div><button type='button' className='product-Addnew-btn ' onClick={openmodel}>Add new</button></div> 
+           )}
         </div>
       </div>
       <div className='body-container-products'>
@@ -196,10 +277,11 @@ const handleSearch = (e) => {
              </thead>
              <tbody className="tbody-responsive">
                {currentProducts.map((item, index) => (
-                <tr key={index} style={{position:"relative"}} onClick={() => {  if (menuIndex === null) { 
+                <tr key={index} style={{position:"relative"}} onClick={(e) => {  
+                   if (e.target.closest('.td-action-menu')) return;
                   openviewmodel();
                   setSelectedProduct(item);
-                } }}>
+                 }}>
                  <td>{item.product_id}</td>
                  <td className="product-cell">
                   <div className="product-card">
@@ -219,11 +301,13 @@ const handleSearch = (e) => {
                   <td>{format(new Date(item.created_at), 'dd-MM-yyyy')}</td>                
                   <td className='td-action-menu'><button onClick={(e) => { e.stopPropagation(); toggleMenu(index); }}> <img src={Actioneditebtn} alt="Act"/> </button>
                    {menuIndex === index && (
-                    <div className="action-menu">
-                     <div><button className="menu-item-product " >Edit</button></div> 
-                      <div><button className="menu-item-product1">Delete</button></div>
+                    <div className="action-menu" ref={dropdownRef}>
+                      <div><button className="menu-item-product " 
+                        onClick={(e) => { e.stopPropagation(); editProduct(item);}} >Edit</button></div> 
+                      <div><button className="menu-item-product1"
+                       onClick={(e) => { e.stopPropagation(); setSelectedProduct(item); openDetetemodel(); }} >Delete</button></div>
                     </div>
-                    )}
+                   )}
                   </td>
                 </tr>
               ))}
@@ -302,6 +386,25 @@ const handleSearch = (e) => {
             {viewproduct && (
              <Viewproduct onClose={closviewemodel}   products={selectedProduct}/> )
           }
+
+        {delConfirmPopup && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <div className="modal-header mb-3">
+              <h5 className="mb-0 add-new-hdr">Confirm to delete</h5>
+            </div>
+            <div className="modal-body mb-2">
+              <div className="container commonst-select">
+                <p>Are you sure to delete this  "{selectedProduct.product_id}"?</p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="cancel-button" onClick={closDetetemodel} >Cancel</button>
+              <button className="next-button" onClick={() => handleDelete()} disabled={loading}>{loading ? 'Deleting...' : 'Delete'}</button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     );
   }

@@ -162,11 +162,13 @@ td {
     white-space: nowrap;
     color: #303030 !important;
     font-size: 16px;
-    padding: 17px !important;
+    padding: 5px !important;
 }
-
+.table-th-row{
+background: linear-gradient(3deg, #0B622F, #18934B) !important;
+}
 .table th {
-    background-color: #0B622F !important;
+     background: transparent !important;
     color: #ffffff !important;
     padding: 14px !important;
     font-size: 16px;
@@ -178,6 +180,7 @@ td {
     background-color: rgb(240 245 242);
     cursor: pointer;
 }
+
 
 .table thead {
   position: sticky !important;

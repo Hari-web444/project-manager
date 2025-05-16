@@ -41,7 +41,7 @@ function App() {
     '/leads': 'Leads',
     '/todo': 'To do list',
     '/products': 'Products',
-    '/products/add': 'addproducts',
+    '/products/add': 'Addproducts',
     '/clients': 'Clients',
     '/tracking': 'Tracking',
     '/user-profile': 'UserProfile',
