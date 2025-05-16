@@ -7,7 +7,7 @@ import SvgContent from '../../components/svgcontent.jsx';
 import DatePicker from 'react-datepicker';
 import { useAuth } from '../../components/context/Authcontext.jsx';
 import configModule from '../../../config.js';
-import { MutatingDots } from 'react-loader-spinner';
+import { PropagateLoader } from 'react-spinners';
 
 
 function AddEmployee() {
@@ -488,7 +488,7 @@ function AddEmployee() {
 
                 {needLoading && (
                     <div className='loading-container w-100 h-100'>
-                        <MutatingDots
+                        <PropagateLoader
                             visible={true}
                             height="100"
                             width="100"

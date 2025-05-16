@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from '../../components/context/Authcontext.jsx';
 import SvgContent from "../../components/svgcontent.jsx";
-import { MutatingDots } from 'react-loader-spinner';
+import { PropagateLoader } from 'react-spinners';
 
 function EmployeeList() {
   const [showAll, setShowAll] = useState(false);
@@ -218,14 +218,13 @@ function EmployeeList() {
     <div className='common-body-st'>
       {needLoading && (
         <div className='loading-container w-100 h-100'>
-          <MutatingDots
+          <PropagateLoader
             visible={true}
             height="100"
             width="100"
             color="#0B9346"
             secondaryColor="#0B9346"
             radius="10"
-            ariaLabel="mutating-dots-loading"
             wrapperStyle={{}}
             wrapperClass=""
           />
@@ -289,7 +288,6 @@ function EmployeeList() {
                     type="button"
                     className="position-absolute top-0 start-0 end-0 bottom-0 w-100 h-100 border-0 bg-transparent"
                     onClick={() => handleOpenEmpData(item)}
-                    aria-label={`Open details for ${item.emp_name}`}
                   />
                   {/* Dropdown menu */}
                   <div className="dropdown position-absolute drop-dots">

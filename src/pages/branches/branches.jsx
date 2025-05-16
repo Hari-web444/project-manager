@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MutatingDots } from 'react-loader-spinner';
+import { PropagateLoader } from 'react-spinners';
 import CommonSelect from "../../components/common-select.jsx";
 import '../../assets/styles/branches.css';
 import { useAuth } from '../../components/context/Authcontext.jsx';
@@ -126,7 +126,7 @@ function Branches() {
     <div className='common-body-st'>
       {needLoading && (
         <div className='loading-container w-100 h-100'>
-          <MutatingDots
+          <PropagateLoader
             visible={true}
             height="100"
             width="100"

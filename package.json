@@ -23,9 +23,9 @@
     "react-bootstrap": "^2.10.9",
     "react-datepicker": "^8.3.0",
     "react-dom": "^19.1.0",
-    "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^7.5.2",
     "react-select": "^5.10.1",
+    "react-spinners": "^0.17.0",
     "react-toastify": "^11.0.5"
   },
   "devDependencies": {
