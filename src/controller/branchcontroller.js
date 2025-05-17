@@ -8,8 +8,8 @@ exports.getLocationDetails = async (req, res) => {
     try {
         db.query(sql, (err, result) => {
             if (err) {
-                console.error('Error getting employee:', err);
-                return res.status(500).json({ message: 'Failed to get employee list' });
+                console.error('Error getting branch:', err);
+                return res.status(500).json({ message: 'Failed to get branch list' });
             }
             res.status(200).json({ data: result[0] });
         });
@@ -27,8 +27,8 @@ exports.getStateByCoutry = async (req, res) => {
     try {
         db.query(sql, (err, result) => {
             if (err) {
-                console.error('Error getting employee:', err);
-                return res.status(500).json({ message: 'Failed to get employee list' });
+                console.error('Error getting branch:', err);
+                return res.status(500).json({ message: 'Failed to get branch list' });
             }
             res.status(200).json({ data: result[0] });
         });
@@ -46,8 +46,27 @@ exports.getCityByState = async (req, res) => {
     try {
         db.query(sql, (err, result) => {
             if (err) {
-                console.error('Error getting employee:', err);
-                return res.status(500).json({ message: 'Failed to get employee list' });
+                console.error('Error getting branch:', err);
+                return res.status(500).json({ message: 'Failed to get branch list' });
+            }
+            res.status(200).json({ data: result[0] });
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.getLastBranchId = async (req, res) => {
+    const { state, city } = req.body;
+
+    const sql = `CALL SP_GetLastBranchId('${state}', '${city}')`;
+
+    try {
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error getting branch:', err);
+                return res.status(500).json({ message: 'Failed to get branch ID list' });
             }
             res.status(200).json({ data: result[0] });
         });
