@@ -322,13 +322,11 @@ box-shadow: none !important;
 }
 
 
-.product-cell {
-  padding: 10px;
-}
 
 .product-card {
   display: flex;
   align-items: center;
+    margin-left: 40px;
 }
 
 .product-img {
@@ -354,7 +352,7 @@ box-shadow: none !important;
 
 .product-category,
 .product-form-factor {
-  font-size: 13px;
+  font-size: 12px;
   color: #404040;
   margin: 0px 0;
 }

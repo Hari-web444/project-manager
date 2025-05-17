@@ -283,7 +283,7 @@ function Products() {
                   setSelectedProduct(item);
                  }}>
                  <td>{item.product_id}</td>
-                 <td className="product-cell">
+                 <td className="product-cell-mr">
                   <div className="product-card">
                     <div className="product-status">
                     <img src={item.product_img} alt='img' className="product-img" />
