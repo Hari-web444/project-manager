@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from '../../components/context/Authcontext.jsx';
 import SvgContent from "../../components/svgcontent.jsx";
-import { MutatingDots } from 'react-loader-spinner';
+import { PropagateLoader } from 'react-spinners';
 
 function EmployeeList() {
   const [showAll, setShowAll] = useState(false);
@@ -218,16 +218,11 @@ function EmployeeList() {
     <div className='common-body-st'>
       {needLoading && (
         <div className='loading-container w-100 h-100'>
-          <MutatingDots
-            visible={true}
+          <PropagateLoader
             height="100"
             width="100"
             color="#0B9346"
-            secondaryColor="#0B9346"
             radius="10"
-            ariaLabel="mutating-dots-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
           />
         </div>
       )}
@@ -289,7 +284,6 @@ function EmployeeList() {
                     type="button"
                     className="position-absolute top-0 start-0 end-0 bottom-0 w-100 h-100 border-0 bg-transparent"
                     onClick={() => handleOpenEmpData(item)}
-                    aria-label={`Open details for ${item.emp_name}`}
                   />
                   {/* Dropdown menu */}
                   <div className="dropdown position-absolute drop-dots">
@@ -353,7 +347,7 @@ function EmployeeList() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay modal-overlay-position">
           <div className="modal-container">
             <div className="modal-header">
               <h5 className="mb-0 add-new-hdr">Add new employee</h5>
@@ -383,7 +377,7 @@ function EmployeeList() {
       )}
 
       {assignPopup && (
-        <div className="modal-overlay">
+        <div className="modal-overlay modal-overlay-position">
           <div className="modal-container">
             <div className="modal-header">
               <h5 className="mb-0 add-new-hdr">In-active data transfer</h5>
@@ -413,7 +407,7 @@ function EmployeeList() {
       )}
 
       {delConfirmPopup && (
-        <div className="modal-overlay">
+        <div className="modal-overlay modal-overlay-position">
           <div className="modal-container">
             <div className="modal-header mb-3">
               <h5 className="mb-0 add-new-hdr">Confirm to delete</h5>

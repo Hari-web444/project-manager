@@ -89,7 +89,6 @@ const LoginPage = () => {
                 />
               <button
                     className="toggle-password"
-                    aria-label="Toggle password visibility"
                     onClick={() => setShowPassword(!showPassword)}
                 >
                     {showPassword ? <SvgContent svg_name="eyeclose" /> : <SvgContent svg_name="eyeopen" />}

@@ -153,16 +153,6 @@
     cursor: pointer;
 }
 
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-}
-
 .modal-container {
     background: white;
     border-radius: 12px;
@@ -412,6 +402,8 @@
     margin-right: auto;
     margin-left: auto;
     padding-top: 22px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .emp-img-st {

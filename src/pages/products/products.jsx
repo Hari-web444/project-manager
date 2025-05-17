@@ -277,7 +277,7 @@ function Products() {
              </thead>
              <tbody className="tbody-responsive">
                {currentProducts.map((item, index) => (
-                <tr key={index} style={{position:"relative"}} onClick={(e) => {  
+                <tr key={item.product_recid} style={{position:"relative"}} onClick={(e) => {  
                    if (e.target.closest('.td-action-menu')) return;
                   openviewmodel();
                   setSelectedProduct(item);

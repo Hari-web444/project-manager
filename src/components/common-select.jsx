@@ -1,7 +1,7 @@
 import Select, { components } from "react-select";
 import PropTypes from "prop-types";
+import { matchSorter } from "match-sorter"; 
 
-// Custom Dropdown Indicator with SVG
 const DropdownIndicator = (props) => {
   return (
     <components.DropdownIndicator {...props}>
@@ -94,6 +94,14 @@ const CommonSelect = ({
     ? options.find((opt) => opt.value === value)
     : null;
 
+    const filterOption = (option, rawInput) => {
+      const filtered = matchSorter(options, rawInput, {
+        keys: ["label"],
+      });
+      return filtered.some((f) => f.value === option.value);
+    };
+    
+
   return (
     <div className="common-select-st mb-0">
       <Select
@@ -106,6 +114,7 @@ const CommonSelect = ({
         styles={customStyles}
         isSearchable={isSearchable}
         placeholder={placeholder}
+        filterOption={filterOption} 
         components={{ DropdownIndicator }}
       />
     </div>

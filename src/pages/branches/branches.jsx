@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MutatingDots } from 'react-loader-spinner';
+import { PropagateLoader } from 'react-spinners';
 import CommonSelect from "../../components/common-select.jsx";
 import '../../assets/styles/branches.css';
 import { useAuth } from '../../components/context/Authcontext.jsx';
@@ -7,9 +7,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import configModule from '../../../config.js';
+import AddEditBranch from './addeditbranch.jsx';
 
 function Branches() {
   const [needLoading, setNeedLoading] = useState(false);
+  const [addEditModal, setAddEditModal] = useState(false);
+  const [formData, setFormData] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [country, setCountry] = useState(null);
   const [cityOption, setCityOption] = useState(null);
@@ -21,7 +24,7 @@ function Branches() {
   const [location, setLocation] = useState("");
   const { user } = useAuth();
   const config = configModule.config();
-   
+
   const TypeOptions = [
     { label: "Office", value: "Office" },
     { label: "Clinic", value: "Clinic" },
@@ -30,6 +33,7 @@ function Branches() {
 
   const getLocationDetails = async () => {
     setNeedLoading(true);
+    setLocation('');
     try {
       const response = await axios.get(`${config.apiBaseUrl}getLocationDetails`);
 
@@ -57,20 +61,20 @@ function Branches() {
   }, [user]);
 
   useEffect(() => {
+    setStateOption([]);
+    setState(null);
+
     if (country) {
       fetchStatesByCountry(country.target.id);
-    } else {
-      setStateOption([]);
-      setState(null);
     }
   }, [country]);
 
   useEffect(() => {
+    setCityOption([]);
+    setCity(null);
+
     if (state) {
       fetchCityByState(state.target.id);
-    } else {
-      setCityOption([]);
-      setCity(null);
     }
   }, [state]);
 
@@ -122,20 +126,31 @@ function Branches() {
     }
   };
 
+  const AddEditBranchModal = (sAction) => {
+    if (!location || !country || !state || !city || !type) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    setFormData({location : location , country: country?.target , state: state?.target, city: city?.target, type: type?.target , action: sAction });
+    
+    setShowModal(false);
+    setAddEditModal(true);
+  };
+
+  const closeAddeditModal = () => {
+    setAddEditModal(false);
+  };
+
   return (
     <div className='common-body-st'>
       {needLoading && (
         <div className='loading-container w-100 h-100'>
-          <MutatingDots
-            visible={true}
+          <PropagateLoader
             height="100"
             width="100"
             color="#0B9346"
-            secondaryColor="#0B9346"
             radius="10"
-            ariaLabel="mutating-dots-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
           />
         </div>
       )}
@@ -164,8 +179,8 @@ function Branches() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-container" style={{ width: "625px" }}>
+        <div className="modal-overlay modal-overlay-position">
+          <div className="modal-container modal-overlay-position" style={{ width: "625px" }}>
             <div className="modal-header">
               <h5 className="mb-0 add-new-hdr">Add new Branch</h5>
             </div>
@@ -193,6 +208,7 @@ function Branches() {
                     value={country}
                     onChange={setCountry}
                     options={countryOption}
+                    isSearchable={true}
                   />
                 </div>
               </div>
@@ -206,6 +222,7 @@ function Branches() {
                     value={state}
                     onChange={setState}
                     options={stateOption}
+                    isSearchable={true}
                   />
                 </div>
               </div>
@@ -219,6 +236,7 @@ function Branches() {
                     value={city}
                     onChange={setCity}
                     options={cityOption}
+                    isSearchable={true}
                   />
                 </div>
               </div>
@@ -240,10 +258,14 @@ function Branches() {
 
             <div className="modal-footer">
               <button className="cancel-button" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="next-button" >Next</button>
+              <button className="next-button" onClick={()=>AddEditBranchModal("Add")} >Next</button>
             </div>
           </div>
         </div>
+      )}
+
+      {addEditModal && (
+        <AddEditBranch rowData={formData} closeAddeditModal={closeAddeditModal} />
       )}
 
       <ToastContainer

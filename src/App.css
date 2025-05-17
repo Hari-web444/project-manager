@@ -75,6 +75,10 @@ select:-webkit-autofill:focus {
     transition: background-color 5000s ease-in-out 0s;
 }
 
+textarea {
+    resize: none !important;
+}
+
 .Toastify__toast-theme--colored.Toastify__toast--warning {
     background: linear-gradient(#f69d0d, #f7b751) !important;
 }
@@ -230,4 +234,18 @@ input[type="number"] {
 
 .cursor-pointer {
     cursor: pointer;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-overlay-position {
+    position: absolute !important;
 }

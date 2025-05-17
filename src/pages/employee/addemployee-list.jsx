@@ -7,7 +7,7 @@ import SvgContent from '../../components/svgcontent.jsx';
 import DatePicker from 'react-datepicker';
 import { useAuth } from '../../components/context/Authcontext.jsx';
 import configModule from '../../../config.js';
-import { MutatingDots } from 'react-loader-spinner';
+import { PropagateLoader } from 'react-spinners';
 
 
 function AddEmployee() {
@@ -52,9 +52,8 @@ function AddEmployee() {
 
     useEffect(() => {
         if (actionType === "Edit" && objEditsItem) {
-            // Make sure objEditsItem is fully populated
             setFormData({
-                emp_id: objEditsItem.emp_id || 'VPA001', // Fallback to default value if emp_id is undefined
+                emp_id: objEditsItem.emp_id || 'VPA001', 
                 emp_name: objEditsItem.emp_name || '',
                 designation: objEditsItem.designation || '',
                 email: objEditsItem.email || '',
@@ -68,7 +67,7 @@ function AddEmployee() {
             });
             setPreviewUrl(objEditsItem.image_url || '');
         }
-    }, [actionType, objEditsItem]); // Ensure the effect reruns when objEditsItem or actionType changes
+    }, [actionType, objEditsItem]);
 
 
 
@@ -285,10 +284,10 @@ function AddEmployee() {
         }
     };
 
-    const handleUpload = () => {
+  /*   const handleUpload = () => {
         if (!image) return toast.error('Please upload an image first.');
         console.log('Uploading image:', image);
-    };
+    }; */
 
     const handleRemoveImage = () => {
         setImage(null);
@@ -488,16 +487,12 @@ function AddEmployee() {
 
                 {needLoading && (
                     <div className='loading-container w-100 h-100'>
-                        <MutatingDots
+                        <PropagateLoader
                             visible={true}
                             height="100"
                             width="100"
                             color="#0B9346"
-                            secondaryColor="#0B9346"
                             radius="10"
-                            ariaLabel="mutating-dots-loading"
-                            wrapperStyle={{}}
-                            wrapperClass=""
                         />
                     </div>
                 )}
