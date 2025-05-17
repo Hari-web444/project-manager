@@ -45,17 +45,17 @@
   color: #121212;
 }
 
-.checkbox-group {
+.checkbox-group-product {
     display: flex;
     gap:10px;
     align-items: center;
     font-family: sans-serif;
   }
   
-  .checkbox-item {
+  .checkbox-item-product {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
     color: #404040;
     cursor: pointer;
   }

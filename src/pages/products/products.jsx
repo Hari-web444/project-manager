@@ -210,8 +210,8 @@ function Products() {
       <div className="col-lg-6 col-6 d-flex  align-items-center">
         <div className="header-product-pvt">
           <h6 className="mt-0 mb-0 product-header-text">Total Products : {counts?.totalCount}</h6>
-          <div className="checkbox-group mt-2 ">
-         <label className="checkbox-item ">
+          <div className="checkbox-group-product mt-2 ">
+         <label className="checkbox-item-product ">
           <input
             type="checkbox"
             name="product"
@@ -222,7 +222,7 @@ function Products() {
           />
         <span className="box">{selected === 'Vaithyar poova' && <span className="dot" />}</span> Vaithyar poova : {counts?.vaithyarPoovaCount}
       </label>
-      <label className="checkbox-item">
+      <label className="checkbox-item-product">
         <input
           type="checkbox"
           name="product"
