@@ -223,7 +223,6 @@ useEffect(() => {
 
 
 
-
 const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -237,6 +236,7 @@ const handleSubmit = async (e) => {
   }
    setIsLoading(true);
     const formDataToSendAsFormData = new FormData();
+    formDataToSendAsFormData.append('folder', 'products');
     formDataToSendAsFormData.append('productId', formData.productId);
     formDataToSendAsFormData.append('productName', formData.productName);
     formDataToSendAsFormData.append('productBrand', formData.brand);
