@@ -26,16 +26,39 @@ async function setupS3Uploader() {
         cb(null, { fieldName: file.fieldname });
       },
       key: (req, file, cb) => {
-        const uniqueName = `products/${Date.now()}_${file.originalname}`;
-        cb(null, uniqueName);
+        const rawFolder = req.body.folder || 'uploads';
+        const folder = rawFolder.replace(/[^a-zA-Z0-9-_]/g, ''); // sanitize
+        const timestamp = Date.now();
+        const fileName = file.originalname.replace(/\s+/g, '_');
+        const key = `${folder}/${timestamp}_${fileName}`;
+        cb(null, key);
       },
     }),
+
     fileFilter: (req, file, cb) => {
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      if (allowedTypes.includes(file.mimetype)) cb(null, true);
-      else cb(new Error('Only JPEG/PNG/JPG allowed'), false);
+      const allowedTypes = [
+        // Images
+        'image/jpeg', 'image/png', 'image/jpg',
+        // Videos
+        'video/mp4', 'video/mpeg', 'video/quicktime',
+        // Documents
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ];
+
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image, video, and document files are allowed'), false);
+      }
     },
-    limits: { fileSize: 5 * 1024 * 1024 },
+
+    limits: {
+      fileSize: 20 * 1024 * 1024, 
+    },
   });
 
   return uploadInstance;
