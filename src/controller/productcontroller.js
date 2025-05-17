@@ -1,7 +1,6 @@
-const db = require('../database/db');
-const path = require('path');
-const multer = require('multer');
-const fs = require('fs');
+const { getPool } = require('../database/db');
+const db = getPool();
+const { getAwsSecrets } = require("../utilities/vaultClient");
 exports.GetAllProductTypes = async (req, res) => {
     try {
         const sql = 'CALL SP_GetAllProductTypes()'; 
@@ -106,44 +105,16 @@ exports.getLastProductID= async (req, res) => {
 };
 
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); 
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); 
-  }
-});
-
-const upload = multer({ storage: storage }).single('image'); 
 exports.AddProduct = async (req, res) => {
-  upload(req, res, async (err) => {
-
-    const { productId,productName,productBrand,productCategory,formFactor,ptype,package_quantity,units,price,product_dsc,quantity,min_stock, userId } = req.body;
-    const stock_status = 'Available';
-    const image = req.file ? req.file : null; 
-    
     try {
-      const imagePath = path.join(__dirname, 'uploads', image.filename);
-    if (!image) {
-      return res.status(400).json({ message: 'No image uploaded' });
-    }
-      const values = [
-        productId,
-        productName,
-        productBrand  ,
-        productCategory,
-        formFactor,
-        ptype,
-        package_quantity,
-        units,
-        price,
-        product_dsc,
-        quantity,
-        min_stock,
-        imagePath, 
-        stock_status,
-        userId
+      const { productId,productName,productBrand,productCategory,formFactor,ptype,
+            package_quantity,units,price,product_dsc,quantity,min_stock, userId } = req.body;
+
+      const stock_status = 'Available';
+      const imagePath = req.file?.key || null;
+      
+      const values = [ productId, productName, productBrand  ,  productCategory, formFactor, ptype, package_quantity,
+                       units, price, product_dsc, quantity, min_stock,imagePath,  stock_status, userId
       ];
 
       const sql = `CALL SP_AddProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ? , ?)`;
@@ -160,31 +131,38 @@ exports.AddProduct = async (req, res) => {
       console.error('Error parsing formDataToSend:', error);
       return res.status(400).json({ message: 'Invalid form data', error: error.message });
     }
-  });
 };
 
 
 
-exports.GetProduct = (req, res) => {
+exports.GetProduct = async (req, res) => {
   const { brand } = req.body;
-
-  if (!brand) {
-    return res.status(400).json({ message: 'Brand is required' });
-  }
+    if (!brand) {
+      return res.status(400).json({ message: 'Brand is required' });
+    }
   const sql = 'CALL SP_GetProductsByBrand(?)';
-  db.query(sql, [brand], (err, result) => {
+  db.query(sql, [brand], async (err, result) => {
     if (err) {
       console.error('Error fetching products:', err);
-      return res.status(500).json({ message: 'Internal server error' });
+      return res.status(500).json({ message: 'Internal server error', error: err });
     }
     const products = result[0];
-    if (products.length > 0) {
-      return res.json(products);  
-    } else {
-      return res.status(404).json({ message: 'No products found for this brand' });
+    try {
+      const aws = await getAwsSecrets();
+      const enrichedProducts = products.map((p) => ({
+        ...p,
+        imageUrl: p.product_img
+          ? `https://${aws.bucket}.s3.${aws.region}.amazonaws.com/${p.product_img}`
+          : null,
+      }));
+      return res.status(200).json(enrichedProducts);
+    } catch (e) {
+      console.warn('⚠️ Failed to enrich product images:', e.message);
+      return res.status(200).json(products); 
     }
   });
 };
+
 
 exports.GetProductCount = (req, res) => {
   const sql = 'CALL SP_GetProductBrandCounts()';
@@ -206,27 +184,16 @@ exports.GetProductCount = (req, res) => {
 
 exports.EditeProduct = (req, res) => {
 
-  upload(req, res, (err) => {
-    if (err) {
-      console.error('Upload error:', err);
-      return res.status(500).json({ message: 'Image upload failed' });
-    }
-
-    const { product_recid } = req.params;
-
-    // fallback for image preview url
-    const p_product_img = req.file
-      ? path.join('uploads', req.file.filename)
-      : req.body.image  || null;
-
+  const { product_recid } = req.params;
   const { productId,productName, productBrand, productCategory, formFactor, ptype, package_quantity,  units,
           price,product_dsc, quantity,min_stock,
         } = req.body;
 
+  const product_img = req.file?.key || null;      
   const sql = 'CALL SP_EditProduct(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
   const values = [ product_recid, productId, productName, productBrand, productCategory, formFactor, ptype,
-                   package_quantity, units, price, product_dsc, quantity, min_stock, p_product_img
+                   package_quantity, units, price, product_dsc, quantity, min_stock, product_img
                  ];
 
   db.query(sql, values, (err, result) => {
@@ -237,8 +204,8 @@ exports.EditeProduct = (req, res) => {
 
     res.status(200).json({ message: 'Product updated successfully', result });
   });
-  });
 };
+
 
 
 

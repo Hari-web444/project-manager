@@ -7,7 +7,7 @@ DROP PROCEDURE IF EXISTS `SP_GetProductsByBrand`;
 CREATE PROCEDURE `SP_GetProductsByBrand`(IN brand_name VARCHAR(100))
 BEGIN
     -- Select all products where the brand matches the provided parameter
-    SELECT * FROM product WHERE brand = brand_name AND is_deleted = 0;
+    SELECT * FROM product WHERE brand = brand_name AND is_deleted = 0  ORDER BY product_recid DESC;
 END $$
 
 DELIMITER ;

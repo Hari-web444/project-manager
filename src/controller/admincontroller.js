@@ -1,4 +1,5 @@
-const db = require('../database/db');
+const { getPool } = require('../database/db');
+const db = getPool();
 const { sendEmail } = require("../appMiddlewares/sendMail");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();

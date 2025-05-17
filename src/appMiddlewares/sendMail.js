@@ -1,19 +1,20 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
 const templates = require("./template");
+const { mailSecrets } = require("../utilities/vaultClient");
 
 // Send Email Function
 const sendEmail = async (email, payload) => {
   try {
-    // Create reusable transporter object using the default SMTP transport
+     const mailCreds = await mailSecrets();
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      host: process.env.MAIL_HOST || "smtp.gmail.com",
-      port: process.env.MAIL_PORT|| 587,
-      secure: false, // true for 465, false for other ports
+      host: mailCreds.MAIL_HOST || "smtp.gmail.com",
+      port: mailCreds.MAIL_PORT|| 587,
+      secure: false, 
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        user: mailCreds.MAIL_USER,
+        pass: mailCreds.MAIL_PASS,
       },
     });
 
@@ -23,7 +24,7 @@ const sendEmail = async (email, payload) => {
     const emailContent = templates[payload.template]({payload});
     // Email options
     const mailOptions = {
-      from: `${process.env.FROM_EMAIL} <${process.env.MAIL_USER}>`,
+      from: `${mailCreds.FROM_EMAIL} <${mailCreds.MAIL_USER}>`,
       to: email,
       ...emailContent
     };

@@ -1,4 +1,5 @@
-const db = require('../database/db');
+const { getPool } = require('../database/db');
+const db = getPool();
 
 exports.getLocationDetails = async (req, res) => {
 

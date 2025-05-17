@@ -11,6 +11,7 @@
   "author": "Ajithkumar, Hariharan",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.812.0",
     "axios": "^1.9.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -22,7 +23,9 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.2",
+    "multer-s3": "^3.0.1",
     "mysql2": "^3.14.0",
+    "node-vault": "^0.10.2",
     "nodemailer": "^6.10.1",
     "react-datepicker": "^8.3.0"
   },
