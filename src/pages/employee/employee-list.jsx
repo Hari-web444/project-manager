@@ -347,7 +347,7 @@ function EmployeeList() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay modal-overlay-position">
           <div className="modal-container">
             <div className="modal-header">
               <h5 className="mb-0 add-new-hdr">Add new employee</h5>
@@ -377,7 +377,7 @@ function EmployeeList() {
       )}
 
       {assignPopup && (
-        <div className="modal-overlay">
+        <div className="modal-overlay modal-overlay-position">
           <div className="modal-container">
             <div className="modal-header">
               <h5 className="mb-0 add-new-hdr">In-active data transfer</h5>
@@ -407,7 +407,7 @@ function EmployeeList() {
       )}
 
       {delConfirmPopup && (
-        <div className="modal-overlay">
+        <div className="modal-overlay modal-overlay-position">
           <div className="modal-container">
             <div className="modal-header mb-3">
               <h5 className="mb-0 add-new-hdr">Confirm to delete</h5>

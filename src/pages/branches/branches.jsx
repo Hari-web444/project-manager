@@ -7,9 +7,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import configModule from '../../../config.js';
+import AddEditBranch from './addeditbranch.jsx';
 
 function Branches() {
   const [needLoading, setNeedLoading] = useState(false);
+  const [addEditModal, setAddEditModal] = useState(false);
+  const [formData, setFormData] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [country, setCountry] = useState(null);
   const [cityOption, setCityOption] = useState(null);
@@ -21,7 +24,7 @@ function Branches() {
   const [location, setLocation] = useState("");
   const { user } = useAuth();
   const config = configModule.config();
-   
+
   const TypeOptions = [
     { label: "Office", value: "Office" },
     { label: "Clinic", value: "Clinic" },
@@ -30,6 +33,7 @@ function Branches() {
 
   const getLocationDetails = async () => {
     setNeedLoading(true);
+    setLocation('');
     try {
       const response = await axios.get(`${config.apiBaseUrl}getLocationDetails`);
 
@@ -71,7 +75,7 @@ function Branches() {
 
     if (state) {
       fetchCityByState(state.target.id);
-    } 
+    }
   }, [state]);
 
   const fetchCityByState = async (id) => {
@@ -122,6 +126,22 @@ function Branches() {
     }
   };
 
+  const AddEditBranchModal = (sAction) => {
+    if (!location || !country || !state || !city || !type) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    setFormData({location : location , country: country?.target , state: state?.target, city: city?.target, type: type?.target , action: sAction });
+    
+    setShowModal(false);
+    setAddEditModal(true);
+  };
+
+  const closeAddeditModal = () => {
+    setAddEditModal(false);
+  };
+
   return (
     <div className='common-body-st'>
       {needLoading && (
@@ -159,8 +179,8 @@ function Branches() {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-container" style={{ width: "625px" }}>
+        <div className="modal-overlay modal-overlay-position">
+          <div className="modal-container modal-overlay-position" style={{ width: "625px" }}>
             <div className="modal-header">
               <h5 className="mb-0 add-new-hdr">Add new Branch</h5>
             </div>
@@ -188,6 +208,7 @@ function Branches() {
                     value={country}
                     onChange={setCountry}
                     options={countryOption}
+                    isSearchable={true}
                   />
                 </div>
               </div>
@@ -201,6 +222,7 @@ function Branches() {
                     value={state}
                     onChange={setState}
                     options={stateOption}
+                    isSearchable={true}
                   />
                 </div>
               </div>
@@ -214,6 +236,7 @@ function Branches() {
                     value={city}
                     onChange={setCity}
                     options={cityOption}
+                    isSearchable={true}
                   />
                 </div>
               </div>
@@ -235,10 +258,14 @@ function Branches() {
 
             <div className="modal-footer">
               <button className="cancel-button" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="next-button" >Next</button>
+              <button className="next-button" onClick={()=>AddEditBranchModal("Add")} >Next</button>
             </div>
           </div>
         </div>
+      )}
+
+      {addEditModal && (
+        <AddEditBranch rowData={formData} closeAddeditModal={closeAddeditModal} />
       )}
 
       <ToastContainer

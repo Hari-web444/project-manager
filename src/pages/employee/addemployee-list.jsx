@@ -52,9 +52,8 @@ function AddEmployee() {
 
     useEffect(() => {
         if (actionType === "Edit" && objEditsItem) {
-            // Make sure objEditsItem is fully populated
             setFormData({
-                emp_id: objEditsItem.emp_id || 'VPA001', // Fallback to default value if emp_id is undefined
+                emp_id: objEditsItem.emp_id || 'VPA001', 
                 emp_name: objEditsItem.emp_name || '',
                 designation: objEditsItem.designation || '',
                 email: objEditsItem.email || '',
@@ -68,7 +67,7 @@ function AddEmployee() {
             });
             setPreviewUrl(objEditsItem.image_url || '');
         }
-    }, [actionType, objEditsItem]); // Ensure the effect reruns when objEditsItem or actionType changes
+    }, [actionType, objEditsItem]);
 
 
 
@@ -285,10 +284,10 @@ function AddEmployee() {
         }
     };
 
-    const handleUpload = () => {
+  /*   const handleUpload = () => {
         if (!image) return toast.error('Please upload an image first.');
         console.log('Uploading image:', image);
-    };
+    }; */
 
     const handleRemoveImage = () => {
         setImage(null);
