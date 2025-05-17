@@ -6,5 +6,6 @@ const router = express.Router();
 router.get('/getLocationDetails', brcontroller.getLocationDetails);
 router.post('/getStateByCoutry', brcontroller.getStateByCoutry);
 router.post('/getCityByState', brcontroller.getCityByState);
+router.post('/getLastBranchId', brcontroller.getLastBranchId);
 
 module.exports = router;
