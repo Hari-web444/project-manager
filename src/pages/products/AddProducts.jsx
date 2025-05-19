@@ -4,10 +4,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import './product.css';
 import graterthen from '../../assets/images/graterthen.svg';
 import SvgContent from '../../components/svgcontent.jsx';
-import { Link } from 'react-router-dom';
 import CommonSelect from "../../components/common-select.jsx";
 import configModule from '../../../config.js';
-import {  useLocation, useNavigate } from 'react-router-dom';
+import {  useLocation, useNavigate,Link  } from 'react-router-dom';
 import { useAuth } from '../../components/context/Authcontext.jsx';
 import axios from 'axios';
 function AddProducts() {
@@ -226,7 +225,8 @@ useEffect(() => {
 const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.productName || !formData.productCategory || !formData.formFactor || !formData.pt || !formData.package_quantity || !formData.units || !formData.price || !formData.product_dsc || !formData.quantity || !formData.min_stock ) {
+    if (!formData.productName || !formData.productCategory || !formData.formFactor || !formData.pt || !formData.package_quantity 
+      || !formData.units || !formData.price || !formData.product_dsc || !formData.quantity || !formData.min_stock ) {
     toast.error("Please fill in all the required fields.");
     return;
     }
@@ -287,7 +287,18 @@ const handleSubmit = async (e) => {
 
   return (
     <div className='common-body-st'>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <div className='header-container-products '>
         <div className=' header-product-el '>
           <div className="header-product-pvt">

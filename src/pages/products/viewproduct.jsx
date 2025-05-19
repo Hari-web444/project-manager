@@ -1,6 +1,7 @@
 import React from 'react';
 import closebtn from '../../assets/images/closebtn.svg';
 import graterthen from '../../assets/images/graterthen.svg';
+import PropTypes from 'prop-types';
 import './product.css'
 function Viewproduct({onClose,products}) {
   return (
@@ -43,4 +44,8 @@ function Viewproduct({onClose,products}) {
   )
 }
 
+Viewproduct.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  products: PropTypes.func.isRequired
+};
 export default Viewproduct

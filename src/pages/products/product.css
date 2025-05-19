@@ -35,7 +35,6 @@
   box-shadow: none !important;
 }
 
-
 .product-search-input{
   padding: 8px 12px;
   border: 1px solid #06823a;
@@ -465,12 +464,12 @@ box-shadow: none !important;
   gap: 8px;
   background: linear-gradient(3deg, #0B622F, #18934B) !important;
   border: #47815f solid 1px  ;
+  outline: none;
+  color: #ffffff;
   border-radius: 6px;
-  color: white;
-  padding: 8px 15px;
-  font-weight: 500;
+  padding: 8px 20px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+    box-shadow: 0px 3px 3px -2px gray;
 }
 
 .product-filter-btns.hover,
@@ -478,6 +477,7 @@ box-shadow: none !important;
 .product-filter-btns:focus {
   background-color: #007f3a;
   outline: none;
+    box-shadow: none;
 }
 
 .product-dropdown-menus {
@@ -492,14 +492,16 @@ box-shadow: none !important;
   list-style: none;
   min-width: 160px;
   z-index: 120;
-  height: 20vh;
+  min-height: auto;
+  max-height: 200px;
   overflow-y: auto;
 }
 
 .product-dropdown-items {
-  padding: 8px 16px;
+  padding: 8px 13px;
   font-weight: 400;
   color: #121212;
+  width: 100%;
   cursor: pointer;
   white-space: nowrap;
   transition: background-color 0.15s ease, font-weight 0.15s ease;
@@ -514,12 +516,37 @@ box-shadow: none !important;
 
 .product-fileters-header{
   position: sticky;
+  display: flex;
+  justify-content: space-between;
   top: 0;
   z-index: 10; 
   background: linear-gradient(3deg, #0B622F, #18934B) !important;
   border-radius: 4px 4px 0 0;
   color: white;
-  padding: 8px 15px;
+  padding: 8px 10px 8px 13px;
   font-weight: 500;
   cursor: default; 
 }
+
+
+.product-dropdown-button {
+  all: unset;
+  display: block; 
+  width: 100%;
+  text-align: left;
+  cursor: pointer !important;
+}
+
+.status-label-available {
+  color: #4BC453;
+}
+
+.status-label-low-stock {
+  color: #EFB93B;
+}
+
+.status-label-not-available {
+  color: #DE1E1E;
+}
+
+

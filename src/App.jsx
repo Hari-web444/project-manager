@@ -80,11 +80,12 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if (user && user.usertype_id) {
-      getSidebarList();
-    }
-  }, [usertype_id]);
+useEffect(() => {
+  if (user?.usertype_id) {
+    getSidebarList();
+  }
+}, [user?.usertype_id]);
+
 
   const formatSidebarMenu = (mainList, subList) => {
     return mainList.map(main => {

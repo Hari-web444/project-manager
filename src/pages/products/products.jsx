@@ -2,6 +2,7 @@ import React,{useState,useEffect,useRef} from 'react';
 import './product.css'
 import closebtn from '../../assets/images/closebtn.svg';
 import filtericon from '../../assets/images/filtericon.svg';
+import filterclear from '../../assets/images/filterclear.svg';
 import Actionbtn from '../../assets/images/actionbtn.svg';
 import Actioneditebtn from '../../assets/images/actionedit.svg';
 import CommonSelect from "../../components/common-select.jsx";
@@ -201,10 +202,26 @@ function Products() {
     setLoading(false); 
   }
   };
+  const statusClassMap = {
+  "Available": "status-label-available",
+  "Low Stock": "status-label-low-stock",
+  "Not Available": "status-label-not-available"
+  };
+
 
   return (
     <div className='common-body-st'>
-       <ToastContainer />
+       <ToastContainer   
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored" />
       <div className='header-container-products'>
       <div className='d-flex header-product-el '>
       <div className="col-lg-6 col-6 d-flex  align-items-center">
@@ -244,12 +261,15 @@ function Products() {
           <div className="product-filter-dropdowns" ref={dropdownRef}>
             <button className="product-filter-btns"  type="button" onClick={() => setIsOpen(!isOpen)} ><img src={filtericon} alt="img" /> Filter</button>
             {isOpen && (
-             <ul className="product-dropdown-menus" role="menu">
-                <li className='product-fileters-header'>Filter</li>
+             <ul className="product-dropdown-menus">
+                <li className='product-fileters-header'>Filter <span>  {productTypeFilter && (<button type='button' onClick={() => { setProductTypeFilter(null); setIsOpen(false); }}><img src={filterclear} style={{width:"10px"}} alt="close"/></button> )}</span></li>
                 {productTypes.map((option) => (
-                  <li key={option.value ?? option.label} className="product-dropdown-items" onClick={() => {  setProductTypeFilter(option.label); setIsOpen(false); }} > {option.label} </li>
-                ))}
-                <li className="product-dropdown-items" onClick={() => { setProductTypeFilter(null); setIsOpen(false); }}>Clear filter</li>
+                 <li key={option.value ?? option.label} className={`product-dropdown-items ${productTypeFilter === option.label ? 'selected-li' : ''}`}>
+                  <button type="button" className="product-dropdown-button" onClick={() => { setProductTypeFilter(option.label); setIsOpen(false); }} >
+                    {option.label}
+                  </button>
+                </li>
+                ))}              
              </ul>
             )}
           </div> 
@@ -295,8 +315,8 @@ function Products() {
                     </div>
                   </div>
                 </td>
-                  <td>{item.package_quantity}{' '}{item.units}</td>
-                  <td>{item.stock_status}</td>
+                <td>{item.package_quantity}{' '}{item.units}</td>
+                <td><span className={statusClassMap[item.stock_status] || ""}>{item.stock_status}</span> </td>
                   <td>₹{item.selling_price}</td>
                   <td>{format(new Date(item.created_at), 'dd-MM-yyyy')}</td>                
                   <td className='td-action-menu'><button onClick={(e) => { e.stopPropagation(); toggleMenu(index); }}> <img src={Actioneditebtn} alt="Act"/> </button>
@@ -315,7 +335,7 @@ function Products() {
            </table>
          </div>
         </div>
-         <div className="mt-2  fs-6 d-flex justify-content-between align-items-center " style={{ height: "50px" }}>
+        <div className="mt-2  fs-6 d-flex justify-content-between align-items-center " style={{ height: "50px" }}>
         <div className="d-flex align-items-center w-100 justify-content-between ">
           <label htmlFor="hfg" className="me-2">
             Results per page{" "}
