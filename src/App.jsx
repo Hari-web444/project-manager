@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Sidebar from './components/sidebar.jsx';
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate , useNavigate} from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
@@ -33,9 +33,11 @@ function App() {
   const location = useLocation();
   const authPaths = ['/', '/login', '/forgot-password', '/notfound'];
   const [menuItems, setMenuItems] = useState(false);
+  const [isShowAlertpopup, setIsShowAlertpopup] = useState(false);
   const config = configModule.config();
   const { user } = useAuth();
   const usertype_id = user?.usertype_id;
+  const navigate = useNavigate();
 
   const pathTitles = {
     '/dashboard': 'Dashboard',
@@ -122,7 +124,7 @@ useEffect(() => {
       ) : (
         <div className='d-flex w-100 h-100'>
           <Sidebar menuItems={menuItems} />
-          <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)',width: 'calc(100% - 245px)'}}>
+          <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)', width: 'calc(100% - 245px)' }}>
             <div className='page-header-common justify-content-between'>
               <div className="animated-text-container">
                 <h4 className="animated-text mb-0">{path}</h4>
@@ -132,7 +134,7 @@ useEffect(() => {
                   <SvgContent svg_name="Notification" />
                 </div>
                 <div className='notify-tb cursor-pointer' title={user && user.user_typecode === "AD" ? "Logout" : "Profile"}>
-                  {user && user.user_typecode === "AD" ? (<SvgContent svg_name="logout_ad" />) : ((<SvgContent svg_name="Profile" />))}
+                  {user && user.user_typecode === "AD" ? (<button onClick={() => setIsShowAlertpopup(true)}><SvgContent svg_name="logout_ad" /></button>) : ((<SvgContent svg_name="Profile" />))}
                 </div>
               </div>
             </div>
@@ -142,7 +144,7 @@ useEffect(() => {
               <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
               <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
               <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
-              <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} /> 
+              <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} />
               <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
               <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
@@ -151,7 +153,7 @@ useEffect(() => {
                {/* <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} /> */}
               <Route path="/clients" element={<PrivateRoute><Clients /></PrivateRoute>} />
               <Route path="/tracking" element={<PrivateRoute><Tracking /></PrivateRoute>} />
-              <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>}/>
+              <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
 
               {/*  Employee's sub-items */}
               <Route path="/employee/list" element={<PrivateRoute><EmployeeList /></PrivateRoute>} />
@@ -163,6 +165,26 @@ useEffect(() => {
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </div>
+
+          {isShowAlertpopup && (
+            <div className="modal-overlay modal-overlay-position">
+              <div className="modal-container">
+                <div className="modal-header mb-3">
+                  <h5 className="mb-0 add-new-hdr">Logout</h5>
+                </div>
+                <div className="modal-body mb-2">
+                  <div className="container commonst-select">
+                    <p>Are you sure to logout ?</p>
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  <button className="cancel-button" onClick={() => setIsShowAlertpopup(false)}>No, Vendaam</button>
+                  <button className="next-button" onClick={() => {navigate("/login"); localStorage.removeItem('authToken'); setIsShowAlertpopup(false); }} >Seri Ok</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </>
