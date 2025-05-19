@@ -10,6 +10,7 @@ import configModule from '../../../config.js';
 import AddEditBranch from './addeditbranch.jsx';
 
 function Branches() {
+  const [branchDataList, setBranchDataList] = useState([]);
   const [needLoading, setNeedLoading] = useState(false);
   const [addEditModal, setAddEditModal] = useState(false);
   const [formData, setFormData] = useState({});
@@ -33,7 +34,6 @@ function Branches() {
 
   const getLocationDetails = async () => {
     setNeedLoading(true);
-    setLocation('');
     try {
       const response = await axios.get(`${config.apiBaseUrl}getLocationDetails`);
 
@@ -55,6 +55,7 @@ function Branches() {
   };
 
   useEffect(() => {
+    setLocation('');
     if (user) {
       getLocationDetails();
     }
@@ -132,8 +133,8 @@ function Branches() {
       return;
     }
 
-    setFormData({location : location , country: country?.target , state: state?.target, city: city?.target, type: type?.target , action: sAction });
-    
+    setFormData({ location: location, country: country?.target, state: state?.target, city: city?.target, type: type?.target, action: sAction });
+
     setShowModal(false);
     setAddEditModal(true);
   };
@@ -175,7 +176,62 @@ function Branches() {
         </div>
       </div>
       <div className='body-div-el'>
-
+        <div className='h-100 w-100 pt-4 p-2'>
+          <div className='table-common-st'>
+            <div className='tb-header-row-st display-flex'>
+              <div className='brcommon-col-st w-10'>
+                S no
+              </div>
+              <div className='brcommon-col-st w-15'>
+                Branch ID
+              </div>
+              <div className='brcommon-col-st w-15'>
+                Branch name
+              </div>
+              <div className='brcommon-col-st w-15'>
+                In-charge
+              </div>
+              <div className='brcommon-col-st w-15'>
+                Phone
+              </div>
+              <div className='brcommon-col-st w-20'>
+                Location
+              </div>
+              <div className='brcommon-col-st w-10'>
+                Action
+              </div>
+            </div>
+            {branchDataList && branchDataList.length > 0 ? (branchDataList.map((item) => (
+              <div key={item.branch_id} className='tb-body-row-st d-flex align-items-start'>
+                <div className='brcommon-col-st w-10'>
+                  S no
+                </div>
+                <div className='brcommon-col-st w-15'>
+                  Branch ID
+                </div>
+                <div className='brcommon-col-st w-15'>
+                  Branch name
+                </div>
+                <div className='brcommon-col-st w-15'>
+                  In-charge
+                </div>
+                <div className='brcommon-col-st w-15'>
+                  Phone
+                </div>
+                <div className='brcommon-col-st w-20'>
+                  Location
+                </div>
+                <div className='brcommon-col-st w-10'>
+                  Action
+                </div>
+              </div>
+            ))) : (
+              <div className='tb-body-row-st display-flex'>
+                No branch list
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {showModal && (
@@ -258,7 +314,7 @@ function Branches() {
 
             <div className="modal-footer">
               <button className="cancel-button" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="next-button" onClick={()=>AddEditBranchModal("Add")} >Next</button>
+              <button className="next-button" onClick={() => AddEditBranchModal("Add")} >Next</button>
             </div>
           </div>
         </div>

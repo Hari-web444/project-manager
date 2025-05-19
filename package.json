@@ -13,6 +13,7 @@
     "@fontsource/montserrat": "^5.2.5",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.5",
+    "bootstrap-select": "^1.13.18",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.10.0",
     "install": "^0.13.0",

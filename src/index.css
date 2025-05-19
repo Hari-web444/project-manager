@@ -68,5 +68,7 @@ button:focus-visible {
   border: 1px solid #f1f1f1; 
 }
 
-
-
+.form-control:disabled, input:disabled {
+  background-color: #F7FAF8 !important;
+  border: 1px solid #02401748 !important;
+}

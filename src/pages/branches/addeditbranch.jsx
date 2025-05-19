@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import CommonSelect from "../../components/common-select.jsx";
 import DatePicker from 'react-datepicker';
 import configModule from '../../../config.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import SingleSelect from '../../components/single-select.jsx';
+import axios from 'axios';
+import { PropagateLoader } from 'react-spinners';
 
 function AddEditBranch({ rowData, closeAddeditModal }) {
     const config = configModule.config();
+    const [branchHeadOpt, setBranchHeadOpt] = useState([]);
     const [formData, setFormData] = useState({
         branch_id: '',
         branch_name: '',
-        branchIncharge: '',
+        branch_in_charge: '',
         email: '',
-        openingDate: '',
+        opening_date: '',
         rent: '',
-        branchType: '',
-        phone: '',
+        branch_type: rowData?.type?.value || '',
+        phone_number: '',
         country: rowData?.country?.value || '',
         state: rowData?.state?.value || '',
         district: rowData?.city?.value || '',
         location: rowData?.location || '',
         address: '',
-        assignBrands: {
-            vaithyar: false,
-            gramiyam: false,
-        }
+        assignBrandasVaithyar: false,
+        assignBrandasGramiyam: false
     });
-
-    const branchInCharge = ["1 st branc", "2nd branch"];
+    const [needLoading, setNeedLoading] = useState(false);
 
     function getTwoLetterCode(str) {
         const words = str.trim().split(/\s+/);
@@ -37,21 +37,6 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
         } else {
             return (words[0][0] + words[1][0]).toUpperCase();
         }
-    };
-
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [id]: value,
-        }));
-    };
-
-    const handleDateChange = (date) => {
-        setFormData((prev) => ({
-            ...prev,
-            openingDate: formatDateTime(date),
-        }));
     };
 
     const formatDateTime = (date) => {
@@ -67,24 +52,31 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
-    const handleCheckboxChange = (e) => {
-        const { name, checked } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            assignBrands: {
-                ...prevData.assignBrands,
-                [name.replace('brand', '').toLowerCase()]: checked,
-            },
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [id]: value,
         }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(formData);
+    const handleDateChange = (date) => {
+        setFormData((prev) => ({
+            ...prev,
+            opening_date: formatDateTime(date),
+        }));
     };
 
-    const getNextNumber = (lastEmpId) => {
-        let numbers = lastEmpId || [];
+    const handleCheckboxChange = (e) => {
+        const { id, checked } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [id]: checked
+        }));
+    };
+
+    const getNextNumber = (lastBranchId) => {
+        let numbers = lastBranchId || [];
 
         const parsedNumbers = numbers.map(code => {
             const match = code.match(/^VPA(\d{3})/);
@@ -95,11 +87,10 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
         return (max + 1).toString().padStart(3, '0');
     };
 
-    const generateCode = (lastEmpId) => {
-        if (lastEmpId) {
+    const generateCode = (lastBranchId) => {
+        if (lastBranchId) {
             const prefix = "VPA" + getTwoLetterCode(rowData?.state.code) + getTwoLetterCode(rowData?.location);
-            const number = getNextNumber(lastEmpId);
-            setVpaCode(`${prefix}${number}`);
+            const number = getNextNumber(lastBranchId);
 
             setFormData((prev) => ({
                 ...prev,
@@ -109,23 +100,27 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
     };
 
     const getLastBranchId = async () => {
-        let lastEmpId = [];
+        let lastBranchId = [];
         try {
             const response = await fetch(`${config.apiBaseUrl}getLastBranchId`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ state: rowData?.state?.value || '', city: rowData?.location || '' })
+                body: JSON.stringify({ state: rowData?.state?.value || '', location: rowData?.location || '' })
             });
             const result = await response.json();
             if (response.ok) {
-                if (result.data.length === 0) {
-                    lastEmpId = result.data;
+                if (result.branchData.length === 0) {
+                    lastBranchId = result.branchData;
                 } else {
-                    lastEmpId = [result.data[0].emp_id];
+                    lastBranchId = [result.branchData[0].branch_id];
                 }
-                generateCode(lastEmpId);
+                generateCode(lastBranchId);
+
+                if (result.headData) {
+                    setBranchHeadOpt(result.headData);
+                }
             } else {
                 console.error("Failed to fetch branch last id: " + result.message);
                 toast.error("Failed to fetch branch last id: " + result.message);
@@ -142,16 +137,80 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
         }
     }, []);
 
+    const handleSelectClose = (selectedOption) => {
+        setFormData((prev) => ({
+            ...prev,
+            "branch_in_charge": selectedOption.value,
+        }));
+
+        setFormData((prev) => ({
+            ...prev,
+            "email": selectedOption.email,
+        }));
+
+        setFormData((prev) => ({
+            ...prev,
+            "phone_number": selectedOption.mobile_number,
+        }));
+    };
+
+    const validateForm = () => {
+        const requiredFieldsFilled = Object.entries(formData).every(([key, value]) => {
+            if (typeof value === 'boolean') return true;
+            return value !== '' && value !== null && value !== undefined;
+        });
+
+        const atLeastOneBrandAssigned = formData.assignBrandasVaithyar || formData.assignBrandasGramiyam;
+
+        return requiredFieldsFilled && atLeastOneBrandAssigned;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        setNeedLoading(true);
+        if (!validateForm()) {
+            toast.error("Please fill all fields and check all required checkboxes.");
+            setNeedLoading(false);
+            return;
+        }
+
+        try {
+            const response = await axios.post(`${config.apiBaseUrl}saveBranchDetails`, formData);
+            toast.success("Data inserted successfully.");
+
+            setTimeout(() => {
+                closeAddeditModal();
+            }, 3000);
+        } catch (err) {
+            toast.error(err.message);
+            console.error(err);
+        } finally {
+            setNeedLoading(false);
+        }
+    };
+
+
     return (
         <div className="modal-overlay">
+            {needLoading && (
+                <div className='loading-container w-100 h-100'>
+                    <PropagateLoader
+                        height="100"
+                        width="100"
+                        color="#0B9346"
+                        radius="10"
+                    />
+                </div>
+            )}
             <div className="modal-container modal-container-ev" style={{ maxHeight: "95%" }}>
                 <div className="modal-header mb-0 modal-header-aeb" >
                     <h5 className="mb-0 add-new-hdr ps-3">{rowData.action} new Branch</h5>
                 </div>
                 <div className="modal-body modal-body-aeb">
-                    <form className="branch-form" onSubmit={handleSubmit}>
+                    <form className="branch-form" >
                         <div className="form-grid">
-                            <div className="col-6 pe-2">
+                            <div className="col-12 col-xl-6 col-sm-12 col-lg-6 col-md-6 pe-2">
                                 <div className="form-group-pp mb-3">
                                     <label htmlFor="branch_id">Branch ID</label>
                                     <input
@@ -174,20 +233,12 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                                         className="form-control"
                                         value={formData.branch_name}
                                         onChange={handleChange}
-                                        required
                                     />
                                 </div>
 
                                 <div className="form-group-pp mb-3">
-                                    <label htmlFor="branchIncharge">Branch In-charge</label>
-                                    <CommonSelect
-                                        header="Select branch incharge"
-                                        id="branchIncharge"
-                                        name="branchIncharge"
-                                        value={formData.branchIncharge}
-                                        onChange={handleChange}
-                                        options={branchInCharge}
-                                    />
+                                    <label htmlFor="branch_name">Branch Name</label>
+                                    <SingleSelect options={branchHeadOpt} onClose={handleSelectClose} />
                                 </div>
 
                                 <div className="form-group-pp mb-3">
@@ -199,13 +250,14 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                                         className="form-control"
                                         value={formData.email}
                                         onChange={handleChange}
+                                        disabled
                                     />
                                 </div>
 
                                 <div className="form-group-pp mb-3">
-                                    <label htmlFor="openingDate">Opening Date</label>
+                                    <label htmlFor="opening_date">Opening Date</label>
                                     <DatePicker
-                                        selected={formData.openingDate}
+                                        selected={formData.opening_date}
                                         onChange={handleDateChange}
                                         placeholderText="dd/mm/yyyy"
                                         className="form-control"
@@ -231,23 +283,23 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                                         <div className="form-check">
                                             <input
                                                 type="checkbox"
-                                                id="brandVaithyar"
-                                                name="brandVaithyar"
+                                                id="assignBrandasVaithyar"
+                                                name="assignBrandasVaithyar"
                                                 className="form-check-input cursor-pointer"
-                                                checked={formData.assignBrands.vaithyar}
+                                                checked={formData.assignBrandasVaithyar}
                                                 onChange={handleCheckboxChange}
                                             />
-                                            <label className="form-check-label cursor-pointer" htmlFor="brandVaithyar">
+                                            <label className="form-check-label cursor-pointer" htmlFor="assignBrandasVaithyar">
                                                 Vaithyar poova
                                             </label>
                                         </div>
                                         <div className="form-check">
                                             <input
                                                 type="checkbox"
-                                                id="brandGramiyam"
-                                                name="brandGramiyam"
+                                                id="assignBrandasGramiyam"
+                                                name="assignBrandasramiyam"
                                                 className="form-check-input cursor-pointer"
-                                                checked={formData.assignBrands.gramiyam}
+                                                checked={formData.assignBrandasGramiyam}
                                                 onChange={handleCheckboxChange}
                                             />
                                             <label className="form-check-label cursor-pointer" htmlFor="brandGramiyam">
@@ -258,28 +310,31 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                                 </div>
                             </div>
 
-                            <div className="col-6 ps-2">
+                            <div className="col-12 col-xl-6 col-sm-12 col-lg-6 col-md-6 ps-2">
                                 <div className="form-group-pp mb-3">
-                                    <label htmlFor="branchType">Branch Type</label>
+                                    <label htmlFor="branch_type">Branch Type</label>
                                     <input
                                         type="text"
-                                        id="branchType"
-                                        name="branchType"
+                                        id="branch_type"
+                                        name="branch_type"
                                         className="form-control"
-                                        value={formData.branchType}
+                                        value={formData.branch_type}
                                         onChange={handleChange}
+                                        disabled
                                     />
                                 </div>
 
                                 <div className="form-group-pp mb-3">
-                                    <label htmlFor="phone">Phone Number</label>
+                                    <label htmlFor="phone_number">Phone Number</label>
                                     <input
                                         type="text"
-                                        id="phone"
-                                        name="phone"
+                                        id="phone_number"
+                                        name="phone_number"
                                         className="form-control"
-                                        value={formData.phone}
+                                        value={formData.phone_number}
                                         onChange={handleChange}
+                                        maxLength={10}
+                                        disabled
                                     />
                                 </div>
 
@@ -358,7 +413,7 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                     >
                         Cancel
                     </button>
-                    <button type="submit" className="next-button">Save</button>
+                    <button type="submit" className="next-button" onClick={handleSubmit}>Save</button>
                 </div>
             </div>
             <ToastContainer
@@ -384,6 +439,7 @@ AddEditBranch.propTypes = {
         country: PropTypes.string,
         state: PropTypes.string,
         location: PropTypes.string,
+        type: PropTypes.string,
     }).isRequired,
     closeAddeditModal: PropTypes.func.isRequired,
 };
