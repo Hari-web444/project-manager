@@ -5,20 +5,20 @@
  ----------------------------------------------------------------------------------------------------------------- */
 DELIMITER //
 
-DROP PROCEDURE IF EXISTS `SP_GetLastEmpID`;
+DROP PROCEDURE IF EXISTS `SP_GetLastBranchId`;
 
-CREATE PROCEDURE `SP_GetLastEmpID`(
-    IN userId INT(11),
-    IN sValue VARCHAR(100)
+CREATE PROCEDURE `SP_GetLastBranchId`(
+    IN sState   VARCHAR(100),
+    IN sLocation    VARCHAR(100)
 )
 BEGIN
 
     SELECT 
-        emp_id
+        branch_recid
     FROM
-        employees
+        branches
     WHERE
-        created_by = userId AND designation = sValue
+        state = sState AND location = sLocation
     ORDER BY created_at DESC
     LIMIT 1;
 
