@@ -14,7 +14,7 @@ CREATE PROCEDURE SP_AddProduct(
     IN p_quantity INT,
     IN p_min_stock_quantity INT,
     IN p_product_img VARCHAR(255),
-    IN p_stock_status ENUM('Available', 'Not Available'),
+    IN p_stock_status ENUM('Available', 'Not Available','Low Stock'),
     IN p_created_by VARCHAR(50) 
 )
 BEGIN

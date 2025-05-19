@@ -228,3 +228,25 @@ exports.DeleteProduct = (req, res) => {
     return res.status(200).json({ message: 'Product deleted successfully', result });
   });
 };
+
+
+
+exports.EditeProductinventry = (req, res) => {
+  const { product_recid } = req.params;
+  const { quantity, selling_price } = req.body;
+
+  if (!quantity || !selling_price) {
+    return res.status(400).json({ message: "Quantity and Selling Price are required" });
+  }
+
+  const sql = 'CALL SP_EditProductinventry(?, ?, ?)';
+  const values = [product_recid, quantity, selling_price];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Edit failed:', err);
+      return res.status(500).json({ message: 'Internal Server Error', error: err });
+    }
+    res.status(200).json({ success: true, message: 'Product updated successfully', result });
+  });
+};

@@ -13,9 +13,11 @@ CREATE TABLE `product` (
   `quantity` INT NOT NULL,
   `min_stock_quantity` INT NOT NULL,
   `product_img` VARCHAR(255) NOT NULL,
-  `stock_status` ENUM('Available', 'Not Available') NOT NULL DEFAULT 'Available',
+  `stock_status` ENUM('Available', 'Not Available','Low Stock') NOT NULL DEFAULT 'Available',
   `created_by` VARCHAR(50) NOT NULL,
+  `updated_quantity` INT DEFAUL 0,
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   `is_deleted` TINYINT(1) DEFAULT 0,
   PRIMARY KEY (`product_recid`),
   UNIQUE (`product_id`)
@@ -23,6 +25,7 @@ CREATE TABLE `product` (
 
 UPDATE product
 SET stock_status = CASE
-    WHEN min_stock_quantity > 5 THEN 'Available'
-    ELSE 'Not Available'
+    WHEN quantity >= min_stock_quantity THEN 'Available'
+    WHEN quantity > 0 AND quantity < min_stock_quantity THEN 'Low Stock'
+    WHEN quantity <= 0 THEN 'Not Available'
 END;

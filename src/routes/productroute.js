@@ -14,5 +14,6 @@ router.post('/getProduct', productcontroller.GetProduct);
 router.post('/getProductcount', productcontroller.GetProductCount);
 router.put('/editproduct/:product_recid',upload.single('image'), productcontroller.EditeProduct);
 router.delete('/product/:product_recid', productcontroller.DeleteProduct);
+router.put('/productinventry/:product_recid', productcontroller.EditeProductinventry);
 });
 module.exports = router;
