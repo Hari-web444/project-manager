@@ -20,21 +20,22 @@ async function setupS3Uploader() {
 
   uploadInstance = multer({
     storage: multerS3({
-      s3,
-      bucket: awsSecret.bucket,
-      metadata: (req, file, cb) => {
-        cb(null, { fieldName: file.fieldname });
-      },
-      key: (req, file, cb) => {
-        const rawFolder = req.body.folder || 'uploads';
-        const folder = rawFolder.replace(/[^a-zA-Z0-9-_]/g, ''); // sanitize
-        const timestamp = Date.now();
-        const fileName = file.originalname.replace(/\s+/g, '_');
-        const key = `${folder}/${timestamp}_${fileName}`;
-        cb(null, key);
-      },
-    }),
-
+  s3,
+  bucket: awsSecret.bucket,
+  contentDisposition: 'inline', // ✅ already added
+  contentType: multerS3.AUTO_CONTENT_TYPE, // ✅ add this line
+  metadata: (req, file, cb) => {
+    cb(null, { fieldName: file.fieldname });
+  },
+  key: (req, file, cb) => {
+    const rawFolder = req.body.folder || 'uploads';
+    const folder = rawFolder.replace(/[^a-zA-Z0-9-_]/g, '');
+    const timestamp = Date.now();
+    const fileName = file.originalname.replace(/\s+/g, '_');
+    const key = `${folder}/${timestamp}_${fileName}`;
+    cb(null, key);
+  },
+}),
     fileFilter: (req, file, cb) => {
       const allowedTypes = [
         // Images

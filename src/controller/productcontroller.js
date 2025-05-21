@@ -1,6 +1,8 @@
 const { getPool } = require('../database/db');
 const db = getPool();
 const { getAwsSecrets } = require("../utilities/vaultClient");
+const ExcelJS = require('exceljs');
+
 exports.GetAllProductTypes = async (req, res) => {
     try {
         const sql = 'CALL SP_GetAllProductTypes()'; 
@@ -163,7 +165,6 @@ exports.GetProduct = async (req, res) => {
   });
 };
 
-
 exports.GetProductCount = (req, res) => {
   const sql = 'CALL SP_GetProductBrandCounts()';
   db.query(sql, (error, results) => {
@@ -180,10 +181,7 @@ exports.GetProductCount = (req, res) => {
   });
 };
 
-
-
 exports.EditeProduct = (req, res) => {
-
   const { product_recid } = req.params;
   const { productId,productName, productBrand, productCategory, formFactor, ptype, package_quantity,  units,
           price,product_dsc, quantity,min_stock,
@@ -207,9 +205,6 @@ exports.EditeProduct = (req, res) => {
 };
 
 
-
-
-
 exports.DeleteProduct = (req, res) => {
   const { product_recid } = req.params;
 
@@ -230,7 +225,6 @@ exports.DeleteProduct = (req, res) => {
 };
 
 
-
 exports.EditeProductinventry = (req, res) => {
   const { product_recid } = req.params;
   const { quantity, selling_price } = req.body;
@@ -241,6 +235,97 @@ exports.EditeProductinventry = (req, res) => {
 
   const sql = 'CALL SP_EditProductinventry(?, ?, ?)';
   const values = [product_recid, quantity, selling_price];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Edit failed:', err);
+      return res.status(500).json({ message: 'Internal Server Error', error: err });
+    }
+    res.status(200).json({ success: true, message: 'Product updated successfully', result });
+  });
+};
+
+exports.Exportinventory = (req, res) => {
+  const { startDate, endDate } = req.body;
+  if (!startDate || !endDate) {
+    return res.status(400).json({ message: 'startDate and endDate are required' });
+  }
+  const input = JSON.stringify({ startDate, endDate });
+  const sql = 'CALL SP_Exportinventory(?)';
+  db.query(sql, [input], async (err, results) => {
+    if (err) {
+      console.error('DB error:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+    const inventory = results[0]; 
+    // Create Excel file
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Inventory');
+
+    worksheet.columns = [
+      { header: 'Product ID', key: 'product_id', width: 15 },
+      { header: 'Product Name', key: 'product_name', width: 30 },
+      { header: 'Brand', key: 'brand', width: 20 },
+      { header: 'Category', key: 'product_category', width: 20 },
+      { header: 'Selling Price', key: 'selling_price', width: 15 },
+      { header: 'Quantity', key: 'quantity', width: 10 },
+      { header: 'Status', key: 'stock_status', width: 15 },
+      { header: 'Created At', key: 'created_at', width: 20 }
+    ];
+
+    worksheet.addRows(inventory);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=inventory_export.xlsx');
+
+    await workbook.xlsx.write(res);
+    res.end();
+  });
+};
+
+exports.Addstocks = async (req, res) => {
+    try {
+      const { stock_product_id,stock_quantity,min_stock_qty } = req.body;
+      const stock_status = 'Available';
+      const values = [ stock_product_id,stock_quantity,min_stock_qty,stock_status];
+      const sql = `CALL SP_Addstocks(?, ?, ?, ?)`;
+
+      db.query(sql, values, (err, result) => {
+        if (err) {   
+          console.error('Error in adding Stock: ', err);
+          return res.status(500).json({ message: 'Error adding product', error: err });
+        }
+        return res.status(200).json({ message: 'Stock added successfully', data: result });
+      });
+    } catch (error) {
+      console.error('Error parsing formDataToSend:', error);
+      return res.status(400).json({ message: 'Invalid form data', error: error.message });
+    }
+};
+
+exports.Getstocks = (req, res) => {
+  const { brand } = req.body;
+  const sql = 'CALL SP_Getstocks(?)';
+  db.query(sql, [brand], (err, results) => {
+    if (err) {
+      console.error('Error fetching stock:', err);
+      return res.status(500).json({ message: 'Error fetching stock data', error: err });
+    }
+      const stockData = results[0];
+    return res.status(200).json(stockData);
+  });
+};
+
+exports.Editstockqty = (req, res) => {
+  const { stock_recid } = req.params;
+  const { stock_quantity } = req.body;
+
+  if (!stock_quantity ) {
+    return res.status(400).json({ message: "stock_quantity  are required" });
+  }
+
+  const sql = 'CALL SP_Editstockqty(?, ?)';
+  const values = [stock_recid, stock_quantity];
 
   db.query(sql, values, (err, result) => {
     if (err) {

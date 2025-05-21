@@ -22,7 +22,6 @@ exports.getDesignationList = async (req, res) => {
 
 exports.getLastEmpID = async (req, res) => {
     const { userId, value } = req.body;
-
     try {
         const sql = `CALL SP_GetLastEmpID(${userId}, '${value}')`;
 

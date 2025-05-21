@@ -23,9 +23,37 @@ CREATE TABLE `product` (
   UNIQUE (`product_id`)
 );
 
-UPDATE product
-SET stock_status = CASE
-    WHEN quantity >= min_stock_quantity THEN 'Available'
-    WHEN quantity > 0 AND quantity < min_stock_quantity THEN 'Low Stock'
-    WHEN quantity <= 0 THEN 'Not Available'
-END;
+DELIMITER //
+
+CREATE TRIGGER insert_stock_status
+BEFORE INSERT ON product
+FOR EACH ROW
+BEGIN
+  IF NEW.quantity >= NEW.min_stock_quantity THEN
+    SET NEW.stock_status = 'Available';
+  ELSEIF NEW.quantity > 0 AND NEW.quantity < NEW.min_stock_quantity THEN
+    SET NEW.stock_status = 'Low Stock';
+  ELSEIF NEW.quantity <= 0 THEN
+    SET NEW.stock_status = 'Not Available';
+  END IF;
+END//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE TRIGGER update_stock_status
+BEFORE UPDATE ON product
+FOR EACH ROW
+BEGIN
+  IF NEW.quantity >= NEW.min_stock_quantity THEN
+    SET NEW.stock_status = 'Available';
+  ELSEIF NEW.quantity > 0 AND NEW.quantity < NEW.min_stock_quantity THEN
+    SET NEW.stock_status = 'Low Stock';
+  ELSEIF NEW.quantity <= 0 THEN
+    SET NEW.stock_status = 'Not Available';
+  END IF;
+END//
+
+DELIMITER ;
