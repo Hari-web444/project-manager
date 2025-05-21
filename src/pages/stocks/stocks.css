@@ -1,0 +1,14 @@
+
+.stocks-add-btn{
+    background: linear-gradient(3deg, #0B622F, #18934B) !important;
+    border: #47815f solid 1px  ;
+    outline: none;
+    color: #ffffff;
+    border-radius: 6px;
+    padding: 8px 25px;
+    cursor: pointer;
+    box-shadow: 0px 3px 3px -2px gray;
+}
+.stocks-add-btn:hover {
+  box-shadow: none !important;
+}

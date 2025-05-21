@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SvgContent from './svgcontent';
+import PropTypes from "prop-types";
 
 const SingleSelect = ({ options = [], onClose }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -57,6 +58,11 @@ const SingleSelect = ({ options = [], onClose }) => {
             )}
         </div>
     );
+};
+
+SingleSelect.propTypes = {
+  options: PropTypes.array.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default SingleSelect;

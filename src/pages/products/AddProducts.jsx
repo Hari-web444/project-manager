@@ -213,7 +213,7 @@ useEffect(() => {
       min_stock: productData.min_stock_quantity,
       image: null 
     });
-    setPreviewUrl(productData.product_img); 
+    setPreviewUrl(productData.imageUrl); 
     setBrand(productData.brand);
     setCategory(productData.product_category );
     setUnits(productData.units);

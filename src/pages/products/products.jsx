@@ -306,7 +306,7 @@ function Products() {
                  <td className="product-cell-mr">
                   <div className="product-card">
                     <div className="product-status">
-                    <img src={item.product_img} alt='img' className="product-img" />
+                    <img src={item.imageUrl} alt='img' className="product-img" />
                     </div>
                     <div className="product-details">
                       <h6 className="product-name">{item.product_name}</h6>

@@ -227,7 +227,7 @@ function Branches() {
               </div>
             ))) : (
               <div className='tb-body-row-st display-flex'>
-                No branch list
+              No Inventory list
               </div>
             )}
           </div>

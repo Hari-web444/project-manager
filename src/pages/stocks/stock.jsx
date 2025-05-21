@@ -1,6 +1,5 @@
-import React,{useState,useEffect,useRef} from 'react';
+import {useState,useEffect,useRef} from 'react';
 import filtericon from '../../assets/images/filtericon.svg';
-import { useAuth } from '../../components/context/Authcontext.jsx'; 
 import configModule from '../../../config.js';
 import Pagination from "../../components/Pagination/index.jsx";
 import filterclear from '../../assets/images/filterclear.svg';
@@ -8,10 +7,10 @@ import updatetd from '../../assets/images/updatebtn.svg';
 import updateth from '../../assets/images/updateinventryth.svg';
 import { PropagateLoader } from 'react-spinners';
 import axios from 'axios';
-import './inventory.css';
-import UpdatePrice from './updateprice.jsx';
-import Export from './export.jsx';
-function Inventory() {
+import './stocks.css';
+import Updatestock from './updatestock.jsx';
+import Addstock from './addstock.jsx';
+function Stocks() {
   const config = configModule.config();
    const [needLoading, setNeedLoading] = useState(false);
   const [selected, setSelected] = useState('Vaithyar poova');
@@ -24,8 +23,6 @@ function Inventory() {
   const [stockFilter, setStockFilter] = useState(null);
   const [updatePrice, setUpdatePrice] = useState(false);
   const [exportin, setExportin] = useState(false);
-  const { user } = useAuth();
-  const user_typecode = user?.user_typecode;
   const dropdownRef = useRef(null);
     useEffect(() => {
       function handleClickOutside(event) {
@@ -45,7 +42,7 @@ function Inventory() {
     const fetchProducts = async () => {
       setNeedLoading(true);
     try {
-      const response = await axios.post(`${config.apiBaseUrl}getProduct`, {
+      const response = await axios.post(`${config.apiBaseUrl}gettocks`, {
         brand: selected, 
       });
       setProducts(response.data); 
@@ -111,7 +108,7 @@ function Inventory() {
       <div className='d-flex header-product-el '>
             <div className="col-lg-6 col-6 d-flex  align-items-center">
               <div className="header-product-pvt">
-                <h6 className="mt-0 mb-0 product-header-text">Inventory</h6>
+                <h6 className="mt-0 mb-0 product-header-text">Stock</h6>
                 <div className="checkbox-group-product mt-2 ">
                <label className="checkbox-item-product ">
                 <input
@@ -138,8 +135,7 @@ function Inventory() {
           </div>
               </div>
             </div>
-              <div className='col-lg-6  col-6 d-flex flex-wrap justify-content-end search-add-wrapper ' >
-                {(user_typecode === "AD" || user_typecode === "DIS") && (   
+              <div className='col-lg-6  col-6 d-flex flex-wrap justify-content-end search-add-wrapper ' >  
                 <div className="product-filter-dropdowns" ref={dropdownRef}>
                   <button className="product-filter-btns"  type="button" onClick={() => setIsOpen(!isOpen)} ><img src={filtericon} alt="img" /> Filter</button>
                   {isOpen && (
@@ -150,11 +146,8 @@ function Inventory() {
                       <li className={`product-dropdown-items ${stockFilter === "Not Available" ? "selected-li" : ""}`} > <button type="button" className="product-dropdown-button" onClick={() => handleStockFilter("Not Available")} >Not Available</button></li>             
                    </ul>
                   )}
-                </div> 
-                )}
-                {(user_typecode === "AD" ) && (      
-                 <div><button type='button' className='inventory-export-btn ' onClick={openexportmodel} >Export</button></div> 
-                 )}
+                </div>           
+                 <div><button type='button' className='stocks-add-btn' onClick={openexportmodel} >Add</button></div> 
               </div>
             </div>
             <div className='body-container-products'>
@@ -176,14 +169,14 @@ function Inventory() {
                   </thead>
                   <tbody>
                       {currentProducts && currentProducts.length > 0 ?(currentProducts.map((item, index) => (
-                     <tr className='tbody-row-inventry ' key={item.product_recid}>
-                      <td>{item.product_id}</td>
+                     <tr className='tbody-row-inventry ' key={item.stock_recid}>
+                      <td>{item.stock_product_id}</td>
                       <td>{item.product_name}</td>
                       <td>{item.product_category}</td>
                       <td>₹{item.selling_price}</td>
                       <td>{item.units}</td>
-                      <td>{item.min_stock_quantity}</td>
-                      <td>{item.quantity}</td>
+                      <td>{item.min_stock_qty}</td>
+                      <td>{item.stock_quantity}</td>
                       <td><span className={statusClassMap[item.stock_status] || ""}>{item.stock_status}</span> </td>
                       <td><button type='update' onClick={(e) => { openviewmodel(); setSelectedProduct(item); }}><img src={updatetd} alt="close" style={{cursor :"pointer"}}/></button></td>
                      </tr>
@@ -230,14 +223,14 @@ function Inventory() {
            </div>
       </div>
            {updatePrice && (
-                   <UpdatePrice onClose={closviewemodel}  getproduct={fetchProducts}  products={selectedProduct}/> )
+                   <Updatestock onClose={closviewemodel}  getstocks={fetchProducts}  stocks={selectedProduct}/> )
             }
          {exportin && (
-                   <Export onClose={closexportmodel} /> )
+                   <Addstock onClose={closexportmodel} /> )
             }
     </div>
     );
   }
   
-  export default Inventory;
+  export default Stocks;
   

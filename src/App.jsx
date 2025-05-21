@@ -27,6 +27,7 @@ import EmployeeAssign from './pages/employee/employee-assign.jsx';
 import EmployeeAttendance from './pages/employee/employee-attendance.jsx';
 import EmployeeLeavePermission from './pages/employee/employee-leavepermission.jsx';
 import AddProducts from './pages/products/AddProducts.jsx';
+import Stocks from './pages/stocks/stock.jsx';
 
 function App() {
   const location = useLocation();
@@ -146,7 +147,8 @@ useEffect(() => {
               <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
               <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
-              <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
+              <Route path="/orders" element={<PrivateRoute><Stocks /></PrivateRoute>} />
+               {/* <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} /> */}
               <Route path="/clients" element={<PrivateRoute><Clients /></PrivateRoute>} />
               <Route path="/tracking" element={<PrivateRoute><Tracking /></PrivateRoute>} />
               <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>}/>

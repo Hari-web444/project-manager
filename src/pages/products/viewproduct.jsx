@@ -15,7 +15,7 @@ function Viewproduct({onClose,products}) {
             <div className='d-flex'>
             <div className='col-6 '>
                 <div style={{height: '100%'}}>
-                    <img src={products?.product_img} alt="product"  className='product-modal-view-img' />
+                    <img src={products?.imageUrl} alt="product"  className='product-modal-view-img' />
                 </div>
             </div>
             <div className='col-6 '>
