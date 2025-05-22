@@ -17,6 +17,7 @@ button {
     border: none;
     background: transparent;
     padding: 0px;
+    color: #121212;
 }
 
 .text-center {
@@ -130,8 +131,8 @@ textarea {
 .row-per-page-select {
     padding: 4px 24px 4px 8px;
     border-radius: 5px;
-    color: #121212;
-    border: solid 1.5px #0B622F;
+    color: #0B622F;
+    border: solid 1px #0B622F;
     outline: none;
     cursor: pointer;
     width: 60px;
@@ -213,6 +214,8 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
      appearance: textfield;
+     background: white;
+     color: #121212;
 }
 
 .fw-500 {
@@ -244,9 +247,19 @@ input[type="number"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 99999;
+    z-index: 9999;
 }
 
 .modal-overlay-position {
     position: absolute !important;
+}
+
+.form-check-input:checked {
+    background-color: #10773b !important;
+    border-color: #10773b !important;
+}
+
+.form-check-input:focus {
+    border-color: none !important;
+    box-shadow: none !important;
 }

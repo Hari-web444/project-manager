@@ -8,27 +8,29 @@ import SingleSelect from '../../components/single-select.jsx';
 import axios from 'axios';
 import { PropagateLoader } from 'react-spinners';
 
-function AddEditBranch({ rowData, closeAddeditModal }) {
+function AddEditBranch({ rowData, selectedItem, closeAddeditModal }) {
     const config = configModule.config();
     const [branchHeadOpt, setBranchHeadOpt] = useState([]);
     const [formData, setFormData] = useState({
-        branch_id: '',
-        branch_name: '',
-        branch_in_charge: '',
-        email: '',
-        opening_date: '',
-        rent: '',
-        branch_type: rowData?.type?.value || '',
-        phone_number: '',
-        country: rowData?.country?.value || '',
-        state: rowData?.state?.value || '',
-        district: rowData?.city?.value || '',
-        location: rowData?.location || '',
-        address: '',
-        assignBrandasVaithyar: false,
-        assignBrandasGramiyam: false
+        branch_id: selectedItem?.branch_id || '',
+        branch_name: selectedItem?.branch_name || '',
+        branch_incharge_recid: selectedItem?.branch_incharge_recid || '',
+        branch_in_charge: selectedItem?.branch_in_charge || '',
+        email: selectedItem?.email || '',
+        opening_date: selectedItem?.opening_date || '',
+        rent: selectedItem?.rent || '',
+        branch_type: selectedItem ? selectedItem.branch_type : (rowData?.type?.value || ''),
+        phone_number: selectedItem?.phone_number || '',
+        country: selectedItem ? selectedItem.country : (rowData?.country?.value || ''),
+        state: selectedItem ? selectedItem.state : (rowData?.state?.value || ''),
+        district: selectedItem ? selectedItem.district : (rowData?.city?.value || ''),
+        location: selectedItem ? selectedItem.location : (rowData?.location || ''),
+        address: selectedItem?.address || '',
+        assign_brand_vaithyar: selectedItem?.assign_brand_vaithyar || false,
+        assign_brand_gramiyam: selectedItem?.assign_brand_gramiyam || false
     });
     const [needLoading, setNeedLoading] = useState(false);
+    const [btnIsDisabled, setBtnIsDisabled] = useState(false);
 
     function getTwoLetterCode(str) {
         const words = str.trim().split(/\s+/);
@@ -79,8 +81,8 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
         let numbers = lastBranchId || [];
 
         const parsedNumbers = numbers.map(code => {
-            const match = code.match(/^VPA(\d{3})/);
-            return match ? parseInt(match[1], 10) : 0;
+            const match = code.match(/^([A-Z]+)(\d{3})$/);
+            return match ? parseInt(match[2], 10) : 0;
         });
 
         const max = parsedNumbers.length > 0 ? Math.max(...parsedNumbers) : 0;
@@ -117,9 +119,31 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                     lastBranchId = [result.branchData[0].branch_id];
                 }
                 generateCode(lastBranchId);
+            } else {
+                console.error("Failed to fetch branch last id: " + result.message);
+                toast.error("Failed to fetch branch last id: " + result.message);
+            }
+        } catch (error) {
+            console.error("Error fetching branch last id: " + error.message);
+            toast.error("Error fetching branch last id: " + error.message);
+        }
+    };
 
+    const getBranchHeadList = async () => {
+        try {
+            const response = await fetch(`${config.apiBaseUrl}getBranchHeadList`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            });
+            const result = await response.json();
+            if (response.ok) {
                 if (result.headData) {
                     setBranchHeadOpt(result.headData);
+                } else {
+                    toast.info("No data found");
+                    setBranchHeadOpt([]);
                 }
             } else {
                 console.error("Failed to fetch branch last id: " + result.message);
@@ -135,6 +159,7 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
         if (rowData.action === "Add") {
             getLastBranchId();
         }
+        getBranchHeadList();
     }, []);
 
     const handleSelectClose = (selectedOption) => {
@@ -152,6 +177,11 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
             ...prev,
             "phone_number": selectedOption.mobile_number,
         }));
+
+        setFormData((prev) => ({
+            ...prev,
+            "branch_incharge_recid": selectedOption.id,
+        }));
     };
 
     const validateForm = () => {
@@ -160,28 +190,95 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
             return value !== '' && value !== null && value !== undefined;
         });
 
-        const atLeastOneBrandAssigned = formData.assignBrandasVaithyar || formData.assignBrandasGramiyam;
+        const atLeastOneBrandAssigned = formData.assign_brand_vaithyar || formData.assign_brand_gramiyam;
 
         return requiredFieldsFilled && atLeastOneBrandAssigned;
+    };
+
+    const getChangedFields = () => {
+        return Object.entries(formData)
+            .filter(([key, newValue]) => {
+                if (newValue === null) return false;
+
+                let oldValue = selectedItem[key];
+
+                if (newValue instanceof Date && oldValue) {
+                    return new Date(oldValue).getTime() !== newValue.getTime();
+                }
+
+                if (
+                    typeof newValue === "number" ||
+                    (!isNaN(newValue) && newValue !== "")
+                ) {
+                    return Number(oldValue) !== Number(newValue);
+                }
+
+                if (
+                    (newValue === '' || newValue === undefined) &&
+                    (oldValue === '' || oldValue === null || oldValue === undefined)
+                ) {
+                    return false;
+                }
+
+                return newValue !== oldValue;
+            })
+            .map(([key, newValue]) => ({
+                key,
+                newValue,
+                branch_id: selectedItem.branch_id,
+            }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         setNeedLoading(true);
+
         if (!validateForm()) {
             toast.error("Please fill all fields and check all required checkboxes.");
             setNeedLoading(false);
             return;
         }
 
-        try {
-            const response = await axios.post(`${config.apiBaseUrl}saveBranchDetails`, formData);
-            toast.success("Data inserted successfully.");
+        let payload;
+        let api = '';
 
-            setTimeout(() => {
-                closeAddeditModal();
-            }, 3000);
+        if (rowData.action === "Edit") {
+            const changedFields = getChangedFields();
+
+            if (changedFields.length === 0) {
+                toast.info("No changes to update.");
+                setNeedLoading(false);
+                return;
+            }
+
+            payload = {
+                branch_id: selectedItem.branch_id,
+                updates: changedFields
+            };
+
+            api = "updateBranchDetails";
+        } else {
+            payload = {
+                formData: formData
+            };
+            api = "saveBranchDetails";
+        }
+
+        try {
+            const response = await axios.post(`${config.apiBaseUrl}${api}`, payload);
+
+            if (response.data) {
+                toast.success("Data inserted successfully.");
+                setBtnIsDisabled(true);
+
+                setTimeout(() => {
+                    closeAddeditModal();
+                    setBtnIsDisabled(false);
+                }, 3000);
+            } else {
+                toast.info("No data found");
+            }
         } catch (err) {
             toast.error(err.message);
             console.error(err);
@@ -237,8 +334,8 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                                 </div>
 
                                 <div className="form-group-pp mb-3">
-                                    <label htmlFor="branch_name">Branch Name</label>
-                                    <SingleSelect options={branchHeadOpt} onClose={handleSelectClose} />
+                                    <label htmlFor="branch_name">Branch In-Charge</label>
+                                    <SingleSelect options={branchHeadOpt} onClose={handleSelectClose} defaultValue={formData.branch_in_charge ? { label: formData.branch_in_charge, value: formData.branch_in_charge } : ''} />
                                 </div>
 
                                 <div className="form-group-pp mb-3">
@@ -283,23 +380,23 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                                         <div className="form-check">
                                             <input
                                                 type="checkbox"
-                                                id="assignBrandasVaithyar"
-                                                name="assignBrandasVaithyar"
+                                                id="assign_brand_vaithyar"
+                                                name="assign_brand_vaithyar"
                                                 className="form-check-input cursor-pointer"
-                                                checked={formData.assignBrandasVaithyar}
+                                                checked={formData.assign_brand_vaithyar}
                                                 onChange={handleCheckboxChange}
                                             />
-                                            <label className="form-check-label cursor-pointer" htmlFor="assignBrandasVaithyar">
+                                            <label className="form-check-label cursor-pointer" htmlFor="assign_brand_vaithyar">
                                                 Vaithyar poova
                                             </label>
                                         </div>
                                         <div className="form-check">
                                             <input
                                                 type="checkbox"
-                                                id="assignBrandasGramiyam"
+                                                id="assign_brand_gramiyam"
                                                 name="assignBrandasramiyam"
                                                 className="form-check-input cursor-pointer"
-                                                checked={formData.assignBrandasGramiyam}
+                                                checked={formData.assign_brand_gramiyam || ''}
                                                 onChange={handleCheckboxChange}
                                             />
                                             <label className="form-check-label cursor-pointer" htmlFor="brandGramiyam">
@@ -413,7 +510,7 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
                     >
                         Cancel
                     </button>
-                    <button type="submit" className="next-button" onClick={handleSubmit}>Save</button>
+                    <button type="submit" className="next-button" onClick={handleSubmit} disabled={btnIsDisabled}>Save</button>
                 </div>
             </div>
             <ToastContainer
@@ -433,15 +530,26 @@ function AddEditBranch({ rowData, closeAddeditModal }) {
 }
 
 AddEditBranch.propTypes = {
-    rowData: PropTypes.shape({
-        action: PropTypes.string.isRequired,
-        city: PropTypes.string,
+    selectedItem: PropTypes.shape({
+        branch_id: PropTypes.string,
+        branch_name: PropTypes.string,
+        branch_incharge_recid: PropTypes.string,
+        branch_in_charge: PropTypes.string,
+        email: PropTypes.string,
+        opening_date: PropTypes.string,
+        rent: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        branch_type: PropTypes.string,
+        phone_number: PropTypes.string,
         country: PropTypes.string,
         state: PropTypes.string,
+        district: PropTypes.string,
         location: PropTypes.string,
-        type: PropTypes.string,
-    }).isRequired,
-    closeAddeditModal: PropTypes.func.isRequired,
+        address: PropTypes.string,
+        assign_brand_vaithyar: PropTypes.bool,
+        assign_brand_gramiyam: PropTypes.bool
+    }),
+    rowData: PropTypes.object,
+    closeAddeditModal: PropTypes.func.isRequired
 };
 
 export default AddEditBranch;

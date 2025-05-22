@@ -165,7 +165,6 @@ function AddEmployee() {
     const getChangedFields = () => {
         return Object.entries(formData)
             .filter(([key, newValue]) => {
-                // Ignore null values
                 if (newValue === null) return false;
     
                 let oldValue = objEditsItem[key];
