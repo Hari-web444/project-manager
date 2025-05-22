@@ -286,6 +286,7 @@ function Products() {
            <table className="table table-bordered">
              <thead className="table-th">
                <tr className=' table-th-row'>
+                <th>S.No</th>
                 <th>ProductID</th>
                 <th>Product</th>
                 <th>Quantity</th>
@@ -302,6 +303,7 @@ function Products() {
                   openviewmodel();
                   setSelectedProduct(item);
                  }}>
+                 <td>{indexOfFirstProduct + index + 1}</td> 
                  <td>{item.product_id}</td>
                  <td className="product-cell-mr">
                   <div className="product-card">
