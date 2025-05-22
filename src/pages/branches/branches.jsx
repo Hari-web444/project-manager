@@ -10,6 +10,7 @@ import configModule from '../../../config.js';
 import AddEditBranch from './addeditbranch.jsx';
 import Pagination from "../../components/Pagination/index.jsx";
 import SvgContent from '../../components/svgcontent.jsx';
+import { useNavigate } from 'react-router-dom';
 
 function Branches() {
   const [branchDataList, setBranchDataList] = useState([]);
@@ -37,6 +38,7 @@ function Branches() {
   const menuRef = useRef();
   const [selectedBranch, setSelectedBranch] = useState(null);
   const [delConfirmPopup, setDelConfirmPopup] = useState(false);
+  const navigate = useNavigate();
 
   const TypeOptions = [
     { label: "Office", value: "Office" },
@@ -259,7 +261,7 @@ function Branches() {
       )}
       <div className='header-div-el'>
         <div className='header-divpart-el'>
-          <p className='mb-0 header-titlecount-el'>Total Branch : 0</p>
+          <p className='mb-0 header-titlecount-el'>Total Branch : {currentBranches.length || 0}</p>
           <div className="d-flex align-items-center">
             <button>
               <p className='mb-0 nav-btn-top'>
@@ -342,7 +344,7 @@ function Branches() {
                           className="cursor-pointer"
                         >
                           <button
-                            className='px-4 py-2 default-bg w-100'
+                            className=' default-bg w-100'
                             style={{ borderRadius: "10px 10px 0px 0px" }}
                             onClick={() => AddEditBranchModal("Edit", item)}
                           >
@@ -353,9 +355,10 @@ function Branches() {
                           className="cursor-pointer"
                         >
                           <button
-                            className='px-4 py-2 default-bg w-100'
+                            className=' default-bg w-100'
                             onClick={() => {
                               setOpen(false);
+                              navigate("/branches/view", { state : { item }});
                             }}
                           >
                             View
@@ -365,7 +368,7 @@ function Branches() {
                           className="cursor-pointer"
                         >
                           <button
-                            className='px-4 py-2 danger-bg w-100'
+                            className=' danger-bg w-100'
                             onClick={() => confirmDeleteFunc(item)}
                           >
                             Delete

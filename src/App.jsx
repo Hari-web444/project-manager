@@ -21,6 +21,7 @@ import Accounts from './pages/accounts/accounts.jsx';
 import Inventory from './pages/inventory/inventory.jsx';
 import Orders from './pages/orders/orders.jsx';
 import Branches from './pages/branches/branches.jsx';
+import ViewBranch from './pages/branches/viewbranch.jsx';
 import EmployeeList from './pages/employee/employee-list.jsx';
 import AddEmployee from './pages/employee/addemployee-list.jsx';
 import EmployeeAssign from './pages/employee/employee-assign.jsx';
@@ -52,6 +53,7 @@ function App() {
     '/inventory': 'Inventory',
     '/accounts': 'Accounts',
     '/branches': 'Branches',
+    '/branches/view': 'Branches',
     '/employee/list': 'Employee List',
     '/employee/list/add-edit': 'Employee Add/Edit List',
     '/employee/assign': 'Employee Assign',
@@ -147,6 +149,7 @@ useEffect(() => {
               <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} />
               <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
               <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
+              <Route path="/branches/view" element={<PrivateRoute><ViewBranch /></PrivateRoute>} />
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
               <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
               <Route path="/orders" element={<PrivateRoute><Stocks /></PrivateRoute>} />
