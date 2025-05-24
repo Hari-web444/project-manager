@@ -4,6 +4,7 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { format } from 'date-fns';
 import { FiCalendar } from 'react-icons/fi';
+import PropTypes from 'prop-types';
 
 function CustomDateRangePicker({ onDateChange }) {
     const [showPicker, setShowPicker] = useState(false);
@@ -90,5 +91,9 @@ function CustomDateRangePicker({ onDateChange }) {
         </div>
     );
 }
+
+CustomDateRangePicker.propTypes = {
+    onDateChange: PropTypes.func.isRequired, // or PropTypes.func if not required
+};
 
 export default CustomDateRangePicker;

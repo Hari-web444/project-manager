@@ -165,7 +165,7 @@ function Stocks() {
                       <th>MinQty</th>
                       <th>InStock</th>
                       <th>Status</th>
-                      <th><img src={updateth} alt="close" /></th>
+                      <th>Upgrade</th>
                     </tr>
                   </thead>
                   <tbody>

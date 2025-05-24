@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CustomDateRangePicker from '../../components/date-range.jsx';
-import PropagateLoader from 'react-spinners/PropagateLoader'; // Make sure you imported this
 
 function ViewBranch() {
-    const [needLoading, setNeedLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const selectedData = location.state?.item;
@@ -24,17 +22,6 @@ function ViewBranch() {
 
     return (
         <div className='common-body-st'>
-            {needLoading && (
-                <div className='loading-container w-100 h-100'>
-                    <PropagateLoader
-                        height={100}
-                        width={100}
-                        color="#0B9346"
-                        radius={10}
-                    />
-                </div>
-            )}
-
             <div className='header-div-el'>
                 <div className='header-divpart-el'>
                     <p className='mb-0 header-titlecount-el'>Total Branch : 0</p>

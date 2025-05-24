@@ -29,7 +29,7 @@ function AddEditBranch({ rowData, selectedItem, closeAddeditModal }) {
         assign_brand_vaithyar: selectedItem?.assign_brand_vaithyar || false,
         assign_brand_gramiyam: selectedItem?.assign_brand_gramiyam || false
     });
-    const [needLoading, setNeedLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [btnIsDisabled, setBtnIsDisabled] = useState(false);
 
     function getTwoLetterCode(str) {
@@ -232,11 +232,11 @@ function AddEditBranch({ rowData, selectedItem, closeAddeditModal }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setNeedLoading(true);
+        setLoading(true);
 
         if (!validateForm()) {
             toast.error("Please fill all fields and check all required checkboxes.");
-            setNeedLoading(false);
+            setLoading(false);
             return;
         }
 
@@ -248,7 +248,7 @@ function AddEditBranch({ rowData, selectedItem, closeAddeditModal }) {
 
             if (changedFields.length === 0) {
                 toast.info("No changes to update.");
-                setNeedLoading(false);
+                setLoading(false);
                 return;
             }
 
@@ -283,14 +283,14 @@ function AddEditBranch({ rowData, selectedItem, closeAddeditModal }) {
             toast.error(err.message);
             console.error(err);
         } finally {
-            setNeedLoading(false);
+            setLoading(false);
         }
     };
 
 
     return (
         <div className="modal-overlay">
-            {needLoading && (
+            {loading && (
                 <div className='loading-container w-100 h-100'>
                     <PropagateLoader
                         height="100"

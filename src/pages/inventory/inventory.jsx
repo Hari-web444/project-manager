@@ -5,7 +5,6 @@ import configModule from '../../../config.js';
 import Pagination from "../../components/Pagination/index.jsx";
 import filterclear from '../../assets/images/filterclear.svg';
 import updatetd from '../../assets/images/updatebtn.svg';
-import updateth from '../../assets/images/updateinventryth.svg';
 import { PropagateLoader } from 'react-spinners';
 import axios from 'axios';
 import './inventory.css';
@@ -163,6 +162,7 @@ function Inventory() {
                <table className="table table-bordered">
                   <thead className="table-th">
                     <tr className="table-th-row">
+                      <th>S.No</th>
                       <th>ID</th>
                       <th>Product</th>
                       <th>Category</th>
@@ -171,12 +171,13 @@ function Inventory() {
                       <th>MinQty</th>
                       <th>InStock</th>
                       <th>Status</th>
-                      <th><img src={updateth} alt="close" /></th>
+                      <th>Upgrade</th>
                     </tr>
                   </thead>
                   <tbody>
                       {currentProducts && currentProducts.length > 0 ?(currentProducts.map((item, index) => (
                      <tr className='tbody-row-inventry ' key={item.product_recid}>
+                       <td>{startIndex + index +1}</td>
                       <td>{item.product_id}</td>
                       <td>{item.product_name}</td>
                       <td>{item.product_category}</td>

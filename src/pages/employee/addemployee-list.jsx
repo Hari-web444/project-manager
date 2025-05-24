@@ -15,7 +15,6 @@ function AddEmployee() {
     const [vpaCode, setVpaCode] = useState("XXXXXX");
     const [needLoading, setNeedLoading] = useState(false);
     const navigate = useNavigate();
-    const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const location = useLocation();
     const desCode = location.state?.role?.target?.code;
@@ -35,6 +34,8 @@ function AddEmployee() {
         salary: '',
         incentive_percentage: '',
         address: '',
+        image_url: null,
+        folder: "employees"
     });
 
     const formatDateTime = (date) => {
@@ -53,7 +54,7 @@ function AddEmployee() {
     useEffect(() => {
         if (actionType === "Edit" && objEditsItem) {
             setFormData({
-                emp_id: objEditsItem.emp_id || 'VPA001', 
+                emp_id: objEditsItem.emp_id || 'VPA001',
                 emp_name: objEditsItem.emp_name || '',
                 designation: objEditsItem.designation || '',
                 email: objEditsItem.email || '',
@@ -64,6 +65,7 @@ function AddEmployee() {
                 salary: objEditsItem.salary || '',
                 incentive_percentage: objEditsItem.incentive_percentage || '',
                 address: objEditsItem.address || '',
+                image_url: objEditsItem.image_url || '',
             });
             setPreviewUrl(objEditsItem.image_url || '');
         }
@@ -159,6 +161,8 @@ function AddEmployee() {
             salary: '',
             incentive_percentage: '',
             address: '',
+            image_url: null,
+            folder: "employees"
         });
     };
 
@@ -166,27 +170,27 @@ function AddEmployee() {
         return Object.entries(formData)
             .filter(([key, newValue]) => {
                 if (newValue === null) return false;
-    
+
                 let oldValue = objEditsItem[key];
-    
+
                 if (newValue instanceof Date && oldValue) {
                     return new Date(oldValue).getTime() !== newValue.getTime();
                 }
-    
+
                 if (
                     typeof newValue === "number" ||
                     (!isNaN(newValue) && newValue !== "")
                 ) {
                     return Number(oldValue) !== Number(newValue);
                 }
-    
+
                 if (
                     (newValue === '' || newValue === undefined) &&
                     (oldValue === '' || oldValue === null || oldValue === undefined)
                 ) {
                     return false;
                 }
-    
+
                 return newValue !== oldValue;
             })
             .map(([key, newValue]) => ({
@@ -194,7 +198,7 @@ function AddEmployee() {
                 newValue,
                 emp_recid: objEditsItem.emp_recid,
             }));
-    };    
+    };
 
 
     const handleSubmit = async (e) => {
@@ -210,13 +214,16 @@ function AddEmployee() {
             !formData.date_of_joining ||
             !formData.salary?.trim() ||
             !formData.incentive_percentage?.trim() ||
-            !formData.address?.trim()
+            !formData.address?.trim() ||
+            !formData.image_url
         ) {
+            setNeedLoading(false);
             return toast.error("Required all fields.");
         }
 
+        const formDataToSend = new FormData();
+
         try {
-            let payload;
             let api = '';
 
             if (actionType === "Edit") {
@@ -228,26 +235,26 @@ function AddEmployee() {
                     return;
                 }
 
-                payload = {
-                    userId: userId,
-                    emp_recid: objEditsItem.emp_recid,
-                    updates: changedFields
-                };
+                formDataToSend.append("userId", userId);
+                formDataToSend.append("emp_recid", objEditsItem.emp_recid);
+                formDataToSend.append("updates", JSON.stringify(changedFields));
+                
+
                 api = "updateEmpDetails";
             } else {
-                payload = {
-                    formData: formData,
-                    userId: userId
-                };
+
+                formDataToSend.append("userId", userId);
+
+                for (const key in formData) {
+                    formDataToSend.append(key, formData[key]);
+                }
+
                 api = "saveEmpDetails";
             }
 
             const response = await fetch(`${config.apiBaseUrl}${api}`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
+                body: formDataToSend
             });
 
             const result = await response.json();
@@ -276,20 +283,21 @@ function AddEmployee() {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-            setImage(file);
+            setFormData(prevState => ({
+                ...prevState,
+                image_url: file
+            }));
             setPreviewUrl(URL.createObjectURL(file));
         } else {
             toast.error('Please upload a valid JPEG or PNG image.');
         }
     };
 
-  /*   const handleUpload = () => {
-        if (!image) return toast.error('Please upload an image first.');
-        console.log('Uploading image:', image);
-    }; */
-
     const handleRemoveImage = () => {
-        setImage(null);
+        setFormData(prevState => ({
+            ...prevState,
+            image_url: null
+        }));
         setPreviewUrl(null);
     };
 
@@ -309,7 +317,7 @@ function AddEmployee() {
                                 Add new
                             </p> : <p className='mb-0 nav-btn-top'>
                                 Edit
-                            </p> }
+                            </p>}
                         </button>
                     </div>
                 </div>
@@ -405,6 +413,7 @@ function AddEmployee() {
                                         placeholder="Enter mobile_number number"
                                         value={formData.mobile_number || ''}
                                         onChange={handleChange}
+                                        maxLength={10}
                                         required
                                     />
                                 </div>
@@ -434,7 +443,7 @@ function AddEmployee() {
                             </div>
                             <div className='display-flex mb-3 w-100 gap-3'>
                                 <div style={{ width: "calc(100% - 12px)" }}>
-                                    <label htmlFor='Salery' className="form-label">Salary</label>
+                                    <label htmlFor='Salary' className="form-label">Salary</label>
                                     <input
                                         type="number"
                                         name="salary"
@@ -486,14 +495,14 @@ function AddEmployee() {
 
                 {needLoading && (
                     <div className='loading-container w-100 h-100'>
-                        <PropagateLoader
-                            visible={true}
-                            height="100"
-                            width="100"
-                            color="#0B9346"
-                            radius="10"
-                        />
-                    </div>
+                    <PropagateLoader
+                        visible="true"
+                        height="100"
+                        width="100"
+                        color="#0B9346"
+                        radius="10"
+                    />
+                </div>
                 )}
             </div>
 

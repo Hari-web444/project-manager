@@ -19,7 +19,6 @@ import Tracking from './pages/tracking/tracking.jsx';
 import UserProfile from './pages/userprofile/user-profile.jsx';
 import Accounts from './pages/accounts/accounts.jsx';
 import Inventory from './pages/inventory/inventory.jsx';
-import Orders from './pages/orders/orders.jsx';
 import Branches from './pages/branches/branches.jsx';
 import ViewBranch from './pages/branches/viewbranch.jsx';
 import EmployeeList from './pages/employee/employee-list.jsx';
@@ -75,7 +74,8 @@ function App() {
 
       const result = await response.json();
       if (response.ok) {
-        const sidebarMenu = formatSidebarMenu(result.mainList, result.subList);
+        const sidebarMenu = formatSidebarMenu(result.data.mainList, result.data.subList);
+        localStorage.setItem("authPermissions", result.token);
         setMenuItems(sidebarMenu);
       } else {
         console.error("Server error:" + result.message);

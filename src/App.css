@@ -148,7 +148,6 @@ textarea {
 
 
 .table {
-    font-size: 16px;
     border: none !important;
     border-collapse: collapse;
     background-color: transparent;
@@ -166,8 +165,6 @@ td {
     vertical-align: middle;
     white-space: nowrap;
     color: #303030 !important;
-    font-size: 14px;
-    font-weight: 500;
     padding: 8px 15px ;
 }
 .table-th-row{
@@ -177,7 +174,6 @@ background: linear-gradient(3deg, #0B622F, #18934B) !important;
      background: transparent !important;
     color: #ffffff !important;
     height: 50px !important;
-    font-size: 16px;
     font-weight: 500;   
     text-align: center;
 }

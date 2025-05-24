@@ -40,10 +40,11 @@ const LoginPage = () => {
 
             const result = await response.json();
 
-            if (response.ok && result.data ) {
+            if (response.ok ) {
                 toast.success(result.message);
-                login(result.token)
+                login(result.token);
                 localStorage.setItem("authToken", result.token);
+                localStorage.setItem("authPermissions", result.pmsToken);
                 setTimeout(() => {
                     navigate('/dashboard');
                     setUsername('');

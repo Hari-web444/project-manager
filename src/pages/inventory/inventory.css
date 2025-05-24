@@ -34,18 +34,15 @@
 }
 .inventry-view-header{
   color: #121212; 
-  font-size: 16px;
   font-weight: 500;
 }
 .inventry-body-header-txt{
     color: #121212; 
-  font-size: 14px;
   font-weight: 500;
    margin-bottom: 0px;
 }
 .inventry-body-p-txt{
     color: #404040; 
-  font-size: 14px;
   font-weight: 500; 
    white-space: nowrap;
   overflow: hidden;
@@ -86,7 +83,7 @@
   cursor: pointer;
 }
 .hr-iventory{
-    border-bottom: #0B622F solid 1px;
+    border-bottom: #0B622F solid 0.5px;
     width: 80%;
 }
 
@@ -110,7 +107,6 @@
   font-weight: 500;
   width: 100%;
   outline: none;
-  font-size: 15px;
   color: #121212;
   font-family: "Plus Jakarta Sans", sans-serif;
   display: flex;
