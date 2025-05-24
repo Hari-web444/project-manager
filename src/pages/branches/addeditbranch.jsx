@@ -11,24 +11,28 @@ import { PropagateLoader } from 'react-spinners';
 function AddEditBranch({ rowData = {}, selectedItem = {}, closeAddeditModal = {} }) {
     const config = configModule.config();
     const [branchHeadOpt, setBranchHeadOpt] = useState([]);
-    const [formData, setFormData] = useState({
-        branch_id: selectedItem?.branch_id || '',
-        branch_name: selectedItem?.branch_name || '',
-        branch_incharge_recid: selectedItem?.branch_incharge_recid || '',
-        branch_in_charge: selectedItem?.branch_in_charge || '',
-        email: selectedItem?.email || '',
-        opening_date: selectedItem?.opening_date || '',
-        rent: selectedItem?.rent || '',
-        branch_type: selectedItem ? selectedItem.branch_type : (rowData?.type?.value || ''),
-        phone_number: selectedItem?.phone_number || '',
-        country: selectedItem ? selectedItem.country : (rowData?.country?.value || ''),
-        state: selectedItem ? selectedItem.state : (rowData?.state?.value || ''),
-        district: selectedItem ? selectedItem.district : (rowData?.city?.value || ''),
-        location: selectedItem ? selectedItem.location : (rowData?.location || ''),
-        address: selectedItem?.address || '',
-        assign_brand_vaithyar: selectedItem?.assign_brand_vaithyar || false,
-        assign_brand_gramiyam: selectedItem?.assign_brand_gramiyam || false
-    });
+    const getField = (field, fallback = '') => selectedItem[field] || fallback;
+    const getNestedRowValue = (key) => rowData?.[key]?.value || '';
+  
+    const defaultFormData = {
+      branch_id: getField('branch_id'),
+      branch_name: getField('branch_name'),
+      branch_incharge_recid: getField('branch_incharge_recid'),
+      branch_in_charge: getField('branch_in_charge'),
+      email: getField('email'),
+      opening_date: getField('opening_date'),
+      rent: getField('rent'),
+      branch_type: selectedItem.branch_type || getNestedRowValue('type'),
+      phone_number: getField('phone_number'),
+      country: selectedItem.country || getNestedRowValue('country'),
+      state: selectedItem.state || getNestedRowValue('state'),
+      district: selectedItem.district || getNestedRowValue('city'),
+      location: selectedItem.location || getNestedRowValue('location'),
+      address: getField('address'),
+      assign_brand_vaithyar: selectedItem.assign_brand_vaithyar ?? false,
+      assign_brand_gramiyam: selectedItem.assign_brand_gramiyam ?? false,
+    };
+    const [formData, setFormData] = useState(defaultFormData);
     const [loading, setLoading] = useState(false);
     const [btnIsDisabled, setBtnIsDisabled] = useState(false);
 
