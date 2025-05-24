@@ -4,7 +4,6 @@ import configModule from '../../../config.js';
 import Pagination from "../../components/Pagination/index.jsx";
 import filterclear from '../../assets/images/filterclear.svg';
 import updatetd from '../../assets/images/updatebtn.svg';
-import updateth from '../../assets/images/updateinventryth.svg';
 import { PropagateLoader } from 'react-spinners';
 import axios from 'axios';
 import './stocks.css';

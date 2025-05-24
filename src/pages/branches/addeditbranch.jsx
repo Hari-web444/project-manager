@@ -8,7 +8,7 @@ import SingleSelect from '../../components/single-select.jsx';
 import axios from 'axios';
 import { PropagateLoader } from 'react-spinners';
 
-function AddEditBranch({ rowData, selectedItem, closeAddeditModal }) {
+function AddEditBranch({ rowData = {}, selectedItem = {}, closeAddeditModal = {} }) {
     const config = configModule.config();
     const [branchHeadOpt, setBranchHeadOpt] = useState([]);
     const [formData, setFormData] = useState({
