@@ -3,8 +3,40 @@ const db = getPool();
 const { sendEmail } = require("../appMiddlewares/sendMail");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+
 function generateOtp() {
     return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+async function getSidebarListFunc(usertype_id) {
+    try {
+        const sqlMain = `CALL SP_GetSidebarList(${usertype_id})`;
+        const sqlSub = `CALL SP_GetSubSidebarList(${usertype_id})`;
+
+        const mainList = await new Promise((resolve, reject) => {
+            db.query(sqlMain, (err, results) => {
+                if (err) return reject(err);
+                resolve(results[0]);
+            });
+        });
+
+        const subList = await new Promise((resolve, reject) => {
+            db.query(sqlSub, (err, results) => {
+                if (err) return reject(err);
+                resolve(results[0]);
+            });
+        });
+
+        return {
+            usertype_id,
+            mainList,
+            subList
+        };
+
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
 }
 
 
@@ -12,30 +44,35 @@ exports.logins = async (req, res) => {
     const { username, password } = req.body;
     try {
         const sql = 'CALL SP_LoggedInUser(?, ?)';
-        db.query(sql, [username, password], (err, result) => {
+        db.query(sql, [username, password], async (err, result) => {
             if (err) {
                 console.error('Error executing stored procedure:', err);
                 return res.status(500).json({ message: 'Server error' });
             }
             const rows = result[0];
             if (rows.length > 0) {
-                const user = rows[0]; 
+                const user = rows[0];
                 const loginTime = new Date().toISOString();
                 console.log("Login Time: ", loginTime);
+
+                const sidebarData = await getSidebarListFunc(user.usertype_id);
+                
                 const payload = {
                     userId: user.user_id,
                     username: user.name,
                     userType: user.user_type,
                     mobile_number: user.mobile_number,
                     usertype_id: user.usertype_id,
-                    user_typecode:user.user_typecode,
-                    loginTime: loginTime 
+                    user_typecode: user.user_typecode,
+                    loginTime: loginTime
                 };
-                const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+                const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); 
+                const pmsToken = jwt.sign(sidebarData, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+
                 return res.status(200).json({
                     message: 'Login successful',
-                    data: {  user_id: user.user_id,  name: user.name, mobile_number: user.mobile_number, user_type: user.user_type,  usertype_id: user.usertype_id,user_typecode:user.user_typecode,loginTime: loginTime },
-                    token: token
+                    token: token,
+                    pmsToken: pmsToken
                 });
             } else {
                 return res.status(401).json({ message: 'Invalid credentials' });
@@ -49,7 +86,7 @@ exports.logins = async (req, res) => {
 
 exports.checkmail = async (req, res) => {
     const { mail } = req.body;
-    if (!mail) {  return res.status(400).json({ message: 'All fields are required' });}
+    if (!mail) { return res.status(400).json({ message: 'All fields are required' }); }
     try {
         const sql = `CALL SP_CheckMail('${mail}')`;
         db.query(sql, async (err, results) => {
@@ -75,7 +112,7 @@ exports.checkmail = async (req, res) => {
                         return res.status(500).json({ message: 'Failed to send OTP email' });
                     }
                 });
-            } else {   return res.status(200).json(results[0]); }
+            } else { return res.status(200).json(results[0]); }
         });
     } catch (error) {
         console.error('Unexpected error:', error);
@@ -152,7 +189,7 @@ exports.putLeadCount = async (req, res) => {
         console.error('Error:', error);
         res.status(500).json({ message: 'Server error' });
     }
-}; 
+};
 
 exports.checkLeadCount = async (req, res) => {
     const { userId } = req.body;
@@ -176,33 +213,18 @@ exports.checkLeadCount = async (req, res) => {
 
 exports.getSidebarList = async (req, res) => {
     const { usertype_id } = req.body;
-
     try {
-        const sqlMain = `CALL SP_GetSidebarList(${usertype_id})`;
-        const sqlSub = `CALL SP_GetSubSidebarList(${usertype_id})`;
-
-        const mainList = await new Promise((resolve, reject) => {
-            db.query(sqlMain, (err, results) => {
-                if (err) reject(err);
-                else resolve(results[0]);
-            });
-        });
-
-        const subList = await new Promise((resolve, reject) => {
-            db.query(sqlSub, (err, results) => {
-                if (err) reject(err);
-                else resolve(results[0]);
-            });
-        });
+        const sidebarData = await getSidebarListFunc(usertype_id);
+        const token = jwt.sign(sidebarData, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 
         res.status(200).json({
-            mainList,
-            subList
+            data: sidebarData,
+            token
         });
-
     } catch (error) {
-        console.error('Error:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+
 
