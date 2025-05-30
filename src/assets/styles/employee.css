@@ -436,9 +436,31 @@
     }
 }
 
+.phone-header-div-el {
+    display: none ;
+}
+
 @media (max-width: 992px) {
     .modal-container-ev {
         width: 96% !important;
         max-width: 96% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .phone-header-div-el {
+        display: block !important;
+    }
+
+    .header-div-el {
+        display: none !important;
+    }
+
+    .search-input , .add-button {
+        padding: 6px 10px !important;
+    } 
+
+    .body-div-el , .current-item-el{
+        padding: 0px !important;
     }
 }

@@ -39,7 +39,7 @@ function EmployeeList() {
 
   //PERMISSION
   const addVisible = allowPermission?.addVisible;
-  const editVisible  = allowPermission?.editVisible;
+  const editVisible = allowPermission?.editVisible;
   const deleteVisible = allowPermission?.deleteVisible;
   const viewVisible = allowPermission?.viewVisible;
 
@@ -238,7 +238,7 @@ function EmployeeList() {
       )}
       <div className='header-div-el'>
         <div className='header-divpart-el'>
-          <p className='mb-0 header-titlecount-el'>Total Employee : {currentList && currentList.length ? currentList.length : 0 }</p>
+          <p className='mb-0 header-titlecount-el'>Total Employee : {currentList && currentList.length ? currentList.length : 0}</p>
           <div className="d-flex align-items-center">
             <button onClick={() => { setShowModal(false); }}>
               <p className='mb-0 nav-btn-top'>
@@ -257,6 +257,29 @@ function EmployeeList() {
           <button className="add-button" title={!addVisible ? "You dont have access" : "Add new"} onClick={() => setShowModal(true)} disabled={!addVisible}>Add new</button>
         </div>
       </div>
+
+      <div className='phone-header-div-el'>
+        <div className='d-flex justify-content-between align-items-center mb-2'>
+          <div className="d-flex align-items-center">
+            <button onClick={() => { setShowModal(false); }}>
+              <p className='mb-0 nav-btn-top'>
+                Employee &gt; List
+              </p>
+            </button>
+          </div>
+          <p className='mb-0 header-titlecount-el'>Total Employee : {currentList && currentList.length ? currentList.length : 0}</p>
+        </div>
+        <div className="search-add-wrapper justify-content-end mb-3">
+          <input
+            type="text"
+            placeholder="Search"
+            className="search-input"
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button className="add-button" title={!addVisible ? "You dont have access" : "Add new"} onClick={() => setShowModal(true)} disabled={!addVisible}>Add</button>
+        </div>
+      </div>
+
       <div className='body-div-el'>
         <div className="status-toggle">
           <label htmlFor="status-active" className="custom-radio">
@@ -408,7 +431,7 @@ function EmployeeList() {
             </div>
 
             <div className="modal-footer">
-              <button className="cancel-button" onClick={()=>setAssignPopup()}>Cancel</button>
+              <button className="cancel-button" onClick={() => setAssignPopup()}>Cancel</button>
               <button className="next-button" onClick={assignTaskToOther} >Assign</button>
             </div>
           </div>

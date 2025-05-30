@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Sidebar from './components/sidebar.jsx';
-import { Routes, Route, useLocation, Navigate , useNavigate} from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
 import { useAuth } from './components/context/Authcontext.jsx';
 import configModule from '../config.js';
+import useWindowWidth from './components/windows-width.jsx';
 
 import SvgContent from './components/svgcontent.jsx';
 import AdminPage from './admin/admin.jsx';
@@ -30,6 +31,7 @@ import AddProducts from './pages/products/AddProducts.jsx';
 import Stocks from './pages/stocks/stock.jsx';
 
 function App() {
+  const width = useWindowWidth();
   const location = useLocation();
   const authPaths = ['/', '/login', '/forgot-password', '/notfound'];
   const [menuItems, setMenuItems] = useState(false);
@@ -38,6 +40,9 @@ function App() {
   const { user } = useAuth();
   const usertype_id = user?.usertype_id;
   const navigate = useNavigate();
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const sidebarRef = useRef(null);
+
 
   const pathTitles = {
     '/dashboard': 'Dashboard',
@@ -85,11 +90,32 @@ function App() {
     }
   };
 
-useEffect(() => {
-  if (user?.usertype_id) {
-    getSidebarList();
-  }
-}, [user?.usertype_id]);
+  useEffect(() => {
+    if (user?.usertype_id) {
+      getSidebarList();
+    }
+  }, [user?.usertype_id]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)
+      ) {
+        setSidebarVisible(false); // or call toggleSidebar() if you prefer
+      }
+    };
+
+    if (sidebarVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [sidebarVisible]);
 
 
   const formatSidebarMenu = (mainList, subList) => {
@@ -119,16 +145,32 @@ useEffect(() => {
     });
   };
 
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
+
   return (
     <>
       {authPaths.includes(location.pathname) ? (
         <AdminPage pathURL={location.pathname === '/' ? '/login' : location.pathname} />
       ) : (
         <div className='d-flex w-100 h-100'>
-          <Sidebar menuItems={menuItems} />
+          {width > 1024 && <Sidebar menuItems={menuItems} />}
           <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)', width: 'calc(100% - 245px)' }}>
+            {(width < 1024 && sidebarVisible) && (
+              <div className='sidebar-div'>
+                <button className='close-sidemenu' onClick={toggleSidebar} style={{ zIndex: "99999" }}>
+                  <SvgContent svg_name="close" />
+                </button>
+
+                <Sidebar menuItems={menuItems} />
+              </div>
+            )}
             <div className='page-header-common justify-content-between'>
-              <div className="animated-text-container">
+              <div className="animated-text-container tabphone-view-container">
+                <button className='sidemenu-hide' onClick={toggleSidebar}>
+                  <SvgContent svg_name="sidemenu" height={20} width={20} />
+                </button>
                 <h4 className="animated-text mb-0">{path}</h4>
               </div>
               <div className="d-flex align-items-center gap-2">
@@ -153,7 +195,7 @@ useEffect(() => {
               <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
               <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
               <Route path="/orders" element={<PrivateRoute><Stocks /></PrivateRoute>} />
-               {/* <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} /> */}
+              {/* <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} /> */}
               <Route path="/clients" element={<PrivateRoute><Clients /></PrivateRoute>} />
               <Route path="/tracking" element={<PrivateRoute><Tracking /></PrivateRoute>} />
               <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
@@ -183,7 +225,7 @@ useEffect(() => {
 
                 <div className="modal-footer">
                   <button className="cancel-button" onClick={() => setIsShowAlertpopup(false)}>No, Vendaam</button>
-                  <button className="next-button" onClick={() => {navigate("/login"); localStorage.removeItem('authToken'); setIsShowAlertpopup(false); }} >Seri Ok</button>
+                  <button className="next-button" onClick={() => { navigate("/login"); localStorage.removeItem('authToken'); setIsShowAlertpopup(false); }} >Seri Ok</button>
                 </div>
               </div>
             </div>
