@@ -25,6 +25,10 @@ function EmployeeList() {
   const config = configModule.config();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { permission } = useAuth();
+  const allowPermission = permission?.subMenuList?.find(
+    (item) => item.name === "List"
+  );
   const userId = user?.userId;
   const user_typecode = user?.user_typecode;
   const [status, setStatus] = useState("active");
@@ -32,6 +36,12 @@ function EmployeeList() {
   const currentList = isActive ? employeList : delEmployeList;
   const [searchQuery, setSearchQuery] = useState("");
   const [needLoading, setNeedLoading] = useState(false);
+
+  //PERMISSION
+  const addVisible = allowPermission?.addVisible;
+  const editVisible  = allowPermission?.editVisible;
+  const deleteVisible = allowPermission?.deleteVisible;
+  const viewVisible = allowPermission?.viewVisible;
 
   const getDesignationList = async () => {
     try {
@@ -61,8 +71,8 @@ function EmployeeList() {
 
       const result = response.data;
       if (response.status === 200) {
-        setEmployeList(result.data?.length > 0 ? result.data.filter(emp => emp.isDeleted === 0) : []);
-        setDelEmployeList(result.data?.length > 0 ? result.data.filter(emp => emp.isDeleted === 1) : []);
+        setEmployeList(result?.length > 0 ? result.filter(emp => emp.isDeleted === 0) : []);
+        setDelEmployeList(result?.length > 0 ? result.filter(emp => emp.isDeleted === 1) : []);
       } else {
         toast.error("Failed to fetch designation list: " + result.message);
       }
@@ -244,7 +254,7 @@ function EmployeeList() {
             className="search-input"
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button className="add-button" onClick={() => setShowModal(true)}>Add new</button>
+          <button className="add-button" title={!addVisible ? "You dont have access" : "Add new"} onClick={() => setShowModal(true)} disabled={!addVisible}>Add new</button>
         </div>
       </div>
       <div className='body-div-el'>
@@ -283,7 +293,7 @@ function EmployeeList() {
                   <button
                     type="button"
                     className="position-absolute top-0 start-0 end-0 bottom-0 w-100 h-100 border-0 bg-transparent"
-                    onClick={() => handleOpenEmpData(item)}
+                    onClick={!viewVisible ? undefined : () => handleOpenEmpData(item)}
                   />
                   {/* Dropdown menu */}
                   <div className="dropdown position-absolute drop-dots">
@@ -299,11 +309,11 @@ function EmployeeList() {
                       </button>}
 
                     <div className="dropdown-menu dropdown-menu-el" aria-labelledby={`dropdownMenu-${item.emp_id}`}>
-                      <div>
-                        <button className="dropdown-item dropdown-item-st dropdown-item-edit" onClick={() => editEmployeeDetails(item)} >Edit</button>
+                      <div title={!editVisible ? "You don't have access" : "Edit"}>
+                        <button className="dropdown-item dropdown-item-st dropdown-item-edit" title={!editVisible ? "You don't have access" : "Edit"} onClick={() => editEmployeeDetails(item)} disabled={!editVisible} >Edit</button>
                       </div>
-                      <div>
-                        <button className="dropdown-item dropdown-item-st" onClick={() => confirmDeleteFunc(item)}>Delete</button>
+                      <div title={!deleteVisible ? "You don't have access" : "Delete"}>
+                        <button className="dropdown-item dropdown-item-st" title={!deleteVisible ? "You don't have access" : "Delete"} onClick={() => confirmDeleteFunc(item)} disabled={!deleteVisible} >Delete</button>
                       </div>
                     </div>
                   </div>
@@ -351,7 +361,6 @@ function EmployeeList() {
           <div className="modal-container">
             <div className="modal-header">
               <h5 className="mb-0 add-new-hdr">Add new employee</h5>
-              <button className="close-button" >×</button>
             </div>
             <div className="modal-body">
               <div className="container commonst-select">
@@ -461,7 +470,7 @@ function EmployeeList() {
                       <span id={`mobile-${selectedViewValue.emp_id}`}>{formatDateTime(selectedViewValue.date_of_joining)}</span>
                     </div>
                     <div className="d-flex mb-3">
-                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Salery:</label>
+                      <label htmlFor={`email-${selectedViewValue.emp_id}`} className="me-2 fw-700" style={{ minWidth: "152px" }}>Salary:</label>
                       <span id={`email-${selectedViewValue.emp_id}`}>₹&nbsp;{selectedViewValue.salary}</span>
                     </div>
                     <div className="d-flex mb-3">

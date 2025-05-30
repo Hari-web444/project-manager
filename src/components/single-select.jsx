@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SvgContent from './svgcontent';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-const SingleSelect = ({ options = [], onClose }) => {
+const SingleSelect = ({ options = [], onClose , defaultValue}) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedOption, setSelectedOption] = useState(() => defaultValue || null);
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -61,8 +61,17 @@ const SingleSelect = ({ options = [], onClose }) => {
 };
 
 SingleSelect.propTypes = {
-  options: PropTypes.array.isRequired,
-  onClose: PropTypes.func.isRequired,
+    options: PropTypes.arrayOf(
+        PropTypes.shape({
+            label: PropTypes.string.isRequired,
+            value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        })
+    ).isRequired,
+    onClose: PropTypes.func,
+    defaultValue: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    }),
 };
 
 export default SingleSelect;

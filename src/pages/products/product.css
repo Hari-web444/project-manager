@@ -188,7 +188,6 @@ box-shadow: none !important;
   color: #404040;
   font-weight: 500;
   line-height: 100%;
-  font-size: 15px;
 }
 
 .product-form-input{
@@ -303,7 +302,6 @@ box-shadow: none !important;
   margin-bottom: 5px;
 }
 .common-overall-container .table-responsive tr th {
-   font-size: 16px;
   vertical-align: middle;
 }
 
@@ -347,7 +345,6 @@ box-shadow: none !important;
   font-weight: 500;
   color: #404040;
   margin-bottom: 2px;
-  font-size: 14px;
 }
 
 .product-category,
@@ -377,7 +374,6 @@ box-shadow: none !important;
   color: #404040;
   cursor: pointer;
   border-radius: 7px;
-  font-size: 14px;
 }
 .menu-item-product1 {
   padding: 7px 25px;
@@ -388,7 +384,6 @@ box-shadow: none !important;
   color: #404040;
   cursor: pointer;
   border-radius: 7px;
-  font-size: 14px;
 }
 .menu-item-product:hover {
   background: linear-gradient(3deg, #0B622F, #18934B) !important;
@@ -423,7 +418,6 @@ box-shadow: none !important;
 .product-view-headtext{
   font-weight:600;
   color: #121212;
-  font-size: 16px;
   margin-bottom: 13px;
 }
 
@@ -444,14 +438,12 @@ box-shadow: none !important;
   width: 100%;
   border: none;
   outline: none;
-  font-size: 16px;
   color: #404040;
   background-color: #ffffff;
   font-weight: 500;
 }
 .product-view-header{
   color: #121212;
-  font-size: 16px;
 }
 
 .product-filter-dropdowns {

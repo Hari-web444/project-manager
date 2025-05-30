@@ -3,7 +3,6 @@ import './product.css'
 import closebtn from '../../assets/images/closebtn.svg';
 import filtericon from '../../assets/images/filtericon.svg';
 import filterclear from '../../assets/images/filterclear.svg';
-import Actionbtn from '../../assets/images/actionbtn.svg';
 import Actioneditebtn from '../../assets/images/actionedit.svg';
 import CommonSelect from "../../components/common-select.jsx";
 import Pagination from "../../components/Pagination/index.jsx";

@@ -54,7 +54,8 @@ function AddProducts() {
       [name]: value 
     }));
   };
-   const handleImageChange = (e) => {
+   
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
       setFormData(prevState => ({

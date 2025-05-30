@@ -45,7 +45,8 @@
 }
 
 .page_arrow:disabled{
-    cursor: not-allowed;
+    cursor: no-drop;
+    background: #f2f2f2 !important;
 }
 
 .pagination_wrapper {

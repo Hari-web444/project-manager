@@ -32,7 +32,7 @@ function Dashboard() {
   const formattedLoginTime = loginTime ? new Date(loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
   let cardData = [];
   
-  if (user_typecode === "AD") {
+  if (user_typecode === "AD" || user_typecode === "BH") {
     cardData = [
       { name: "Today’s leads", img: lead_dbc, count: 45 },
       { name: "Total Revenue", img: revenue_dbc, count: 65 },
@@ -117,7 +117,7 @@ function Dashboard() {
         theme="colored"
       />
 
-      {(initialPopup && user_typecode !== "AD") && (<ModalPopup userId={userId} closeModal={closeInitialModal} />)}
+      {(initialPopup && user_typecode !== "AD" && user_typecode !== "BH") && (<ModalPopup userId={userId} closeModal={closeInitialModal} />)}
       <div className='header-container-db w-100'>
         <h2 className='welcome-st mb-0'>Welcome!</h2>
         <p className='mb-0'>{formattedDate} / Login - {formattedLoginTime}</p>
