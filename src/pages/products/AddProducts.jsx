@@ -91,7 +91,7 @@ function AddProducts() {
         setVpapCode(`${prefix}${pyCode}${ffCode}${number}`);
         setFormData((prev) => ({
             ...prev,
-            productId: `${prefix}${pyCode}${ffCode}${number}`,
+            productId: `${prefix}${ffCode}${pyCode}${number}`,
         }));
     };
 
@@ -99,7 +99,7 @@ function AddProducts() {
   const getLastProductid = async () => {
       let lastProductid= [];
           try {
-              const value = `${pyCode}${ffCode}`;
+              const value = `${ffCode}${pyCode}`;
               const response = await axios.post(`${config.apiBaseUrl}getLastProductid`, { value: value } );       
               const result = response.data;
               if (response.status === 200) {

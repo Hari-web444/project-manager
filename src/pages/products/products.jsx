@@ -293,7 +293,7 @@ function Products() {
                 <th>Stock</th>
                 <th>Price</th>
                 <th>CreatedDate</th>
-                <th><img src={Actionbtn} alt="Act"/></th>
+                 {(user_typecode === "AD" || user_typecode === "BH") && (    <th><img src={Actionbtn} alt="Act"/></th>   )}
                </tr>
              </thead>
              <tbody className="tbody-responsive">
@@ -320,7 +320,8 @@ function Products() {
                 <td>{item.package_quantity}{' '}{item.units}</td>
                 <td><span className={statusClassMap[item.stock_status] || ""}>{item.stock_status}</span> </td>
                   <td>₹{item.selling_price}</td>
-                  <td>{format(new Date(item.created_at), 'dd-MM-yyyy')}</td>                
+                  <td>{format(new Date(item.created_at), 'dd-MM-yyyy')}</td>    
+                    {(user_typecode === "AD" || user_typecode === "BH") && (               
                   <td className='td-action-menu'><button onClick={(e) => { e.stopPropagation(); toggleMenu(index); }}> <img src={Actioneditebtn} alt="Act"/> </button>
                    {menuIndex === index && (
                     <div className="action-menu" ref={dropdownRef}>
@@ -330,7 +331,7 @@ function Products() {
                        onClick={(e) => { e.stopPropagation(); setSelectedProduct(item); openDetetemodel(); }} >Delete</button></div>
                     </div>
                    )}
-                  </td>
+                  </td> )}
                 </tr>
               ))}
              </tbody>
@@ -374,19 +375,7 @@ function Products() {
                   </div>
                   <div className="product-modal-body">
                     <div className="d-flex">
-                     <div className='col-5 d-flex  align-items-center'> <h6 className=''>Select Product type</h6>  </div>
-                    <div className='col-7'> 
-                       <CommonSelect
-                          name="ptype"
-                          value={ptype}
-                          onChange={setPtype}
-                          placeholder="Select Product type"
-                          options={productTypes}
-                        /> 
-                        </div>                  
-                    </div>
-                    <div className="d-flex mt-2">
-                    <div className='col-5 d-flex  align-items-center'> <h6 className=''>Select Form factor</h6>  </div>
+                        <div className='col-5 d-flex  align-items-center'> <h6 className=''>Select Form factor</h6>  </div>
                     <div className='col-7'> 
                        <CommonSelect
                           name="factor"
@@ -394,6 +383,18 @@ function Products() {
                           onChange={setFactor}
                           placeholder="Select Form factor"
                           options={formFactor}
+                        /> 
+                        </div>               
+                    </div>
+                    <div className="d-flex mt-3">
+                    <div className='col-5 d-flex  align-items-center'> <h6 className=''>Select Product type</h6>  </div>
+                    <div className='col-7'> 
+                       <CommonSelect
+                          name="ptype"
+                          value={ptype}
+                          onChange={setPtype}
+                          placeholder="Select Product type"
+                          options={productTypes}
                         /> 
                         </div>                 
                     </div>

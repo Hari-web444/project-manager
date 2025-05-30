@@ -163,6 +163,7 @@ function Inventory() {
                <table className="table table-bordered">
                   <thead className="table-th">
                     <tr className="table-th-row">
+                       <th>S.No</th>
                       <th>ID</th>
                       <th>Product</th>
                       <th>Category</th>
@@ -177,6 +178,7 @@ function Inventory() {
                   <tbody>
                       {currentProducts && currentProducts.length > 0 ?(currentProducts.map((item, index) => (
                      <tr className='tbody-row-inventry ' key={item.product_recid}>
+                       <td>{startIndex + index + 1}</td> 
                       <td>{item.product_id}</td>
                       <td>{item.product_name}</td>
                       <td>{item.product_category}</td>
