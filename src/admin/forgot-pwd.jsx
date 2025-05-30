@@ -52,8 +52,8 @@ const LoginPage = () => {
         } catch (error) {
             console.error(error);
             toast.error('An error occurred');
-        }    finally {
-            setLoading(prevState => ({ ...prevState, otp: false })); 
+        } finally {
+            setLoading(prevState => ({ ...prevState, otp: false }));
         }
     };
 
@@ -76,7 +76,7 @@ const LoginPage = () => {
 
         if (verifyform.otp[0] !== "" && verifyform.otp[1] !== "" && verifyform.otp[2] !== "" && verifyform.otp[3] !== "") {
             const otpValue = verifyform.otp[0] + verifyform.otp[1] + verifyform.otp[2] + verifyform.otp[3];
-            setLoading(prevState => ({ ...prevState, verify: true })); 
+            setLoading(prevState => ({ ...prevState, verify: true }));
             try {
                 const response = await fetch(`${config.apiBaseUrl}verifyOTP`, {
                     method: 'POST',
@@ -98,8 +98,8 @@ const LoginPage = () => {
             } catch (error) {
                 console.error(error);
                 toast.error('An error occurred');
-            }finally {
-                setLoading(prevState => ({ ...prevState, verify: false })); 
+            } finally {
+                setLoading(prevState => ({ ...prevState, verify: false }));
             }
         }
         else {
@@ -139,8 +139,8 @@ const LoginPage = () => {
                 }
             } catch (error) {
                 console.error(error);
-            }finally {
-                setLoading(prevState => ({ ...prevState, reset: false })); 
+            } finally {
+                setLoading(prevState => ({ ...prevState, reset: false }));
             }
         }
     };
@@ -175,7 +175,7 @@ const LoginPage = () => {
                     <div className='d-flex justify-content-end align-items-end mb-5 gap-2'>
                         <p className='mb-0' style={{ fontSize: "12px" }}>Back to login</p><button className='backtologin' onClick={() => navigate('/login')} >Login</button>
                     </div>
-                    <button type="submit" className="btn btn-primary admin-button"  disabled={loading.otp}  onClick={checkMailIsCorrect}>{loading.otp ? "Sending..." : "Send OTP"}</button>
+                    <button type="submit" className="btn btn-primary admin-button" disabled={loading.otp} onClick={checkMailIsCorrect}>{loading.otp ? "Sending..." : "Send OTP"}</button>
                 </>
             )}
 
@@ -200,7 +200,7 @@ const LoginPage = () => {
                         </div>
                     </div>
                     <button className='forgot' style={{ marginRight: "60px" }} onClick={checkMailIsCorrect} >Resend OTP</button>
-                    <button type="submit" className="btn btn-primary admin-button" disabled={loading.verify}  onClick={verifyOTP}> {loading.verify ? "Verifing..." : "Verify OTP"}</button>
+                    <button type="submit" className="btn btn-primary admin-button" disabled={loading.verify} onClick={verifyOTP}> {loading.verify ? "Verifing..." : "Verify OTP"}</button>
                 </>
             )}
 
@@ -218,11 +218,10 @@ const LoginPage = () => {
                         />
                         <span
                             className="toggle-password"
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => setShowPassword(!showPassword)}
                         >
-                            {showPassword ? <SvgContent svg_name="eyeclose" /> : <SvgContent svg_name="eyeopen" />}
+                            <button onClick={() => setShowPassword(!showPassword)}>
+                                {showPassword ? <SvgContent svg_name="eyeclose" /> : <SvgContent svg_name="eyeopen" />}
+                            </button>
                         </span>
                     </div>
 
@@ -238,14 +237,13 @@ const LoginPage = () => {
                         />
                         <span
                             className="toggle-password"
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => setShowCnfmPassword(!showCnfmPassword)}
                         >
+                            <button onClick={() => setShowCnfmPassword(!showCnfmPassword)}>
                             {showCnfmPassword ? <SvgContent svg_name="eyeclose" /> : <SvgContent svg_name="eyeopen" />}
+                            </button>
                         </span>
                     </div>
-                    <button type="submit" className="btn btn-primary admin-button"  disabled={loading.reset} onClick={ResetPassword} > {loading.reset ? "Reseting..." : "Reset"}</button>
+                    <button type="submit" className="btn btn-primary admin-button" disabled={loading.reset} onClick={ResetPassword} > {loading.reset ? "Reseting..." : "Reset"}</button>
                 </>
             )}
         </form>
