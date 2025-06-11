@@ -2,6 +2,7 @@ const { getPool } = require('../database/db');
 const db = getPool();
 const { sendEmail } = require("../appMiddlewares/sendMail");
 const jwt = require('jsonwebtoken');
+const { getAwsSecrets } = require("../utilities/vaultClient");
 require('dotenv').config();
 
 function generateOtp() {
@@ -64,6 +65,7 @@ exports.logins = async (req, res) => {
                     mobile_number: user.mobile_number,
                     usertype_id: user.usertype_id,
                     user_typecode: user.user_typecode,
+                    created_by: user.created_by,
                     loginTime: loginTime
                 };
                 const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); 
@@ -223,8 +225,37 @@ exports.getSidebarList = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
+        console.log(error,"")
     }
 };
 
-
-
+exports.getSingleUserData = async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const aws = await getAwsSecrets();
+        const sql = 'CALL SP_GetSingleUserData(?)';
+        db.query(sql, [userId], (err, result) => {
+            if (err) {
+                console.error('Error executing stored procedure:', err);
+                return res.status(500).json({ message: 'Server error' });
+            }
+            const rows = result[0];
+            if (!rows || rows.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            const user = rows[0];
+            const imageUrl = user.image_url
+                ? `https://${aws.bucket}.s3.${aws.region}.amazonaws.com/${user.image_url}`
+                : null;
+            res.status(200).json({
+                data: {
+                    ...user,
+                    image_url: imageUrl,
+                },
+            });
+        });
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

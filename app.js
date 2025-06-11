@@ -33,8 +33,8 @@ app.use(cors({
     const employee = require('./src/routes/employeeroute.js');
     const product = require('./src/routes/productroute');
     const branch = require('./src/routes/branchroute.js');
-
-    app.use('/', admin, product);
+    const users = require('./src/routes/userroute.js');
+    app.use('/', admin, product,users);
     app.use('/', employee);
     app.use('/', branch);
 

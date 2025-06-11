@@ -10,5 +10,6 @@ router.post('/SetPassword', admincontroller.setpwd);
 router.post('/SaveLeadCount', admincontroller.putLeadCount);
 router.post('/CheckLeadCount', admincontroller.checkLeadCount);
 router.post('/GetSidebarList', admincontroller.getSidebarList);
+router.post('/getSingleUserData/:userId', admincontroller.getSingleUserData);
 
 module.exports = router;
