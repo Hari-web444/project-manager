@@ -292,7 +292,7 @@ function Products() {
                 <th>Stock</th>
                 <th>Price</th>
                 <th>CreatedDate</th>
-                 {(user_typecode === "AD" || user_typecode === "BH") && (    <th><img src={Actionbtn} alt="Act"/></th>   )}
+                   {(user_typecode === "AD" || user_typecode === "BH") && (    <th>Action</th>)}
                </tr>
              </thead>
              <tbody className="tbody-responsive">

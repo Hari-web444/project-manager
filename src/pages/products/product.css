@@ -35,7 +35,11 @@
 .product-Addnew-btn:hover {
   box-shadow: none !important;
 }
-
+.add-new-hdr{
+  font-weight: 500 !important;
+  color: #121212;
+  
+}
 .product-search-input{
   padding: 8px 12px;
   border: 1px solid #06823a;
@@ -169,12 +173,12 @@
 .product-upload-btn {
   background: linear-gradient(3deg, #0B622F, #18934B) !important;
   width: 100%;
-  max-width: 180px;
+  max-width: 170px;
   border: none;
   outline: none;
   color: #ffffff;
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 7px 10px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
   box-shadow: 0px 3px 3px -2px gray;
@@ -192,14 +196,13 @@ box-shadow: none !important;
 
 .product-form-input{
   width: 100%;
-  padding: 2px 12px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
   border: solid 1px #E5E5E5;
   background-color: #ffffff;
   outline: none;
   color: #121212;
   margin-top: 5px;
-  min-height: 48px;
 }
 .product-form-input:disabled{
   background-color: #e9ecef;
@@ -217,17 +220,14 @@ box-shadow: none !important;
   max-width: 100px;
   font-weight: 500;
   width: 100%;
-  padding: 8px 16px;
+  padding: 6px 16px;
   cursor: pointer;
-  box-shadow: 0px 3px 3px -2px gray;
 }
-.product-next-btn:hover {
-box-shadow: none !important;
-}
+
 
 
 .product-Previous-btn{
-  padding: 7px 25px;
+  padding: 6px 25px;
   border: 1px solid #ccc;
   background: white;
   border-radius: 6px;

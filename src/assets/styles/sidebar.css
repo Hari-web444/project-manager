@@ -23,13 +23,12 @@
 
 nav a,
 .submenu-wrapper {
-  display: block;
   color: #121212;
   padding: 8px 16px;
   border-radius: 12px 0px 0px 12px;
   text-decoration: none;
   margin: 5px 0;
-  font-weight: 300;
+  font-weight: 400;
   display: flex;
   gap: 12px;
   align-items: center;
@@ -44,7 +43,7 @@ nav a:hover {
 nav a.active {
   background: linear-gradient(3deg, #0B622F, #18934b);
   color: white;
-  font-weight: 500;
+  font-weight: 500 !important;
   width: 100%;
 }
 
@@ -136,4 +135,8 @@ nav a.active .search-bar-sb {
     top: 8px;
     display: block;
   }
+}
+
+.sbnone-title{
+  font-size: 16px;
 }

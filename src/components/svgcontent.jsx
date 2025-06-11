@@ -229,6 +229,32 @@ const SvgContent = ({ svg_name, width = 24, height = 24, color = "transparent", 
                 />
             </svg>
         ),
+          dropdownDownselect: (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill={color}
+                stroke={stroke}
+                width={width}
+                height={height}
+                strokeWidth="0.1"
+            >
+              <path d="M4 8L12 16L20 8H4Z" fill="#404040"/>
+            </svg>
+        ),
+             dropdownUPselect: (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill={color}
+                stroke={stroke}
+                width={width}
+                height={height}
+                strokeWidth="0.1"
+            >
+             <path d="M20 16L12 8L4 16H20Z" fill="#303030"/>
+            </svg>
+        ),
         dropdownUp: (
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -368,6 +394,8 @@ SvgContent.propTypes = {
     stroke: PropTypes.string,
 };
 export default SvgContent;
+
+
 
 
 

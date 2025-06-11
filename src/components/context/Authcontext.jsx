@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("authToken");
     if (token) {
       const decodedToken = jwtDecode(token);
+      console.log("Decoded Token:", decodedToken);
       setUser({
         userId: decodedToken.userId,
         username: decodedToken.username,
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }) => {
         mobile_number: decodedToken.mobile_number,
         usertype_id: decodedToken.usertype_id,
         user_typecode: decodedToken.user_typecode,
+        created_by: decodedToken.created_by,
         loginTime: decodedToken.loginTime
       });
     }
@@ -48,6 +50,7 @@ export const AuthProvider = ({ children }) => {
       mobile_number: decodedToken.mobile_number,
       usertype_id: decodedToken.usertype_id,
       user_typecode: decodedToken.user_typecode,
+      created_by: decodedToken.created_by,
       loginTime: decodedToken.loginTime
     });
   };

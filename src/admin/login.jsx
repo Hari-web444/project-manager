@@ -64,7 +64,7 @@ const LoginPage = () => {
     };
 
     return (
-        <form onSubmit={handleLogin}>
+        <form >
             <div className="mb-4">
                 <label htmlFor="user" className="form-label mb-3 admin-label">Username</label>
                 <input
@@ -89,6 +89,7 @@ const LoginPage = () => {
                     autoComplete="new-password"
                 />
               <button
+                    type="button" 
                     className="toggle-password"
                     onClick={() => setShowPassword(!showPassword)}
                 >
@@ -108,6 +109,7 @@ const LoginPage = () => {
                 type="submit"
                 className="btn btn-primary admin-button"
                 disabled={loading}
+                onClick={handleLogin}
             >
                 {loading ? <span className="button-animate">Logging in...</span> : "Login"}
             </button>

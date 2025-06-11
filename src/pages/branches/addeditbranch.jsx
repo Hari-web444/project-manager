@@ -4,9 +4,9 @@ import DatePicker from 'react-datepicker';
 import configModule from '../../../config.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import SingleSelect from '../../components/single-select.jsx';
 import axios from 'axios';
 import { PropagateLoader } from 'react-spinners';
+import CommonSelect from '../../components/common-select.jsx';
 
 function AddEditBranch({ rowData = {}, selectedItem = {}, closeAddeditModal = {} }) {
     const config = configModule.config();
@@ -339,7 +339,7 @@ function AddEditBranch({ rowData = {}, selectedItem = {}, closeAddeditModal = {}
 
                                 <div className="form-group-pp mb-3">
                                     <label htmlFor="branch_name">Branch In-Charge</label>
-                                    <SingleSelect options={branchHeadOpt} onClose={handleSelectClose} defaultValue={formData.branch_in_charge ? { label: formData.branch_in_charge, value: formData.branch_in_charge } : ''} />
+                                    <CommonSelect options={branchHeadOpt} onClose={handleSelectClose} defaultValue={formData.branch_in_charge ? { label: formData.branch_in_charge, value: formData.branch_in_charge } : ''} />
                                 </div>
 
                                 <div className="form-group-pp mb-3">

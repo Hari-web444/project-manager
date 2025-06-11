@@ -45,9 +45,7 @@ button {
   cursor: pointer;
 
 }
-button:hover {
-  border-color: #e4ede6;
-}
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -59,7 +57,7 @@ button:disabled {
 
 ::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {

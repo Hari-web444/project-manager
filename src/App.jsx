@@ -1,23 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import  { useState, useEffect,  } from 'react';
 import './App.css';
-import Sidebar from './components/sidebar.jsx';
-import { Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import "react-datepicker/dist/react-datepicker.css";
+import { Routes, Route, Navigate,  } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "react-datepicker/dist/react-datepicker.css";
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
 import { useAuth } from './components/context/Authcontext.jsx';
 import configModule from '../config.js';
-import useWindowWidth from './components/windows-width.jsx';
-
-import SvgContent from './components/svgcontent.jsx';
 import AdminPage from './admin/admin.jsx';
+import MainLayout from './mainlayout.jsx';
 import Dashboard from './pages/dashboard/dashboard.jsx';
 import Leads from './pages/leads/leads.jsx';
 import TodoList from './pages/todo/todo-list.jsx';
 import Products from './pages/products/products.jsx';
 import Clients from './pages/clientslist/clients.jsx';
 import Tracking from './pages/tracking/tracking.jsx';
-import UserProfile from './pages/userprofile/user-profile.jsx';
+import Profile from './pages/profile/profile.jsx';
 import Accounts from './pages/accounts/accounts.jsx';
 import Inventory from './pages/inventory/inventory.jsx';
 import Branches from './pages/branches/branches.jsx';
@@ -29,54 +27,26 @@ import EmployeeAttendance from './pages/employee/employee-attendance.jsx';
 import EmployeeLeavePermission from './pages/employee/employee-leavepermission.jsx';
 import AddProducts from './pages/products/AddProducts.jsx';
 import Stocks from './pages/stocks/stock.jsx';
+import NotFound from './components/notfoun.jsx';
+import Logoutmodal from './components/logoutmodal.jsx';
+import UserProfile from './pages/userprofile/userProfile.jsx';
+import Orders from './pages/orders/orders.jsx';
 
 function App() {
-  const width = useWindowWidth();
-  const location = useLocation();
-  const authPaths = ['/', '/login', '/forgot-password', '/notfound'];
+
   const [menuItems, setMenuItems] = useState(false);
   const [isShowAlertpopup, setIsShowAlertpopup] = useState(false);
   const config = configModule.config();
   const { user } = useAuth();
   const usertype_id = user?.usertype_id;
-  const navigate = useNavigate();
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const sidebarRef = useRef(null);
-
-
-  const pathTitles = {
-    '/dashboard': 'Dashboard',
-    '/leads': 'Leads',
-    '/todo': 'To do list',
-    '/products': 'Products',
-    '/products/add': 'Addproducts',
-    '/clients': 'Clients',
-    '/tracking': 'Tracking',
-    '/user-profile': 'UserProfile',
-    '/orders': 'Orders',
-    '/inventory': 'Inventory',
-    '/accounts': 'Accounts',
-    '/branches': 'Branches',
-    '/branches/view': 'Branches',
-    '/employee/list': 'Employee List',
-    '/employee/list/add-edit': 'Employee Add/Edit List',
-    '/employee/assign': 'Employee Assign',
-    '/employee/attendance': 'Employee Attendance',
-    '/employee/leave-permissions': 'Leave and Permission',
-  };
-
-  const path = pathTitles[location.pathname] || 'Dashboard';
 
   const getSidebarList = async () => {
     try {
       const response = await fetch(`${config.apiBaseUrl}GetSidebarList`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usertype_id: parseInt(usertype_id) })
       });
-
       const result = await response.json();
       if (response.ok) {
         const sidebarMenu = formatSidebarMenu(result.data.mainList, result.data.subList);
@@ -96,141 +66,63 @@ function App() {
     }
   }, [user?.usertype_id]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        sidebarRef.current &&
-        !sidebarRef.current.contains(event.target)
-      ) {
-        setSidebarVisible(false); // or call toggleSidebar() if you prefer
-      }
-    };
-
-    if (sidebarVisible) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [sidebarVisible]);
-
-
   const formatSidebarMenu = (mainList, subList) => {
     return mainList.map(main => {
       const subMenuItems = subList
         .filter(sub => sub.menu_id === main.menu_id)
-        .map(sub => ({
-          path: sub.path,
-          name: sub.name
-        }));
+        .map(sub => ({ path: sub.path, name: sub.name }));
 
       const menuItem = {
         path: main.path,
         name: main.name,
         icon: main.icon,
+        ...(main.exact === 1 && { exact: true }),
+        ...(subMenuItems.length > 0 && { subMenu: subMenuItems })
       };
-
-      if (main.exact === 1) {
-        menuItem.exact = true;
-      }
-
-      if (subMenuItems.length > 0) {
-        menuItem.subMenu = subMenuItems;
-      }
-
       return menuItem;
     });
   };
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
-
   return (
     <>
-      {authPaths.includes(location.pathname) ? (
-        <AdminPage pathURL={location.pathname === '/' ? '/login' : location.pathname} />
-      ) : (
-        <div className='d-flex w-100 h-100'>
-          {width > 1024 && <Sidebar menuItems={menuItems} />}
-          <div style={{ flex: 1, background: 'rgb(228 237 230 / 54%)', width: 'calc(100% - 245px)' }}>
-            {(width < 1024 && sidebarVisible) && (
-              <div className='sidebar-div'>
-                <button className='close-sidemenu' onClick={toggleSidebar} style={{ zIndex: "99999" }}>
-                  <SvgContent svg_name="close" />
-                </button>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<AdminPage pathURL="/login" />} />
+        <Route path="/login" element={<AdminPage pathURL="/login" />} />
+        <Route path="/forgot-password" element={<AdminPage pathURL="/forgot-password" />} />
 
-                <Sidebar menuItems={menuItems} />
-              </div>
-            )}
-            <div className='page-header-common justify-content-between'>
-              <div className="animated-text-container tabphone-view-container">
-                <button className='sidemenu-hide' onClick={toggleSidebar}>
-                  <SvgContent svg_name="sidemenu" height={20} width={20} />
-                </button>
-                <h4 className="animated-text mb-0">{path}</h4>
-              </div>
-              <div className="d-flex align-items-center gap-2">
-                <div className='notify-tb cursor-pointer'>
-                  <SvgContent svg_name="Notification" />
-                </div>
-                <div className='notify-tb cursor-pointer' title={user && user.user_typecode === "AD" ? "Logout" : "Profile"}>
-                  {user && user.user_typecode === "AD" ? (<button onClick={() => setIsShowAlertpopup(true)}><SvgContent svg_name="logout_ad" /></button>) : ((<SvgContent svg_name="Profile" />))}
-                </div>
-              </div>
-            </div>
+        {/* Protected Routes with Sidebar */}
+        <Route element={<MainLayout menuItems={menuItems} />}>
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
+          <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
+          <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
+          <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
+          <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} />
+          <Route path="/clients" element={<PrivateRoute><Clients /></PrivateRoute>} />
+          <Route path="/tracking" element={<PrivateRoute><Tracking /></PrivateRoute>} />
+          <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
+          <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
+          <Route path="/orders" element={<PrivateRoute><Orders/></PrivateRoute>} />
+          <Route path="/stocks" element={<PrivateRoute><Stocks /></PrivateRoute>} />
+          <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
+          <Route path="/branches/view" element={<PrivateRoute><ViewBranch /></PrivateRoute>} />
+          <Route path="/employee/list" element={<PrivateRoute><EmployeeList /></PrivateRoute>} />
+          <Route path="/employee/list/add-edit" element={<PrivateRoute><AddEmployee /></PrivateRoute>} />
+          <Route path="/employee/assign" element={<PrivateRoute><EmployeeAssign /></PrivateRoute>} />
+          <Route path="/employee/attendance" element={<PrivateRoute><EmployeeAttendance /></PrivateRoute>} />
+          <Route path="/employee/leave-permissions" element={<PrivateRoute><EmployeeLeavePermission /></PrivateRoute>} />
+        </Route>
 
-            <Routes>
-              <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-              <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
-              <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
-              <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
-              <Route path="/products/add" element={<PrivateRoute><AddProducts /></PrivateRoute>} />
-              <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
-              <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
-              <Route path="/branches/view" element={<PrivateRoute><ViewBranch /></PrivateRoute>} />
-              <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
-              <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
-              <Route path="/orders" element={<PrivateRoute><Stocks /></PrivateRoute>} />
-              {/* <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} /> */}
-              <Route path="/clients" element={<PrivateRoute><Clients /></PrivateRoute>} />
-              <Route path="/tracking" element={<PrivateRoute><Tracking /></PrivateRoute>} />
-              <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+        {/* 404 fallback route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
 
-              {/*  Employee's sub-items */}
-              <Route path="/employee/list" element={<PrivateRoute><EmployeeList /></PrivateRoute>} />
-              <Route path="/employee/list/add-edit" element={<PrivateRoute><AddEmployee /></PrivateRoute>} />
-              <Route path="/employee/assign" element={<PrivateRoute><EmployeeAssign /></PrivateRoute>} />
-              <Route path="/employee/attendance" element={<PrivateRoute><EmployeeAttendance /></PrivateRoute>} />
-              <Route path="/employee/leave-permissions" element={<PrivateRoute><EmployeeLeavePermission /></PrivateRoute>} />
-
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-          </div>
-
-          {isShowAlertpopup && (
-            <div className="modal-overlay modal-overlay-position">
-              <div className="modal-container">
-                <div className="modal-header mb-3">
-                  <h5 className="mb-0 add-new-hdr">Logout</h5>
-                </div>
-                <div className="modal-body mb-2">
-                  <div className="container commonst-select">
-                    <p>Are you sure to logout ?</p>
-                  </div>
-                </div>
-
-                <div className="modal-footer">
-                  <button className="cancel-button" onClick={() => setIsShowAlertpopup(false)}>No, Vendaam</button>
-                  <button className="next-button" onClick={() => { navigate("/login"); localStorage.removeItem('authToken'); setIsShowAlertpopup(false); }} >Seri Ok</button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+      {/* Logout modal */}
+      {isShowAlertpopup && (
+        <Logoutmodal oncloses={() => setIsShowAlertpopup(false)} />
       )}
     </>
   );
