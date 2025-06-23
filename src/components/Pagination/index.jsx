@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import "./pagination.css";
+import "./Pagination.css";
 import PropTypes from "prop-types";
 
 // Arrow Components
