@@ -267,7 +267,9 @@ function EmployeeList() {
               </p>
             </button>
           </div>
-          <p className='mb-0 header-titlecount-el'>Total Employee : {currentList && currentList.length ? currentList.length : 0}</p>
+          <p className='mb-0 header-titlecount-el'>
+            Total Employee : {currentList?.length ?? 0}
+          </p>
         </div>
         <div className="search-add-wrapper justify-content-end mb-3">
           <input
