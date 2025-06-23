@@ -77,14 +77,19 @@ function AddProducts() {
   };
 
     const getNextNumber = (lastProductid) => {
-        let numbers = lastProductid || [];
-        numbers = numbers.map(code => {
-            const match = code.match(/(\d+)$/);
-            return match ? parseInt(match[1], 10) : 0;
-        });
-        const max = numbers.length > 0 ? Math.max(...numbers) : 0;
-        return (max + 1).toString().padStart(3, '0'); 
-    };
+    let numbers = lastProductid || [];
+    numbers = numbers.map(code => {
+        let i = code.length - 1;
+        while (i >= 0 && code[i] >= '0' && code[i] <= '9') {
+            i--;
+        }
+        const numberPart = code.slice(i + 1);
+        return numberPart ? parseInt(numberPart, 10) : 0;
+    });
+    const max = numbers.length > 0 ? Math.max(...numbers) : 0;
+    return (max + 1).toString().padStart(3, '0');
+};
+
 
     const generateCode = (lastProductid) => {
         const prefix = "VPA";
