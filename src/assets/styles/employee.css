@@ -463,4 +463,8 @@
     .body-div-el , .current-item-el{
         padding: 0px !important;
     }
+
+    .body-div-el {
+        height: calc(100% - 75px) !important;
+    }
 }

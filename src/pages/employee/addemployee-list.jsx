@@ -19,6 +19,7 @@ function AddEmployee() {
     const location = useLocation();
     const desCode = location.state?.role?.target?.code;
     const desValue = location.state?.role?.target?.value;
+    const desId = location.state?.role?.target?.id;
     const objEditsItem = location.state?.item;
     const actionType = location.state?.type;
     const { user } = useAuth();
@@ -28,6 +29,7 @@ function AddEmployee() {
         emp_id: vpaCode,
         emp_name: '',
         designation: desValue,
+        designation_id: desId,
         email: '',
         mobile_number: '',
         date_of_joining: null,
@@ -155,6 +157,7 @@ function AddEmployee() {
             emp_id: vpaCode,
             emp_name: '',
             designation: desValue,
+            designation_id: desId,
             email: '',
             mobile_number: '',
             date_of_joining: null,
@@ -437,7 +440,7 @@ function AddEmployee() {
                                         onChange={handleDateChange}
                                         placeholderText="Select date of joining"
                                         className="form-control"
-                                        dateFormat="yyyy-MM-dd"
+                                        dateFormat="dd-MM-yyyy"
                                     />
                                 </div>
                             </div>

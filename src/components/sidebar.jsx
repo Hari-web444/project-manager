@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import '../assets/styles/sidebar.css';
 import main_logo from '../assets/images/main_logo.png';
 import SvgContent from './svgcontent.jsx';
-import { NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 function Sidebar({ menuItems }) {
-  const [openSubMenu, setOpenSubMenu] = useState(false);
+  const [openSubMenu, setOpenSubMenu] = useState(() => {
+    return localStorage.getItem('lastOpenSubMenu') || false;
+  });
 
   const handleSubMenuClick = (path) => {
-    setOpenSubMenu((prev) => (prev === path ? null : path));
+    setOpenSubMenu((prev) => {
+      const newValue = prev === path ? null : path;
+      localStorage.setItem('lastOpenSubMenu', newValue || '');
+      return newValue;
+    });
   };
-
   return (
     <div className="sidebar">
       <div className="logo mb-3 text-center">
@@ -69,6 +74,6 @@ function Sidebar({ menuItems }) {
   );
 }
 Sidebar.propTypes = {
-  menuItems: PropTypes.string.isRequired,  
+  menuItems: PropTypes.string.isRequired,
 };
 export default Sidebar;

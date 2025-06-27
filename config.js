@@ -5,10 +5,10 @@ const configs = {
     apiBaseUrl: "http://localhost:3001/"
   },
   DEV: {
-    apiBaseUrl: "https://api.vaithiyarpoova.dev/"
+    apiBaseUrl: "https://dev-api.vaithiyarpoovafoundation.com/"
   },
   PROD: {
-    apiBaseUrl: "https://api.vaithiyarpoova.ai/",
+    apiBaseUrl: "https://dev-api.vaithiyarpoovafoundation.com/",
   },
 };
 

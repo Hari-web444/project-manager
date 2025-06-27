@@ -326,6 +326,12 @@
     height: calc(100% - 50px);
 }
 
+
+.btn-bg-filled {
+    background: linear-gradient(3deg, #0B622F, #18934B) !important;
+    color: #fff;
+}
+
 @media (max-width: 768px) {
     .form-grid {
         flex-direction: column;
