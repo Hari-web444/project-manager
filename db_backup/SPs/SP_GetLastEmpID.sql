@@ -16,7 +16,7 @@ BEGIN
     SELECT 
         emp_id
     FROM
-        employees
+        users
     WHERE
         created_by = userId AND designation = sValue
     ORDER BY created_at DESC

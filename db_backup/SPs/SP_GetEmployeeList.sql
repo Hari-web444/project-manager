@@ -13,14 +13,14 @@ BEGIN
 
     IF user_typecode = 'AD' THEN
         SELECT 
-        emp_recid, emp_id, emp_name, designation, mobile_number, email, date_of_joining, salary, incentive_percentage, address, image_url, created_by, created_at, isDeleted
-        FROM employees
+        user_id, emp_id, name, designation, mobile_number, email, date_of_joining, salary, incentive_percentage, address, image_url, created_by, created_at, isDeleted
+        FROM users WHERE designation NOT IN ("Admin")
         ORDER BY created_at DESC ;
     ELSE
         SELECT 
-        emp_recid, emp_id, emp_name, designation, mobile_number, email, date_of_joining, salary, incentive_percentage, address, image_url, created_by, created_at, isDeleted
-        FROM employees 
-        WHERE created_by = userId 
+        user_id, emp_id, name, designation, mobile_number, email, date_of_joining, salary, incentive_percentage, address, image_url, created_by, created_at, isDeleted
+        FROM users
+        WHERE designation NOT IN ("Admin") AND created_by = userId 
         ORDER BY created_at DESC ;
     END IF;
 

@@ -1,5 +1,5 @@
 require('dotenv-flow').config();
-const {authenticate } = require('./src/database/db');
+const { authenticate } = require('./src/database/db');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -25,18 +25,19 @@ app.use(cors({
   },
   credentials: true
 }));
+
 (async () => {
   try {
-    await authenticate(); 
+    await authenticate();
 
     const admin = require('./src/routes/adminroute.js');
     const employee = require('./src/routes/employeeroute.js');
     const product = require('./src/routes/productroute');
     const branch = require('./src/routes/branchroute.js');
     const users = require('./src/routes/userroute.js');
-    app.use('/', admin, product,users);
-    app.use('/', employee);
-    app.use('/', branch);
+    const assign = require('./src/routes/assignroute.js');
+    const leads = require('./src/routes/leadroute.js');
+    app.use('/', admin, product, users, employee, branch, assign, leads);
 
     app.get('/', (req, res) => {
       res.send('✅ Vaithiyar Poova API is running!');

@@ -49,12 +49,12 @@ exports.saveEmpDetails = async (req, res) => {
 
         const {
             emp_id, emp_name, email, mobile_number, address,
-            salary, incentive_percentage, date_of_joining, designation, userId
+            salary, incentive_percentage, date_of_joining, designation, designation_id ,userId
         } = req.body;
 
         const imagePath = req.file?.key || null; 
 
-        const sql = `CALL SP_SaveEmpDetails(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `CALL SP_SaveEmpDetails(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         const values = [
             emp_id,
@@ -67,7 +67,8 @@ exports.saveEmpDetails = async (req, res) => {
             incentive_percentage,
             address,
             userId,
-            imagePath
+            imagePath,
+            designation_id
         ];
 
         db.query(sql, values, (err, result) => {
@@ -149,7 +150,7 @@ exports.updateEmployee = async (req, res) => {
             });
 
         for (const { key, newValue } of parsedUpdates) {
-            const sql = `UPDATE employees SET ${key} = ? WHERE emp_recid = ?`;
+            const sql = `UPDATE users SET ${key} = ? WHERE user_id = ?`;
             await query(sql, [newValue, emp_recid]);
         }
 
