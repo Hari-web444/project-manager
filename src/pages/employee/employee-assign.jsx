@@ -203,7 +203,7 @@ function EmployeeAssign() {
                                                     >
                                                       <input
                                                         type="checkbox"
-                                                        className="custom-checkbox"
+                                                        className="custom-checkbox-ap"
                                                         id={`check-${item.menu_id}-${action}`}
                                                         defaultChecked
                                                       />
