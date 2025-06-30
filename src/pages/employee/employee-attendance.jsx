@@ -12,11 +12,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 function EmployeeAttendance() {
-  const [branchDataList, setBranchDataList] = useState([]);
+  const [userAttendanceDataList, setUserAttendanceDataList] = useState([]);
   const [needLoading, setNeedLoading] = useState(false);
   const { user } = useAuth();
   const user_typecode = user?.user_typecode;
-  const userId = user?.userId;
   const config = configModule.config();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -25,24 +24,26 @@ function EmployeeAttendance() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  const getBranchDetails = async () => {
+  const getUserAttendanceData = async () => {
     setNeedLoading(true);
+
     try {
-      const response = await axios.post(`${config.apiBaseUrl}getBranchDetails`, {
-        userId: userId,
-        user_typecode: user_typecode
+      const response = await axios.post(`${config.apiBaseUrl}getUserAttendanceData`, {
+        user_typecode: user_typecode || "",
+        startDate: startDate || '',
+        endDate: endDate || ''
       });
 
       const result = response.data;
       if (response.status === 200) {
-        setBranchDataList(result.data);
+        setUserAttendanceDataList(result.data);
       } else {
-        toast.error("Failed to fetch branch details: " + result.message);
-        console.error("Failed to fetch branch details: " + result.message);
+        toast.error("Failed to fetch userAttendance details: " + result.message);
+        console.error("Failed to fetch userAttendance details: " + result.message);
       }
     } catch (error) {
       toast.error(
-        "Error fetching branch details: " +
+        "Error fetching attendance details: " +
         (error.response?.data?.message || error.message)
       );
     } finally {
@@ -52,7 +53,7 @@ function EmployeeAttendance() {
 
   useEffect(() => {
     if (user) {
-      getBranchDetails();
+      getUserAttendanceData();
     }
   }, [user]);
 
@@ -61,12 +62,12 @@ function EmployeeAttendance() {
     setCurrentPage(1);
   };
 
-  const indexOfLastBranch = currentPage * itemsPerPage;
-  const indexOfFirstBranch = indexOfLastBranch - itemsPerPage;
-  const paginatedBranches = branchDataList.slice(indexOfFirstBranch, indexOfLastBranch);
+  const indexOfLastUserAttendance = currentPage * itemsPerPage;
+  const indexOfFirstUserAttendance = indexOfLastUserAttendance - itemsPerPage;
+  const paginatedUserAttendancees = userAttendanceDataList.slice(indexOfFirstUserAttendance, indexOfLastUserAttendance);
 
-  const currentBranches = paginatedBranches.filter((item) =>
-    `${item.branch_id} ${item.branch_name} ${item.branch_in_charge} ${item.location} ${item.phone_number}`
+  const currentUserAttendancees = paginatedUserAttendancees.filter((item) =>
+    `${item.attendance_id} ${item.emp_id} ${item.emp_name} ${item.designation} ${item.work_type} ${item.status}`
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
@@ -85,7 +86,7 @@ function EmployeeAttendance() {
       )}
       <div className='header-div-el'>
         <div className='header-divpart-el'>
-          <p className='mb-0 header-titlecount-el'>Attendance Report : {currentBranches.length || 0}</p>
+          <p className='mb-0 header-titlecount-el'>Attendance Report : {currentUserAttendancees.length || 0}</p>
           <div className="d-flex align-items-center">
             <button>
               <p className='mb-0 nav-btn-top'>
@@ -132,6 +133,7 @@ function EmployeeAttendance() {
                 onClick={() => {
                   setCurrentPage(1);
                   setShowDateFilter(false);
+                  getUserAttendanceData();
                 }}
               >
                 Apply Filter
@@ -164,9 +166,6 @@ function EmployeeAttendance() {
                 Duration
               </div> <span style={{ color: "#129347" }}> | </span>
               <div className='brcommon-col-st w-10'>
-                Date
-              </div> <span style={{ color: "#129347" }}> | </span>
-              <div className='brcommon-col-st w-10'>
                 Work type
               </div> <span style={{ color: "#129347" }}> | </span>
               <div className='brcommon-col-st w-10'>
@@ -175,42 +174,45 @@ function EmployeeAttendance() {
               <div className='brcommon-col-st w-10'>
                 Logoff
               </div> <span style={{ color: "#129347" }}> | </span>
+              <div className='brcommon-col-st w-10'>
+                Status
+              </div> <span style={{ color: "#129347" }}> | </span>
             </div>
 
             <div className='tb-body-row-st' style={{ minWidth: "1112px" }}>
-              {currentBranches && currentBranches.length > 0 ? (currentBranches.map((item, index) => (
-                <div className='display-flex br-rowst' key={item.branch_id}>
+              {currentUserAttendancees && currentUserAttendancees.length > 0 ? (currentUserAttendancees.map((item, index) => (
+                <div className='display-flex br-rowst' key={item.attendance_id}>
                   <div className='brcommon-col-st w-10'>
                     {(currentPage - 1) * itemsPerPage + index + 1}
                   </div>
-                  <div className='brcommon-col-st w-15'>
-                    {item.branch_id}
+                  <div className='brcommon-col-st w-10'>
+                    {item.emp_id}
                   </div>
                   <div className='brcommon-col-st w-15'>
-                    {item.branch_name}
+                    {item.emp_name}
                   </div>
                   <div className='brcommon-col-st w-15'>
-                    {item.branch_in_charge}
+                    {item.designation}
                   </div>
-                  <div className='brcommon-col-st w-15'>
-                    {item.phone_number}
+                  <div className='brcommon-col-st w-10'>
+                    {item.duration}
                   </div>
-                  <div className='brcommon-col-st w-20'>
-                    {item.location}
+                  <div className='brcommon-col-st w-10'>
+                    {item.work_type}
                   </div>
-                  <div
-                    className="brcommon-col-st w-10 cursor-pointer position-relative">
-                    <button onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedBranch(item);
-                    }} >
-                      <SvgContent svg_name="threedots" />
-                    </button>
+                  <div className='brcommon-col-st w-10'>
+                    {item.login_time}
+                  </div>
+                  <div className='brcommon-col-st w-10'>
+                    {item.logoff_time}
+                  </div>
+                  <div className='brcommon-col-st w-10'>
+                    {item.status}
                   </div>
                 </div>
               ))) : (
                 <div className='tb-body-row-st display-flex'>
-                  No branch list
+                  No Attendance list
                 </div>
               )}
 
@@ -232,7 +234,7 @@ function EmployeeAttendance() {
               </select>
             </label>
             <Pagination
-              count={branchDataList.length}
+              count={userAttendanceDataList.length}
               page={currentPage}
               pageSize={itemsPerPage}
               onChange={(pageNo) => setCurrentPage(pageNo)}
