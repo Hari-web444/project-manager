@@ -152,7 +152,7 @@
     cursor: pointer;
 }
 
-.custom-checkbox {
+.custom-checkbox-ap {
     width: 20px;
     height: 20px;
     border: 1px solid #05823a;
@@ -166,12 +166,12 @@
     display: block !important;
 }
 
-.custom-checkbox:checked {
+.custom-checkbox-ap:checked {
     background-color: #fff;
     border: 1px solid #05823a;
 }
 
-.custom-checkbox:checked::after {
+.custom-checkbox-ap:checked::after {
     content: '';
     position: absolute;
     left: 10px;
