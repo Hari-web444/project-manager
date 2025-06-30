@@ -3,6 +3,7 @@ import  { useState, useEffect,  } from 'react';
 import './App.css';
 import { Routes, Route, Navigate,  } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "react-datepicker/dist/react-datepicker.css";
 import PrivateRoute from './components/auth/PrivateRoute.jsx';
 import { useAuth } from './components/context/Authcontext.jsx';
@@ -31,6 +32,8 @@ import NotFound from './components/notfoun.jsx';
 import Logoutmodal from './components/logoutmodal.jsx';
 import UserProfile from './pages/userprofile/userProfile.jsx';
 import Orders from './pages/orders/orders.jsx';
+import Orderlist from './pages/orders/order-list.jsx';
+import Directory from './pages/directory/directory.jsx';
 
 function App() {
 
@@ -106,6 +109,8 @@ function App() {
           <Route path="/inventory" element={<PrivateRoute><Inventory /></PrivateRoute>} />
           <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
           <Route path="/orders" element={<PrivateRoute><Orders/></PrivateRoute>} />
+          <Route path="/directory" element={<PrivateRoute><Directory/></PrivateRoute>} />
+          <Route path="/orders-list" element={<PrivateRoute><Orderlist/></PrivateRoute>} />
           <Route path="/stocks" element={<PrivateRoute><Stocks /></PrivateRoute>} />
           <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
           <Route path="/branches/view" element={<PrivateRoute><ViewBranch /></PrivateRoute>} />

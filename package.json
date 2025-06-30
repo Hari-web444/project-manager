@@ -12,7 +12,7 @@
   "dependencies": {
     "@fontsource/montserrat": "^5.2.5",
     "axios": "^1.9.0",
-    "bootstrap": "^5.3.5",
+    "bootstrap": "^5.3.7",
     "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
