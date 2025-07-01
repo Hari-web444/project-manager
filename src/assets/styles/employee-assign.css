@@ -184,6 +184,47 @@
     background: white;
 }
 
+.filter-container-up {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-up {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    width: 145px;
+    overflow: hidden;
+}
+
+.dropdown-header-up {
+    background-color: #066333;
+    color: white;
+    padding: 8px;
+    text-align: center;
+}
+
+.dropdown-list-up {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-item-up {
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item-up:hover {
+    background-color: #f2f2f2;
+}
+
 
 
 @media (max-width: 1024px) {

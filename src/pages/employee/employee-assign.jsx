@@ -190,39 +190,36 @@ function EmployeeAssign() {
                                         .filter(([key, value]) => actionKeys.has(key) && Number(value) === 1)
                                         .map(([key]) => key);
 
-                                        return (
-                                            <div key={item.menu_id || index} className='mb-4'>
-                                              <h6 className='fw-bold'>{item.name}</h6>
-                                              <div className="d-flex flex-wrap gap-4 mt-2">
+                                    return (
+                                        <div key={item.menu_id || index} className='mb-4'>
+                                            <h6 className='fw-bold'>{item.name}</h6>
+                                            <div className="d-flex flex-wrap gap-4 mt-2">
                                                 {actions.length > 0 ? (
-                                                  actions.map(action => (
-                                                    <label
-                                                      key={action}
-                                                      className="custom-form-check"
-                                                      htmlFor={`check-${item.menu_id}-${action}`}
-                                                    >
-                                                      <input
-                                                        type="checkbox"
-                                                        className="custom-checkbox-ap"
-                                                        id={`check-${item.menu_id}-${action}`}
-                                                        defaultChecked
-                                                      />
-                                                      <span className="text-capitalize">{action}</span>
-                                                    </label>
-                                                  ))
+                                                    actions.map(action => (
+                                                        <label
+                                                            key={action}
+                                                            className="custom-form-check"
+                                                            htmlFor={`check-${item.menu_id}-${action}`}
+                                                        >
+                                                            <input
+                                                                type="checkbox"
+                                                                className="custom-checkbox-ap"
+                                                                id={`check-${item.menu_id}-${action}`}
+                                                                defaultChecked
+                                                            />
+                                                            <span className="text-capitalize">{action}</span>
+                                                        </label>
+                                                    ))
                                                 ) : (
-                                                  <span className='text-muted'>No permissions</span>
+                                                    <span className='text-muted'>No permissions</span>
                                                 )}
-                                              </div>
                                             </div>
-                                          );
-                                          
+                                        </div>
+                                    );
                                 })}
                         </div>
                     </div>
                 )}
-
-
             </div>
             <ToastContainer
                 position="top-right"
