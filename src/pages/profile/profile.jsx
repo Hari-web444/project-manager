@@ -95,39 +95,40 @@ function Profile() {
     }
   }, [duration]);
 
-  const handleSubmit = async () => {
-    if (step === 1) {
-      try {
-        const payload = {
-          ...leaveForm,
-          leave_type: formData.type_leave,
-          duration: formData.type_day,
-          created_by: creat_by,
-          user_id: userId,
-        };
-        await axios.post(`${config.apiBaseUrl}insertLeave`, payload);
-        toast.success("Leave submitted successfully!");
-        resetLeaveForm();
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to submit leave.");
-      }
-    } else if (step === 2) {
-      try {
-        const payload = {
-          ...permissionForm,
-          created_by: creat_by,
-          user_id: userId,
-        };
-        await axios.post(`${config.apiBaseUrl}insertPermission`, payload);
-        toast.success("Permission request sent!");
-        resetPermissionForm();
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to submit permission.");
-      }
+ const handleSubmit = async () => {
+  if (step === 1) {
+    try {
+      const payload = {
+        ...leaveForm,
+        leave_type: formData.type_leave,
+        duration: formData.type_day,
+        created_by: userId,
+        user_id:  creat_by,
+      };
+      await axios.post(`${config.apiBaseUrl}insertLeave`, payload);
+      toast.success("Leave submitted successfully!");
+      resetLeaveForm();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to submit leave.");
     }
-  };
+  } else if (step === 2) {
+    try {
+      const payload = {
+        ...permissionForm,
+        created_by: userId,
+        user_id:  creat_by,
+      };
+      await axios.post(`${config.apiBaseUrl}insertPermission`, payload);
+      toast.success("Permission request sent!");
+      resetPermissionForm();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to submit permission.");
+    }
+  }
+};
+
 
   const resetLeaveForm = () => {
     setLeaveForm({ from_date: '', to_date: '', reason: '' });
@@ -143,7 +144,7 @@ function Profile() {
 
 
   useEffect(() => {
-    const fetchstaus = async () => {
+    const fetchStatus = async () => {
       try {
         const response = await axios.post(`${config.apiBaseUrl}getstatus/${userId}`);
         setStatus(response.data.data);
@@ -152,8 +153,10 @@ function Profile() {
         toast.error(err.response?.data?.message || 'Something went wrong. Please try again.');
       }
     };
-    if (userId) fetchstaus();
-  }, [userId]);
+    if (userId && step === 3) {
+    fetchStatus(); 
+  }
+  }, [userId,step]);
 
 
  const statusClassMap = {
@@ -311,7 +314,7 @@ function Profile() {
                         options={typeleave}
                         placeholder="Select Leave  type"
                         value={ltype}
-                        onChange={setLtype}/>
+                         onChange={(e) => setLtype(e.target.value)}/>
                      </div>
                      <div className="col-6">
                       <label htmlFor="duration" className="fw-500 mb-2">Duration</label>
@@ -320,7 +323,7 @@ function Profile() {
                        options={leaveDuration}               
                        placeholder="Select leave duration"
                        value={duration}
-                       onChange={setDuration}  />
+                       onChange={(e) => setDuration(e.target.value)} />
                     </div>
                    </div> 
                     <div className="row mt-4">

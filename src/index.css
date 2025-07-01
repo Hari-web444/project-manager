@@ -79,3 +79,13 @@ input {
   background: #fff;
   color: #121212;
 }
+.css-qfc1gj-placeholder {
+    grid-area: 1 / 1 / 2 / 3;
+    color: #aaa;
+    margin-left: 2px;
+    margin-right: 2px;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;       
+    overflow: hidden !important;       
+    text-overflow: ellipsis !important;   
+}

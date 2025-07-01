@@ -256,7 +256,7 @@ function Products() {
           <div className=''>
             <input type='search' className='product-search-input' placeholder='Search '  value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
-          {(user_typecode === "TSL" || user_typecode === "TCL") && (   
+          {(user_typecode === "TSL" || user_typecode === "TCL" || user_typecode === "DIS") && (   
           <div className="product-filter-dropdowns" ref={dropdownRef}>
             <button className="product-filter-btns"  type="button" onClick={() => setIsOpen(!isOpen)} ><img src={filtericon} alt="img" /> Filter</button>
             {isOpen && (
