@@ -20,18 +20,21 @@ function EmployeeAttendance() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterData, setFilterData] = useState("");
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const getUserAttendanceData = async () => {
+  const getUserAttendanceData = async (objStatus = '') => {
     setNeedLoading(true);
 
     try {
       const response = await axios.post(`${config.apiBaseUrl}getUserAttendanceData`, {
         user_typecode: user_typecode || "",
-        startDate: startDate || '',
-        endDate: endDate || ''
+        startDate: startDate?.toISOString().split('T')[0] || '',
+        endDate: endDate?.toISOString().split('T')[0] || '',
+        filterData: objStatus || ''
       });
 
       const result = response.data;
@@ -71,6 +74,19 @@ function EmployeeAttendance() {
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
   );
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleSelect = (status) => {
+    setFilterData(status);
+    setShowDropdown(false);
+    getUserAttendanceData(status);
+  };
+
+  const options = ['Present', 'Late', 'Leave', 'Permission', 'Absent'];
+
 
   return (
     <div className='common-body-st'>
@@ -140,10 +156,30 @@ function EmployeeAttendance() {
               </button>
             </div>
           )}
-          <button className="btn-top-up btn-bg-filled" >
+          {/* <button className="btn-top-up btn-bg-filled" >
             <SvgContent svg_name="btn_filter" stroke="white" width={20} height={20} />
             <span className='visible-label-up'>Filter</span>
-          </button>
+          </button> */}
+
+          <div className="filter-container-up">
+            <button className="btn-top-up btn-bg-filled" onClick={toggleDropdown}>
+              <SvgContent svg_name="btn_filter" stroke="white" width={20} height={20} />
+              <span className="visible-label-up">Filter</span>
+            </button>
+
+            {showDropdown && (
+              <div className="dropdown-up">
+                <div className="dropdown-header-up">Filter</div>
+                <ul className="dropdown-list-up">
+                  {options.map((option) => (
+                    <li key={option} onClick={() => handleSelect(option)} className="dropdown-item-up">
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className='body-div-el'>
