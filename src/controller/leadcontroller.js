@@ -3,17 +3,28 @@ const db = getPool();
 
 
 exports.getallleads = async (req, res) => {
-    const sqlPg = `CALL SP_GetAllLeadDetails()`;
+    const { fileredData } = req.body;
+
+    const sqlPg = `CALL SP_GetAllLeadDetails('${fileredData}')`;
+    const cgSql = `CALL SP_GetAllcatagories()`;
 
     try {
         db.query(sqlPg, (errPg, resultPg) => {
             if (errPg) {
-                console.error('Error getting pages:', errPg);
-                return res.status(500).json({ message: 'Failed to get page lists' });
+                console.error('Error getting leads:', errPg);
+                return res.status(500).json({ message: 'Failed to get leads' });
             }
 
-            res.status(200).json({
-                leads: resultPg[0]
+            db.query(cgSql, (errCg, resultCg) => {
+                if (errCg) {
+                    console.error('Error getting categories:', errCg);
+                    return res.status(500).json({ message: 'Failed to get categories' });
+                }
+
+                res.status(200).json({
+                    leads: resultPg[0],
+                    categories: resultCg[0]
+                });
             });
         });
     } catch (error) {

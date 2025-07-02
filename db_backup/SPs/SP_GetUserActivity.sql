@@ -1,14 +1,14 @@
 
 /* ----------------------------------------------------------------------------------------------------------------- 
  NAME: Hariharan S
- DATE: 30/05/2025
- DESC: It is used to get attendance details
+ DATE: 01/07/2025
+ DESC: It is used to get user activity details
  ----------------------------------------------------------------------------------------------------------------- */
 DELIMITER //
 
-DROP PROCEDURE IF EXISTS `SP_GetAttendanceData`;
+DROP PROCEDURE IF EXISTS `SP_GetUserActivity`;
 
-CREATE PROCEDURE `SP_GetAttendanceData`(
+CREATE PROCEDURE `SP_GetUserActivity`(
     IN usertype_code VARCHAR(10),
     IN startDate VARCHAR(50),
     IN endDate VARCHAR(50),
@@ -28,7 +28,8 @@ BEGIN
 
     -- Query for Admin user
     IF usertype_code = "AD" THEN
-        SET @sQuery = CONCAT("SELECT 
+        SET @sQuery = CONCAT("
+        SELECT 
             AT.attendance_id    AS attendance_id,
             US.emp_id           AS emp_id,
             AT.emp_name         AS emp_name,
