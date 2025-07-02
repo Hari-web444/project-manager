@@ -31,10 +31,7 @@ function Profile() {
 
   const visibleItems = showAll ? achievementsData : achievementsData.slice(0, 2);
 
-  const [formData, setFormData] = useState({
-    type_leave: '',
-    type_day: '',
-  });
+
 
   const [leaveForm, setLeaveForm] = useState({
     from_date: '',
@@ -100,8 +97,8 @@ function Profile() {
     try {
       const payload = {
         ...leaveForm,
-        leave_type: formData.type_leave,
-        duration: formData.type_day,
+        leave_type: ltype,
+        duration: duration,
         created_by: userId,
         user_id:  creat_by,
       };
