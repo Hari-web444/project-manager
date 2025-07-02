@@ -17,6 +17,7 @@ function UserProfile() {
   const user_typecode = user?.user_typecode;
   const [needLoading, setNeedLoading] = useState(false);
   const [leadDetails, setLeadDetails] = useState([]);
+  const [categories, setCatagories] = useState([]);
   const [nILeadDetails, setNILeadDetails] = useState([]);
   const config = configModule.config();
   const [status, setStatus] = useState("active");
@@ -28,16 +29,21 @@ function UserProfile() {
   const [endDate, setEndDate] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const isActive = status === "active";
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const getPageDetails = async () => {
+  const getPageDetails = async (objStatus = '') => {
     setNeedLoading(true);
     try {
-      const response = await axios.get(`${config.apiBaseUrl}getAllLeadDetails`);
+      const response = await axios.post(`${config.apiBaseUrl}getAllLeadDetails`, {
+        fileredData: objStatus
+      });
+      
       const result = response.data;
 
       if (response.status === 200) {
         setLeadDetails(result?.leads?.length > 0 ? result.leads.filter(itm => itm.disposition !== "Not interested") : []);
         setNILeadDetails(result?.leads?.length > 0 ? result.leads.filter(itm => itm.disposition === "Not interested") : []);
+        setCatagories(result?.categories);
       } else {
         toast.error("Failed to fetch designation list: " + result.message);
       }
@@ -85,11 +91,16 @@ function UserProfile() {
   const indexOfFirstLeads = indexOfLastLeads - itemsPerPage;
   const currentLeads = filteredLeads.slice(indexOfFirstLeads, indexOfLastLeads);
 
-  const handleUpload = (file) => {
-    console.log("File to upload:", file);
-    // Send to server logic here...
-    setShowUploadModal(false);
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
   };
+
+  const handleSelect = (status) => {
+    setShowDropdown(false);
+    getPageDetails(status);
+  };
+
+  const options = ['Leave', 'Permission'];
 
   return (
     <div className='common-body-st'>
@@ -166,10 +177,25 @@ function UserProfile() {
               </button>
             </div>
           )}
-          <button className="btn-top-up">
-            <SvgContent svg_name="btn_filter" width={20} height={20} />
-            <span className='visible-label-up'>Filter</span>
-          </button>
+          <div className="filter-container-up">
+            <button className="btn-top-up" onClick={toggleDropdown}>
+              <SvgContent svg_name="btn_filter" width={20} height={20} />
+              <span className="visible-label-up">Filter</span>
+            </button>
+
+            {showDropdown && (
+              <div className="dropdown-up">
+                <div className="dropdown-header-up">Filter</div>
+                <ul className="dropdown-list-up">
+                  {categories.map((option) => (
+                    <li key={option.category_id} onClick={() => handleSelect(option.category_name)} className="dropdown-item-up">
+                      {option.category_name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           <button className="btn-top-up" onClick={() => setShowUploadModal(true)} >
             <SvgContent svg_name="btn_upload" width={20} height={20} />
             <span className='visible-label-up'>Upload</span>
