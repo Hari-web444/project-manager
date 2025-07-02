@@ -129,7 +129,6 @@ function Profile() {
   }
 };
 
-
   const resetLeaveForm = () => {
     setLeaveForm({ from_date: '', to_date: '', reason: '' });
     setFormData({ type_leave: '', type_day: '' });
