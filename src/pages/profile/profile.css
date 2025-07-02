@@ -68,6 +68,7 @@
   object-fit: cover;
   border-radius: 50%;
   display: block;
+  object-fit: fill;
 }
 
 .profile-details-view{
@@ -129,7 +130,8 @@
     border-radius: 4px;
     width: 100%;
     outline: none;
-  
+    background: transparent;
+    color: #121212;
 }
 .profile-form-controle:focus{
    border-color: #18934B;

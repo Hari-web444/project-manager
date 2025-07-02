@@ -371,3 +371,7 @@ input[type="number"] {
 .w-14 {
     width: 14% !important;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: block !important;
+}

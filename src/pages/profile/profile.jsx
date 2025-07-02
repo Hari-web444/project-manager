@@ -178,7 +178,7 @@ function Profile() {
           <div className="row h-100">
             <div className="col-12 col-md-5 col-lg-5">
               <div className="profile-card-view">
-                <div className="p-4">
+                <div className="p-4 display-flex">
                  <img
                     src={userData?.image_url || null}
                     alt="Employee"
