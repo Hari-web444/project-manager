@@ -3,12 +3,12 @@ const db = getPool();
 
 exports.insertLeave = async (req, res) => {
   try {
-    const { from_date, to_date, leave_type, duration, reason, user_status = 'Pending', created_by,user_id } = req.body;
+    const { from_date, to_date, leave_type, duration, reason, user_status = 'Pending', created_by, user_id , action } = req.body;
     if (!from_date || !to_date || !leave_type || !duration || !reason || !created_by) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
-    const values = [from_date, to_date, leave_type, duration, reason, user_status, created_by,user_id];
-    const sql = 'CALL SP_InsertLeaveRequest(?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [from_date, to_date, leave_type, duration, reason, user_status, created_by, user_id , action];
+    const sql = 'CALL SP_InsertLeaveRequest(?, ?, ?, ?, ?, ?, ?, ?, ?)';
     db.query(sql, values, (err, result) => {
       if (err) {
         console.error('Error insertin’ leave:', err);
@@ -26,14 +26,14 @@ exports.insertLeave = async (req, res) => {
 
 exports.insertPermission = async (req, res) => {
   try {
-    const { from_time, to_time, reason, user_status = 'Pending', created_by,user_id } = req.body;
+    const { from_time, to_time, reason, user_status = 'Pending', created_by,user_id , action} = req.body;
 
     if (!from_time || !to_time || !reason || !created_by) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
 
-    const sql = 'CALL SP_InsertPermissionRequest(?, ?, ?, ?, ?, ?)';
-    const values = [from_time, to_time, reason, user_status, created_by,user_id];
+    const sql = 'CALL SP_InsertPermissionRequest(?, ?, ?, ?, ?, ?, ?)';
+    const values = [from_time, to_time, reason, user_status, created_by,user_id, action];
 
     db.query(sql, values, (err, results) => {
       if (err) {
