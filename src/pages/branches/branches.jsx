@@ -43,7 +43,9 @@ function Branches() {
   const TypeOptions = [
     { label: "Office", value: "Office" },
     { label: "Clinic", value: "Clinic" },
-    { label: "Store", value: "Store" }
+    { label: "Store", value: "Store" },
+    { label: "Dispatch", value: "Dispatch" },
+    { label: "Creative service", value: "Creative service" }
   ];
 
   const getLocationDetails = async () => {

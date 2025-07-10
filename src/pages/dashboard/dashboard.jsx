@@ -75,6 +75,15 @@ function Dashboard() {
       { name: "Today’s Call backs", img: call_back, count: 95 },
     ];
   }
+  else if (user_typecode === "AC") {
+    cardData = [
+      { name: "Pending approvals", img: permission, count: 55 },
+      { name: "Total revenue", img: revenue_dbc, count: 85 },
+      { name: "Total expenses", img: expense_dbc, count: 15 },
+      { name: "Total orders", img: t_orders2, count: 254 },
+      { name: "Today’s Orders", img: t_orders, count: 25 }
+    ];
+  }
 
   const checkLeadCount = async () => {
     try {

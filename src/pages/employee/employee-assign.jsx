@@ -9,9 +9,6 @@ import SvgContent from '../../components/svgcontent.jsx';
 
 function EmployeeAssign() {
     const { user } = useAuth();
-    const userId = user?.userId;
-    const user_typecode = user?.user_typecode;
-    const [needLoading, setNeedLoading] = useState(false);
     const [allPages, setAllPages] = useState([]);
     const [allDesignation, setAllDesignation] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
@@ -20,7 +17,6 @@ function EmployeeAssign() {
     const [navigateNext, setNavigateNext] = useState(false);
 
     const getPageDetails = async () => {
-        setNeedLoading(true);
         try {
             const response = await axios.get(`${config.apiBaseUrl}getAssignDetails`);
 
@@ -40,8 +36,6 @@ function EmployeeAssign() {
 
             setAllPages([]);
 
-        } finally {
-            setNeedLoading(false);
         }
     };
 

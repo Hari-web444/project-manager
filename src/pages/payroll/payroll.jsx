@@ -10,10 +10,8 @@ import Pagination from "../../components/Pagination/index.jsx";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { PropagateLoader } from 'react-spinners';
-import viewicon from '../../assets/images/viewicon.svg';
-import update from '../../assets/images/updatebtn.svg';
 
-function Orderlist() {
+function PayRoll() {
     const { user } = useAuth();
     const [needLoading, setNeedLoading] = useState(false);
     const [leadDetails, setLeadDetails] = useState([]);
@@ -113,9 +111,8 @@ function Orderlist() {
                 </div>
             )}
             <div className='header-div-el'>
-                <div className='header-divpart-el gap-4 flex-row'>
-                    <p className='mb-0 header-titlecount-el'>Total order : 55</p>
-                    <p className='mb-0 header-titlecount-el'>Pending order : 15</p>
+                <div className='header-divpart-el gap-2'>
+                    <p className='mb-0 header-titlecount-el'>Total Employee : 55</p>
                 </div>
 
                 <div className="search-add-wrapper">
@@ -241,14 +238,14 @@ function Orderlist() {
                         <div className='table-userpro-up w-100 h-100 overflow-auto'>
                             <div className='table-head-up d-flex'>
                                 <div className='w-10 p-2 d-flex justify-content-center align-items-center'>S.No</div><span style={{ color: "#129347" }}> | </span>
-                                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Order ID</div><span style={{ color: "#129347" }}> | </span>
+                                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Cus ID</div><span style={{ color: "#129347" }}> | </span>
                                 <div className='w-14 p-2 d-flex justify-content-center align-items-center'>Name</div><span style={{ color: "#129347" }}> | </span>
-                                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Quantity</div><span style={{ color: "#129347" }}> | </span>
-                                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Value</div><span style={{ color: "#129347" }}> | </span>
+                                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Mobile</div><span style={{ color: "#129347" }}> | </span>
+                                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Category</div><span style={{ color: "#129347" }}> | </span>
                                 <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Date</div><span style={{ color: "#129347" }}> | </span>
-                                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Courier</div><span style={{ color: "#129347" }}> | </span>
-                                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Status</div><span style={{ color: "#129347" }}> | </span>
-                                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Action</div>
+                                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Handle by</div><span style={{ color: "#129347" }}> | </span>
+                                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Disposition</div><span style={{ color: "#129347" }}> | </span>
+                                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Entry Date</div>
                             </div>
                             <div className='table-body-up d-flex'>
                                 {currentLeads.map((lead, index) => (
@@ -277,9 +274,8 @@ function Orderlist() {
                                         <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
                                             {lead.disposition}
                                         </div>
-                                        <div className='w-10 p-2 gap-3 d-flex justify-content-center align-items-center'>
-                                            <img src={viewicon} alt='view' />
-                                            <img src={update} alt='view' />
+                                        <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
+                                            {formatDateTime(lead.disposition_date)}
                                         </div>
                                     </div>
                                 ))}
@@ -329,4 +325,4 @@ function Orderlist() {
     );
 }
 
-export default Orderlist;
+export default PayRoll;

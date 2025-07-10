@@ -203,7 +203,7 @@
 }
 
 .dropdown-header-up {
-    background-color: #066333;
+    background: linear-gradient(3deg, #0B622F, #18934B) !important;
     color: white;
     padding: 8px;
     text-align: center;
@@ -218,7 +218,7 @@
 }
 
 .dropdown-item-up {
-    padding: 8px;
+    padding: 8px 22px;
     text-align: center;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -234,4 +234,8 @@
     .assign-icon-ap {
         left: 10px !important;
     }
+}
+
+.header-div-cp {
+    height: 58px !important;
 }

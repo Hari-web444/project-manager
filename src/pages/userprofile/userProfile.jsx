@@ -10,11 +10,10 @@ import Pagination from "../../components/Pagination/index.jsx";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import UploadModal from './upload-userprofile.jsx';
+import { PropagateLoader } from 'react-spinners';
 
 function UserProfile() {
   const { user } = useAuth();
-  const userId = user?.userId;
-  const user_typecode = user?.user_typecode;
   const [needLoading, setNeedLoading] = useState(false);
   const [leadDetails, setLeadDetails] = useState([]);
   const [categories, setCatagories] = useState([]);
@@ -100,10 +99,18 @@ function UserProfile() {
     getPageDetails(status);
   };
 
-  const options = ['Leave', 'Permission'];
-
   return (
     <div className='common-body-st'>
+      {needLoading && (
+        <div className='loading-container w-100 h-100'>
+          <PropagateLoader
+            height="100"
+            width="100"
+            color="#0B9346"
+            radius="10"
+          />
+        </div>
+      )}
       <div className='header-div-el'>
         <div className='header-divpart-el gap-2'>
           <p className='mb-0 header-titlecount-el'>Total user profiles : 1050</p>

@@ -27,6 +27,14 @@ const pathTitles = {
   '/employee/assign': 'Assign Employee',
   '/employee/attendance': 'Employee Attendance',
   '/employee/leave-permissions': 'Leave & Permission',
+  '/purchase': 'Purchases',
+  '/calendar': 'Calendar',
+  '/creative-service': 'Creative Service',
+  '/credits': 'Credits',
+  '/payroll': 'Payroll',
+  '/randd': 'R&D',
+  '/orders-list': 'Orders',
+  '/directory': "Directory"
 };
 
 function MainLayout({ menuItems }) {

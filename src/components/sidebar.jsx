@@ -63,9 +63,13 @@ function Sidebar({ menuItems }) {
 
             ) : (
               <NavLink to={path} end={exact}>
-                <SvgContent svg_name={icon} />
-                <span className="sbnone-title">{name}</span>
-              </NavLink>
+              {({ isActive }) => (
+                <>
+                  <SvgContent svg_name={icon} stroke={isActive ? "white" : "#121212"} />
+                  <span className="sbnone-title">{name}</span>
+                </>
+              )}
+            </NavLink>
             )}
           </div>
         ))}

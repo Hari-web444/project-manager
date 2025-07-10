@@ -3,7 +3,7 @@
 }
 
 .location-ip-br {
-    min-height: 45px;
+    min-height: 40px;
 }
 
 .location-ip-br::placeholder {
@@ -171,9 +171,13 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    flex-wrap: wrap;
+    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    padding: 12px 2px;
+    gap: 5px;
 }
-
-
 
 .button:hover {
     border-color: #cccccc !important;

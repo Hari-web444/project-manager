@@ -51,6 +51,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+button:disabled.bg-transparent-st {
+  background: #ffffff8f !important;
+}
+
 button:disabled {
   background: #0b622f8f !important;
 }
@@ -88,4 +92,14 @@ input {
     white-space: nowrap !important;       
     overflow: hidden !important;       
     text-overflow: ellipsis !important;   
+}
+
+.form-select:focus {
+  border-color:unset !important;
+  box-shadow: unset !important;
+}
+
+.form-control {
+  height: 40px !important;
+  border: 1px solid #ccc !important;
 }

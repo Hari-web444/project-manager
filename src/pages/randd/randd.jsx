@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PropagateLoader } from 'react-spinners';
-import '../../assets/styles/branches.css';
+import '../../assets/styles/accounts.css';
 import { useAuth } from '../../components/context/Authcontext.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,7 +11,7 @@ import SvgContent from '../../components/svgcontent.jsx';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-function EmployeeLeavePermission() {
+function RandD() {
   const [userActivityDataList, setUserActivityDataList] = useState([]);
   const [leaveData, setLeaveData] = useState([]);
   const [permissionData, setPermissionData] = useState([]);
@@ -26,7 +26,6 @@ function EmployeeLeavePermission() {
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
   const [status, setStatus] = useState("pending");
   const isActive = status === "pending";
   const allUserActData = isActive ? userActivityDataList : userActivityDataHistory;
@@ -83,14 +82,6 @@ function EmployeeLeavePermission() {
       .includes(searchQuery.toLowerCase())
   );
 
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
-
-  const handleSelect = (status) => {
-    setShowDropdown(false);
-    getUserActivityDatas(status);
-  };
 
   const options = ['Leave', 'Permission'];
 
@@ -152,18 +143,10 @@ function EmployeeLeavePermission() {
           />
         </div>
       )}
-      <div className='header-div-lp'>
+      <div className='header-div-ac'>
         <div className='header-divpart-el'>
-          <div className='d-flex gap-2'>
-            <p className='mb-0 header-titlecount-el'>Leaves : {leaveData?.length || 0}</p>
-            <p className='mb-0 header-titlecount-el'>permissions : {permissionData?.length || 0}</p>
-          </div>
-          <div className="d-flex align-items-center mb-4">
-            <button>
-              <p className='mb-0 nav-btn-top'>
-                Employee &gt; Leave and permissions
-              </p>
-            </button>
+          <div className='d-flex gap-2 mb-2'>
+            <p className='mb-0 header-titlecount-el'>Accounts</p>
           </div>
 
           <div className="status-toggle-up">
@@ -176,7 +159,7 @@ function EmployeeLeavePermission() {
                 checked={status === "pending"}
                 onChange={(e) => setStatus(e.target.value)}
               />
-              <span className="radio-button"></span> Pending Request
+              <span className="radio-button"></span> Revenue
             </label>
 
             <label htmlFor="status-inactive" className="custom-radio">
@@ -188,11 +171,15 @@ function EmployeeLeavePermission() {
                 checked={status === "history"}
                 onChange={(e) => setStatus(e.target.value)}
               />
-              <span className="radio-button"></span> History
+              <span className="radio-button"></span> Expenses
             </label>
           </div>
         </div>
         <div className="search-add-wrapper">
+          <div className="checkbox-wrapper-7">
+            <input className="tgl tgl-ios" id="cb2-7" type="checkbox" />
+            <label className="tgl-btn" htmlFor="cb2-7"></label>
+          </div>
           <input
             type="text"
             placeholder="Search"
@@ -200,6 +187,9 @@ function EmployeeLeavePermission() {
             style={{ padding: "5px 12px" }}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <button className="btn-top-up" >
+            <span>Premium</span>
+          </button>
           <button className="btn-top-up" onClick={() => setShowDateFilter(!showDateFilter)} >
             <SvgContent svg_name="btn_calendar" width={20} height={20} />
             <span className='visible-label-up'>Sort</span>
@@ -239,29 +229,57 @@ function EmployeeLeavePermission() {
           )}
 
           <div className="filter-container-up">
-            <button className="btn-top-up btn-bg-filled" onClick={toggleDropdown}>
-              <SvgContent svg_name="btn_filter" stroke="white" width={20} height={20} />
-              <span className="visible-label-up">Filter</span>
+            <button className="btn-top-up btn-bg-filled">
+              <span>Export</span>
             </button>
-
-            {showDropdown && (
-              <div className="dropdown-up">
-                <div className="dropdown-header-up">Filter</div>
-                <ul className="dropdown-list-up">
-                  {options.map((option) => (
-                    <li key={option} onClick={() => handleSelect(option)} className="dropdown-item-up">
-                      {option}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         </div>
       </div>
-      <div className='body-div-lp'>
+      <div className='body-div-ac'>
         <div className='h-100 w-100 p-2 pb-0'>
-          <div className='table-common-st'>
+          <div className='bodyhead-ac'>
+            <div className='col-3 bodyhead-div-ac flex-column'>
+              <h5 className='mb-0'>₹ XXXX</h5>
+              <p className='mb-0' style={{ color: "rgb(152 152 152)" }}>Today’s revenue</p>
+            </div>
+            <div className='col-3 bodyhead-div-ac flex-column'>
+              <h5 className='mb-0'>₹ XXXX</h5>
+              <p className='mb-0' style={{ color: "rgb(152 152 152)" }}>Monthly revenue</p>
+            </div>
+            <div className='col-3 bodyhead-div-ac flex-column'>
+              <h5 className='mb-0'>₹ XXXX</h5>
+              <p className='mb-0' style={{ color: "rgb(152 152 152)" }}>Total revenue</p>
+            </div>
+            <div className='col-3 bodyhead-div-ac flex-column'>
+              <div className='w-100 h-100 db-ac'>
+                <div className='d-flex gap-2'>
+                  <div>
+                    Sales
+                  </div>
+                  <div>
+                    ₹ XXXX
+                  </div>
+                </div>
+                <div className='d-flex gap-2'>
+                  <div>
+                    Wallet
+                  </div>
+                  <div>
+                    ₹ XXXX
+                  </div>
+                </div>
+                <div className='d-flex gap-2'>
+                  <div>
+                    Courier
+                  </div>
+                  <div>
+                    ₹ XXXX
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='table-common-st table-common-ac'>
             <div className='tb-header-row-st display-flex' style={{ minWidth: "1112px" }}>
               <div className='brcommon-col-st w-10'>
                 S no
@@ -342,7 +360,7 @@ function EmployeeLeavePermission() {
                 </div>
               ))) : (
                 <div className='tb-body-row-st display-flex'>
-                  No leave permission list
+                  No Attendance list
                 </div>
               )}
 
@@ -389,4 +407,4 @@ function EmployeeLeavePermission() {
   );
 }
 
-export default EmployeeLeavePermission;
+export default RandD;

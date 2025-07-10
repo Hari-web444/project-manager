@@ -34,6 +34,12 @@ import UserProfile from './pages/userprofile/userProfile.jsx';
 import Orders from './pages/orders/orders.jsx';
 import Orderlist from './pages/orders/order-list.jsx';
 import Directory from './pages/directory/directory.jsx';
+import PurchasePage from './pages/purchases/purchase.jsx';
+import CalendarWithHolidayMarker from './pages/calendar/calendar.jsx';
+import CreativeService from './pages/creative-services/creative-services.jsx';
+import Credits from './pages/credits/credits.jsx';
+import Payroll from './pages/payroll/payroll.jsx';
+import RandD from './pages/randd/randd.jsx';
 
 function App() {
 
@@ -110,6 +116,7 @@ function App() {
           <Route path="/accounts" element={<PrivateRoute><Accounts /></PrivateRoute>} />
           <Route path="/orders" element={<PrivateRoute><Orders/></PrivateRoute>} />
           <Route path="/directory" element={<PrivateRoute><Directory/></PrivateRoute>} />
+          <Route path="/purchase" element={<PrivateRoute><PurchasePage/></PrivateRoute>} />
           <Route path="/orders-list" element={<PrivateRoute><Orderlist/></PrivateRoute>} />
           <Route path="/stocks" element={<PrivateRoute><Stocks /></PrivateRoute>} />
           <Route path="/branches" element={<PrivateRoute><Branches /></PrivateRoute>} />
@@ -119,6 +126,11 @@ function App() {
           <Route path="/employee/assign" element={<PrivateRoute><EmployeeAssign /></PrivateRoute>} />
           <Route path="/employee/attendance" element={<PrivateRoute><EmployeeAttendance /></PrivateRoute>} />
           <Route path="/employee/leave-permissions" element={<PrivateRoute><EmployeeLeavePermission /></PrivateRoute>} />
+          <Route path="/calendar" element={<PrivateRoute><CalendarWithHolidayMarker /></PrivateRoute>} />
+          <Route path="/creative-service" element={<PrivateRoute><CreativeService /></PrivateRoute>} />
+          <Route path="/credits" element={<PrivateRoute><Credits /></PrivateRoute>} />
+          <Route path="/payroll" element={<PrivateRoute><Payroll /></PrivateRoute>} />
+          <Route path="/randd" element={<PrivateRoute><RandD /></PrivateRoute>} />
         </Route>
 
         {/* 404 fallback route */}

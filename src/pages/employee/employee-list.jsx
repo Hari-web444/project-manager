@@ -331,7 +331,8 @@ function EmployeeList() {
                         aria-expanded="false"
                       >
                         <SvgContent svg_name="threedots" />
-                      </button>}
+                      </button>
+                    }
 
                     <div className="dropdown-menu dropdown-menu-el" aria-labelledby={`dropdownMenu-${item.emp_id}`}>
                       <div title={!editVisible ? "You don't have access" : "Edit"}>

@@ -373,5 +373,53 @@ input[type="number"] {
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-    display: block !important;
+    color: black !important;
+}
+
+.react-datepicker__header {
+    text-align: center;
+    background: linear-gradient(3deg, #0B622F, #18934b) !important;
+    border-bottom: 1px solid #106c35 !important;
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
+    padding: 8px 0;
+    position: relative;
+}
+
+.react-datepicker {
+    font-family: 'Montserrat', sans-serif !important;
+    background-color: #e9fff2 !important;
+    color: #ffffff !important;
+    border: 1px solid #158a46 !important;
+    border-radius: 22px !important;
+}
+
+.react-datepicker__current-month, .react-datepicker-time__header, .react-datepicker-year-header {
+    color: #fff !important;
+}
+
+.react-datepicker__day-name {
+    color: #fff !important;
+}
+
+.react-datepicker__day--selected, .react-datepicker__day--in-selecting-range, .react-datepicker__day--in-range, .react-datepicker__month-text--selected, .react-datepicker__month-text--in-selecting-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--selected, .react-datepicker__quarter-text--in-selecting-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--selected, .react-datepicker__year-text--in-selecting-range, .react-datepicker__year-text--in-range {
+    background-color:#0B622F !important;
+}
+
+.react-datepicker__day--today {
+    color:#0B622F !important;
+    font-size: 12px;
+    border: 1px solid green;
+    border-radius: 5px;
+    background-color: #e9fff2 !important;
+}
+
+.react-datepicker__day:not([aria-disabled=true]):hover, .react-datepicker__month-text:not([aria-disabled=true]):hover, .react-datepicker__quarter-text:not([aria-disabled=true]):hover, .react-datepicker__year-text:not([aria-disabled=true]):hover {
+    font-weight: 700 !important; 
+    background-color: transparent !important;
+}
+
+.react-datepicker-popper[data-placement^=top] .react-datepicker__triangle {
+    fill: #117037 !important;
+    color: #148241 !important;
 }
