@@ -40,6 +40,7 @@ import CreativeService from './pages/creative-services/creative-services.jsx';
 import Credits from './pages/credits/credits.jsx';
 import Payroll from './pages/payroll/payroll.jsx';
 import RandD from './pages/randd/randd.jsx';
+import AddToCart from './pages/leads/addtocart.jsx';
 
 function App() {
 
@@ -131,6 +132,7 @@ function App() {
           <Route path="/credits" element={<PrivateRoute><Credits /></PrivateRoute>} />
           <Route path="/payroll" element={<PrivateRoute><Payroll /></PrivateRoute>} />
           <Route path="/randd" element={<PrivateRoute><RandD /></PrivateRoute>} />
+          <Route path="/lead/add-to-card" element={<PrivateRoute><AddToCart /></PrivateRoute>} />
         </Route>
 
         {/* 404 fallback route */}

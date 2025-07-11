@@ -36,7 +36,7 @@ function UserProfile() {
       const response = await axios.post(`${config.apiBaseUrl}getAllLeadDetails`, {
         fileredData: objStatus
       });
-      
+
       const result = response.data;
 
       if (response.status === 200) {
@@ -148,75 +148,87 @@ function UserProfile() {
             className="search-input-up"
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button className="btn-top-up" onClick={() => setShowDateFilter(!showDateFilter)} >
-            <SvgContent svg_name="btn_calendar" width={20} height={20} />
-            <span className='visible-label-up'>Sort</span>
-          </button>
-          {showDateFilter && (
-            <div className="date-filter-popup">
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                placeholderText="Start Date"
-                className="form-control form-btncontrol-up mb-2"
-              />
-              <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
-                placeholderText="End Date"
-                className="form-control form-btncontrol-up mb-3"
-              />
-              <button
-                className="btn btn-sm btn-primary w-100 apply-filter-st"
-                onClick={() => {
-                  setCurrentPage(1);
-                  setShowDateFilter(false);
-                }}
-              >
-                Apply Filter
+          {status === "active" ? (
+            <>
+              <button className="btn-top-up" onClick={() => setShowDateFilter(!showDateFilter)} >
+                <SvgContent svg_name="calendar" width={20} height={20} />
+                <span className='visible-label-up'>Sort</span>
               </button>
-            </div>
-          )}
-          <div className="filter-container-up">
-            <button className="btn-top-up" onClick={toggleDropdown}>
-              <SvgContent svg_name="btn_filter" width={20} height={20} />
-              <span className="visible-label-up">Filter</span>
-            </button>
+              {showDateFilter && (
+                <div className="date-filter-popup">
+                  <DatePicker
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    selectsStart
+                    startDate={startDate}
+                    endDate={endDate}
+                    placeholderText="Start Date"
+                    className="form-control form-btncontrol-up mb-2"
+                  />
+                  <DatePicker
+                    selected={endDate}
+                    onChange={(date) => setEndDate(date)}
+                    selectsEnd
+                    startDate={startDate}
+                    endDate={endDate}
+                    minDate={startDate}
+                    placeholderText="End Date"
+                    className="form-control form-btncontrol-up mb-3"
+                  />
+                  <button
+                    className="btn btn-sm btn-primary w-100 apply-filter-st"
+                    onClick={() => {
+                      setCurrentPage(1);
+                      setShowDateFilter(false);
+                    }}
+                  >
+                    Apply Filter
+                  </button>
+                </div>
+              )}
+              <div className="filter-container-up">
+                <button className="btn-top-up" onClick={toggleDropdown}>
+                  <SvgContent svg_name="btn_filter" width={20} height={20} />
+                  <span className="visible-label-up">Filter</span>
+                </button>
 
-            {showDropdown && (
-              <div className="dropdown-up">
-                <div className="dropdown-header-up">Filter</div>
-                <ul className="dropdown-list-up">
-                  {categories.map((option) => (
-                    <li key={option.category_id} onClick={() => handleSelect(option.category_name)} className="dropdown-item-up">
-                      {option.category_name}
-                    </li>
-                  ))}
-                </ul>
+                {showDropdown && (
+                  <div className="dropdown-up">
+                    <div className="dropdown-header-up">Filter</div>
+                    <ul className="dropdown-list-up">
+                      {categories.map((option) => (
+                        <li key={option.category_id} onClick={() => handleSelect(option.category_name)} className="dropdown-item-up">
+                          {option.category_name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <button className="btn-top-up" onClick={() => setShowUploadModal(true)} >
-            <SvgContent svg_name="btn_upload" width={20} height={20} />
-            <span className='visible-label-up'>Upload</span>
-          </button>
+              <button className="btn-top-up" onClick={() => setShowUploadModal(true)} >
+                <SvgContent svg_name="btn_upload" width={20} height={20} />
+                <span className='visible-label-up'>Upload</span>
+              </button>
 
-          <UploadModal
-            show={showUploadModal}
-            onClose={() => setShowUploadModal(false)}
-            onUpload={(file) => {
-              console.log("Uploading file:", file);
-              setShowUploadModal(false);
-            }}
-          />
-
+              <UploadModal
+                show={showUploadModal}
+                onClose={() => setShowUploadModal(false)}
+                onUpload={(file) => {
+                  console.log("Uploading file:", file);
+                  setShowUploadModal(false);
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <div className="filter-container-up">
+                <button className="btn-top-up">
+                  <SvgContent svg_name="suffle" />
+                  <span className="visible-label-up">Shuffle</span>
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

@@ -42,7 +42,7 @@ function Credits() {
       };
     });
 
-    setDataList(generatedData);
+    setDataList([]);
   }, []);
 
   const parseDate = (str) => {

@@ -41,8 +41,8 @@ function Orderlist() {
             const result = response.data;
 
             if (response.status === 200) {
-                setLeadDetails(result?.leads?.length > 0 ? result.leads.filter(itm => itm.disposition !== "Not interested") : []);
-                setNILeadDetails(result?.leads?.length > 0 ? result.leads.filter(itm => itm.disposition === "Not interested") : []);
+                setLeadDetails([]);
+                setNILeadDetails([]);
                 setCatagories(result?.categories);
             } else {
                 toast.error("Failed to fetch designation list: " + result.message);

@@ -12,43 +12,48 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { PropagateLoader } from 'react-spinners';
 import viewicon from '../../assets/images/viewicon.svg';
 import printer from '../../assets/images/printer.svg';
+import OrderDetailModal from './order-modal.jsx';
+import '../../assets/styles/orders.css';
 
 function Orders() {
   const { user } = useAuth();
   const [needLoading, setNeedLoading] = useState(false);
-  const [leadDetails, setLeadDetails] = useState([]);
-  const [categories, setCatagories] = useState([]);
+  const [orderDetails, setOrderDetails] = useState([]);
   const [nILeadDetails, setNILeadDetails] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const config = configModule.config();
   const [status, setStatus] = useState("active");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDateFilter, setShowDateFilter] = useState(false);
+  const [isHistoryClicked, setIsHistoryClicked] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const isActive = status === "active";
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const getPageDetails = async (objStatus = '') => {
+  const categories = ["Pending", "Approved"];
+
+  const getOrderDetails = async (objStatus = '') => {
     setNeedLoading(true);
+
     try {
-      const response = await axios.post(`${config.apiBaseUrl}getAllLeadDetails`, {
+      const response = await axios.post(`${config.apiBaseUrl}getOrderDetails`, {
         fileredData: objStatus
       });
-      
+
       const result = response.data;
 
       if (response.status === 200) {
-        setLeadDetails(result?.leads?.length > 0 ? result.leads.filter(itm => itm.disposition !== "Not interested") : []);
-        setNILeadDetails(result?.leads?.length > 0 ? result.leads.filter(itm => itm.disposition === "Not interested") : []);
-        setCatagories(result?.categories);
+        setOrderDetails(result?.data?.length > 0 ? result.data.filter(itm => itm.status === "Pending") : []);
+        setNILeadDetails(result?.shopes || []);
       } else {
         toast.error("Failed to fetch designation list: " + result.message);
       }
     } catch (error) {
-      setLeadDetails([]);
+      setOrderDetails([]);
       toast.error("Error fetching designation list: " + (error.response?.data?.message || error.message));
     } finally {
       setNeedLoading(false);
@@ -57,7 +62,7 @@ function Orders() {
 
   useEffect(() => {
     if (user) {
-      getPageDetails();
+      getOrderDetails();
     }
   }, [user]);
 
@@ -72,10 +77,8 @@ function Orders() {
     setCurrentPage(1);
   };
 
-  const allLeads = isActive ? leadDetails : nILeadDetails;
-
-  const filteredLeads = allLeads.filter((item) => {
-    const matchSearch = `${item.lead_id} ${item.lead_name} ${item.mobile_number} ${item.category} ${item.created_by} ${item.created_at} ${item.disposition} ${item.disposition_date}`
+  const filteredLeads = orderDetails.filter((item) => {
+    const matchSearch = `${item.order_id} ${item.order_name} ${item.order_qty} ${item.order_value} ${item.order_date} ${item.order_type} ${item.status} `
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
@@ -97,7 +100,11 @@ function Orders() {
 
   const handleSelect = (status) => {
     setShowDropdown(false);
-    getPageDetails(status);
+    getOrderDetails(status);
+  };
+
+  const HistoryFunc = () => {
+    setIsHistoryClicked(true)
   };
 
   return (
@@ -115,8 +122,8 @@ function Orders() {
       <div className='header-div-el'>
         <div className='header-divpart-el gap-2'>
           <div className='d-flex align-items-center gap-2 flex-wrap'>
-          <p className='mb-0 header-titlecount-el'>Total orders : 1050</p>
-          <p className='mb-0 header-titlecount-el'>Pending approvals : 15 </p>
+            <p className='mb-0 header-titlecount-el'>Total orders : 1050</p>
+            <p className='mb-0 header-titlecount-el'>Pending approvals : 15 </p>
           </div>
           <div className="status-toggle-up">
             <label htmlFor="status-active" className="custom-radio">
@@ -163,15 +170,15 @@ function Orders() {
                 <div className="dropdown-header-up">Filter</div>
                 <ul className="dropdown-list-up">
                   {categories.map((option) => (
-                    <li key={option.category_id} onClick={() => handleSelect(option.category_name)} className="dropdown-item-up">
-                      {option.category_name}
+                    <li key={option} onClick={() => handleSelect(option)} className="dropdown-item-up">
+                      {option}
                     </li>
                   ))}
                 </ul>
               </div>
             )}
           </div>
-          <button className="btn-top-up" onClick={() => setShowUploadModal(true)} >
+          <button className="btn-top-up" onClick={HistoryFunc} >
             <SvgContent svg_name="history" width={20} height={20} />
             <span className='visible-label-up'>History</span>
           </button>
@@ -229,45 +236,53 @@ function Orders() {
           {currentLeads.length > 0 ? (
             <div className='table-userpro-up w-100 h-100 overflow-auto'>
               <div className='table-head-up d-flex'>
-                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>S.No</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Order ID</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-14 p-2 d-flex justify-content-center align-items-center'>Order Name</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Quantity</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Value</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Date</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Type</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-12 p-2 d-flex justify-content-center align-items-center'>Status</div><span style={{ color: "#129347" }}> | </span>
-                <div className='w-10 p-2 d-flex justify-content-center align-items-center'>Action</div>
+                <div className='w-10 p-2 d-flex text-center justify-content-center align-items-center'>S.No</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-10 p-2 d-flex text-center justify-content-center align-items-center'>Order ID</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-14 p-2 d-flex text-center justify-content-center align-items-center'>Order Name</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-12 p-2 d-flex text-center justify-content-center align-items-center'>Quantity</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-12 p-2 d-flex text-center justify-content-center align-items-center'>Value</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-10 p-2 d-flex text-center justify-content-center align-items-center'>Date</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-10 p-2 d-flex text-center justify-content-center align-items-center'>Type</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-12 p-2 d-flex text-center justify-content-center align-items-center'>Status</div><span style={{ color: "#129347" }}> | </span>
+                <div className='w-10 p-2 d-flex text-center justify-content-center align-items-center'>Action</div>
               </div>
               <div className='table-body-up d-flex'>
-                {currentLeads.map((lead, index) => (
-                  <div className='table-bodydiv-up' key={lead.lead_recid || index}>
-                    <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
+                {currentLeads.map((item, index) => (
+                  <div className='table-bodydiv-up' key={item.order_recid || index}>
+                    <div className='w-10 p-2 d-flex text-center  justify-content-center align-items-center'>
                       {(currentPage - 1) * itemsPerPage + index + 1}
                     </div>
-                    <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
-                      {lead.lead_id}
+                    <div className='w-10 p-2 d-flex text-center  justify-content-center align-items-center'>
+                      {item.order_id}
                     </div>
-                    <div className='w-14 p-2 d-flex justify-content-center align-items-center'>
-                      {lead.lead_name}
-                    </div>
-                    <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
-                      {lead.mobile_number}
+                    <div className='w-14 p-2 d-flex text-center  justify-content-center align-items-center'>
+                      {item.order_name}
                     </div>
                     <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
-                      {lead.category}
-                    </div>
-                    <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
-                      {formatDateTime(lead.created_at)}
-                    </div>
-                    <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
-                      {lead.created_by}
+                      {item.order_qty}
                     </div>
                     <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
-                      {lead.disposition}
+                      {item.order_value}
+                    </div>
+                    <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
+                      {formatDateTime(item.order_date)}
+                    </div>
+                    <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
+                      {item.order_type}
+                    </div>
+                    <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
+                      {item.status}
                     </div>
                     <div className='w-10 p-2 d-flex justify-content-center align-items-center gap-3'>
-                      <img src={viewicon} alt="view" />
+                      <img
+                        src={viewicon}
+                        alt="view"
+                        onClick={() => {
+                          setSelectedOrder(item);
+                          setIsHistoryClicked(true);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
                       <img src={printer} alt="printer" />
                     </div>
                   </div>
@@ -302,6 +317,11 @@ function Orders() {
           />
         </div>
       </div>
+
+      {isHistoryClicked && selectedOrder && (
+        <OrderDetailModal order={selectedOrder} onClose={() => setIsHistoryClicked(false)} />
+      )}
+
       <ToastContainer
         position="top-right"
         autoClose={3000}
