@@ -34,9 +34,9 @@ exports.getallleads = async (req, res) => {
 };
 
 exports.getallleadsforcl = async (req, res) => {
-    const { fileredData } = req.body;
+    const { userId } = req.body;
 
-    const sqlPg = `CALL SP_GetAllLeadDetails('${fileredData}')`;
+    const sqlPg = `CALL SP_GetAllLeadDetailsbyid('${userId}')`;
     const cgSql = `CALL SP_GetAllcatagories()`;
 
     try {
@@ -120,5 +120,26 @@ exports.uploadBulkLeads = async (req, res) => {
             message: "Internal server error",
             error: error.message
         });
+    }
+};
+
+exports.updateDisposition = async (req, res) => {
+    const { key, id } = req.body;
+
+    const sqlPg = `CALL SP_UpdateDisposition('${key}', ${id})`;
+
+    try {
+        db.query(sqlPg, (errPg, resultPg) => {
+            if (errPg) {
+                console.error('Error getting leads:', errPg);
+                return res.status(500).json({ message: 'Failed to get leads' });
+            }
+            res.status(200).json({
+                data: resultPg[0]
+            });
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 };

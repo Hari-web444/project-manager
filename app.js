@@ -40,7 +40,8 @@ app.use(cors({
     const attendance = require('./src/routes/attendanceroute.js');
     const creatives = require('./src/routes/creativesroute.js');
     const dispatch = require('./src/routes/dispatchroute.js');
-    app.use('/', admin, product, users, employee, branch, assign, leads , attendance, creatives, dispatch);
+    const order = require('./src/routes/ordersroute.js');
+    app.use('/', admin, product, users, employee, branch, assign, leads , attendance, creatives, dispatch, order);
 
     app.get('/', (req, res) => {
       res.send('✅ Vaithiyar Poova API is running!');
