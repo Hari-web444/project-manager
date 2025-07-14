@@ -1,17 +1,15 @@
 const { getPool } = require('../database/db');
 const db = getPool();
 
-
 exports.getallorder = async (req, res) => {
-    const { fileredData } = req.body;
 
-    const sqlPg = `CALL SP_GetAllOrderDetails('${fileredData}')`;
+    const sqlPg = `CALL SP_GetAllSalesByCl()`;
 
     try {
         db.query(sqlPg, (errPg, resultPg) => {
             if (errPg) {
-                console.error('Error getting leads:', errPg);
-                return res.status(500).json({ message: 'Failed to get leads' });
+                console.error('Error getting sales:', errPg);
+                return res.status(500).json({ message: 'Failed to get sales' });
             }
 
             res.status(200).json({

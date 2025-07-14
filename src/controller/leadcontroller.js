@@ -1,6 +1,6 @@
 const { getPool } = require('../database/db');
 const db = getPool();
-
+const { getAwsSecrets } = require("../utilities/vaultClient");
 
 exports.getallleads = async (req, res) => {
     const { fileredData } = req.body;
@@ -142,4 +142,111 @@ exports.updateDisposition = async (req, res) => {
         console.error('Server error:', error);
         res.status(500).json({ message: 'Server error' });
     }
+};
+
+exports.getallproducts = async (req, res) => {
+    const { type } = req.body;
+
+    const sqlPg = `CALL SP_GetAllProductSale('${type}')`;
+
+    try {
+        db.query(sqlPg, async (errPg, resultPg) => {
+            if (errPg) {
+                console.error('Error getting leads:', errPg);
+                return res.status(500).json({ message: 'Failed to get leads' });
+            }
+
+            const aws = await getAwsSecrets();
+            const products = resultPg[0];
+            const enrichedProducts = products.map((p) => ({
+                ...p,
+                imageUrl: p.product_img
+                    ? `https://${aws.bucket}.s3.${aws.region}.amazonaws.com/${p.product_img}`
+                    : null,
+            }));
+
+            res.status(200).json({
+                data: enrichedProducts
+            });
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.createprofileData = async (req, res) => {
+    const { customer_id, name, age, genderName, categoryName, mobile, email, userId } = req.body.profileData;
+
+    const sqlPg = `CALL SP_CreateProfileData('${customer_id}','${name}','${age}','${genderName}','${categoryName}','${mobile}','${email}', ${userId})`;
+
+    try {
+        db.query(sqlPg, async (errPg, resultPg) => {
+            if (errPg) {
+                console.error('Error getting leads:', errPg);
+                return res.status(500).json({ message: 'Failed to get leads' });
+            }
+
+            res.status(200).json({
+                data: resultPg[0]
+            });
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.insertSalesOrder = async (req, res) => {
+    const data = req.body;
+
+    const {
+        order_id, leads_id, direct_pickup, additional_number,
+        address, district, state, country, courier,
+        order_value, discount, approved_by, payment_mode,
+        wallet, total_value, amount_to_pay, medication_period,
+        receipt_image_url, transaction_id, date_time, catagory_id, quantity,  user_id , rec_id
+    } = data;
+
+    const sql = `
+        CALL SP_InsertSalesOrder(
+            '${order_id}', '${leads_id}', ${direct_pickup}, '${additional_number}',
+            '${address}', '${district}', '${state}', '${country}', '${courier}',
+            ${order_value}, ${discount || 0}, '${approved_by}', '${payment_mode}',
+            ${wallet || 0}, ${total_value}, ${amount_to_pay}, '${medication_period}',
+            '${receipt_image_url}', '${transaction_id}',  '${date_time}', ${user_id}, ${catagory_id}, ${quantity}, '${rec_id}'
+        )
+    `;
+
+    try {
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error('Error inserting sales order:', err);
+                return res.status(500).json({ message: 'Failed to insert sales order' });
+            }
+
+            return res.status(200).json({ message: 'Sales order inserted successfully' });
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.getLatestOrderId = async (req, res) => {
+    const sql = "SELECT order_id FROM sales ORDER BY order_recid DESC LIMIT 1";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error fetching last order_id:", err);
+            return res.status(500).json({ message: "Failed to get latest order ID" });
+        }
+
+        let nextOrderId = "VPO001";
+        if (result.length > 0 && result[0].order_id) {
+            const lastId = parseInt(result[0].order_id.replace("VPO", "")) || 0;
+            nextOrderId = "VPO" + String(lastId + 1).padStart(3, "0");
+        }
+
+        res.status(200).json({ nextOrderId });
+    });
 };
