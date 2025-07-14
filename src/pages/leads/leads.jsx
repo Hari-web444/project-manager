@@ -7,25 +7,30 @@ import configModule from '../../../config.js';
 import { PropagateLoader } from 'react-spinners';
 import Pagination from "../../components/Pagination/index.jsx";
 import { useNavigate } from 'react-router-dom';
+import CommonSelect from "../../components/common-select.jsx";
 
 function Leads() {
   const { user } = useAuth();
   const userId = user?.userId;
-  const [searchNumber, setSearchNumber] = useState("");
+  const [catagory, setCatagory] = useState([]);
   const [leadsClData, setLeadsClData] = useState([]);
   const [needLoading, setNeedLoading] = useState(false);
-  const [openNewDropDown, setOpenNewDropDown] = useState(false);
   const config = configModule.config();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDirectory, setSelectedDirectory] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const [editableDisposition, setEditableDisposition] = useState({});
   const [hoveredParent, setHoveredParent] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-
-  const menuRef = useRef();
+  const [custID, setCustID] = useState("");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [categoryList, setCategoryList] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
 
   const clearSearch = () => {
     setSearchInput('');
@@ -36,9 +41,6 @@ function Leads() {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
-
-  const indexOfLastDirectory = currentPage * itemsPerPage;
-  const indexOfFirstDirectory = indexOfLastDirectory - itemsPerPage;
 
   const currentDirectory = leadsClData?.filter((item) =>
     `${item.title} ${item.lead_name} ${item.mobile_number} ${item.district}`
@@ -62,6 +64,7 @@ function Leads() {
 
       if (response.status === 200) {
         setLeadsClData(result.leads);
+        setCatagory(result.categories);
       } else {
         toast.error("Failed to fetch designation list: " + result.message);
       }
@@ -84,8 +87,17 @@ function Leads() {
     }
   }, [user]);
 
+
+  const TypeOptions = Array.isArray(catagory)
+    ? catagory.map(item => ({
+      label: item.category_name,
+      value: item.category_id
+    }))
+    : [];
+
+  const TypeGender = [{ label: "Male", value: "Male" }, { label: "Female", value: "Female" }];
+
   const handleDispositionChange = async (leadId, newDisposition) => {
-    setOpenNewDropDown(false);
     if (newDisposition === "Intereseted") {
       try {
         const response = await axios.post(`${config.apiBaseUrl}updateDisposition`, {
@@ -99,14 +111,90 @@ function Leads() {
           toast.error("Failed to update disposition");
         }
       } catch (error) {
-        toast.error("Error updating disposition");
+        console.error("Error updating disposition:", error);
+        const errorMessage = error?.response?.data?.message || error.message || "Error updating disposition";
+        toast.error(errorMessage);
       }
+
     }
   };
 
-  const handleDispositionSubChange = () => {
-    navigate("/lead/add-to-card");
-    return;
+  const handleDispositionSubChange = (objData) => {
+    navigate("/leads/add-to-card", { state: { selectedData: objData, catagory: catagory } });
+  };
+
+  const generateNextCustomerId = () => {
+    if (!leadsClData || leadsClData.length === 0) {
+      return "VPC001";
+    }
+
+    const vpcIds = leadsClData
+      .map((lead) => lead.lead_id)
+      .filter((id) => /^VPC\d+$/.test(id));
+
+    if (vpcIds.length === 0) {
+      return "VPC001";
+    }
+
+    const maxId = Math.max(...vpcIds.map(id => parseInt(id.replace("VPC", ""), 10)));
+
+    const nextId = maxId + 1;
+
+    return `VPC${String(nextId).padStart(3, "0")}`;
+  };
+
+  const handleAddProfile = async () => {
+    const genderName = gender?.target?.name;
+    const categoryName = categoryList?.target?.name;
+
+    if (!name || !age || !genderName || !categoryName || !mobile || !email) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    // Optional: Mobile and email format checks
+    if (!/^[0-9]{10}$/.test(mobile)) {
+      toast.error("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    const profileData = {
+      customer_id: custID,
+      name,
+      age,
+      genderName,
+      categoryName,
+      mobile,
+      email,
+      userId
+    };
+
+    try {
+      const response = await axios.post(`${config.apiBaseUrl}createProfileData`, { profileData });
+      if (response.status === 200) {
+        toast.success("Profile successfully created.");
+        getLeadsPage();
+
+        setShowModal(false);
+        setName('');
+        setAge('');
+        setGender('');
+        setCategoryList('');
+        setMobile('');
+        setEmail('');
+      } else {
+        toast.error("Failed to update disposition");
+      }
+    } catch (error) {
+      console.error("Error updating disposition:", error);
+      const errorMessage = error?.response?.data?.message || error.message || "Error updating disposition";
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -140,7 +228,8 @@ function Leads() {
                 onChange={(e) => setSearchInput(e.target.value)}
               />
               {searchInput && (
-                <span
+                <button
+                  type="button"
                   className="clear-icon"
                   onClick={clearSearch}
                   style={{
@@ -150,16 +239,24 @@ function Leads() {
                     transform: 'translateY(-50%)',
                     cursor: 'pointer',
                     fontSize: '16px',
-                    color: '#999'
+                    color: '#999',
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
                   }}
+                  aria-label="Clear search"
                 >
-                  &times;
-                </span>
+                  ×
+                </button>
               )}
             </div>
             <div className='d-flex gap-2 align-items-center mobilebtn-label-st '>
               <button className="search-btn-lead" onClick={() => setSearchQuery(searchInput)} >Search</button>
-              <button className="search-btn-lead">
+              <button className="search-btn-lead" onClick={() => {
+                const newId = generateNextCustomerId();
+                setCustID(newId);
+                setShowModal(true);
+              }}>
                 Create Profile
               </button>
             </div>
@@ -197,8 +294,11 @@ function Leads() {
                       <div className='brcommon-col-st w-15'>
                         {(item.disposition !== "Interested" && item.disposition !== "Not interested") ? (
                           <div className="custom-dropdown-wrapper">
-                            <div
+                            <button
+                              type="button"
                               className="custom-dropdown-trigger"
+                              aria-haspopup="true"
+                              aria-expanded={editableDisposition[item.lead_id] === "__open__"}
                               onClick={() =>
                                 setEditableDisposition((prev) => ({
                                   ...prev,
@@ -209,14 +309,16 @@ function Leads() {
                               {editableDisposition[item.lead_id] && editableDisposition[item.lead_id] !== "__open__"
                                 ? editableDisposition[item.lead_id]
                                 : item.disposition || "Select disposition"}
-                            </div>
+                            </button>
 
                             {editableDisposition[item.lead_id] === "__open__" && (
                               <div className="custom-dropdown-menu">
                                 {groupedOptions.base.map((option) => (
                                   <div
+                                    role="button"
+                                    tabIndex={0}
                                     key={option}
-                                    className="dropdown-item position-relative"
+                                    className="dropdown-item-ldst position-relative"
                                     onClick={() => {
                                       if (option !== "Interested") {
                                         setEditableDisposition((prev) => ({
@@ -226,9 +328,21 @@ function Leads() {
                                         handleDispositionChange(item.lead_recid, option);
                                       }
                                     }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        if (option !== "Interested") {
+                                          setEditableDisposition((prev) => ({
+                                            ...prev,
+                                            [item.lead_id]: option
+                                          }));
+                                          handleDispositionChange(item.lead_recid, option);
+                                        }
+                                      }
+                                    }}
                                     onMouseEnter={() => {
                                       if (option === "Interested") {
-                                        setHoveredParent(item.lead_id); // optional, local state to track open submenu
+                                        setHoveredParent(item.lead_id);
                                       }
                                     }}
                                     onMouseLeave={() => {
@@ -239,28 +353,30 @@ function Leads() {
                                   >
                                     {option}
 
-                                    {/* Submenu */}
+                                    {/* Submenu (can still be buttons) */}
                                     {option === "Interested" && hoveredParent === item.lead_id && (
                                       <div className="submenu">
                                         {groupedOptions.Interested.map((sub) => (
-                                          <div
+                                          <button
                                             key={sub}
-                                            className="dropdown-item"
+                                            type="button"
+                                            className="dropdown-item-ldst"
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               setEditableDisposition((prev) => ({
                                                 ...prev,
                                                 [item.lead_id]: sub
                                               }));
-                                              handleDispositionSubChange(item.lead_recid, sub);
+                                              handleDispositionSubChange(item);
                                             }}
                                           >
                                             {sub}
-                                          </div>
+                                          </button>
                                         ))}
                                       </div>
                                     )}
                                   </div>
+
                                 ))}
                               </div>
                             )}
@@ -270,17 +386,16 @@ function Leads() {
                         )}
                       </div>
 
-
                       <div className='brcommon-col-st w-15'>{formatDateTime(item.created_at)}</div>
                       <div className='brcommon-col-st w-10'>
-                        <button className='' onClick={() => setSelectedDirectory(item)}>
+                        <button className=''>
                           View
                         </button>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className='tb-body-row-st display-flex'>No directory list</div>
+                  <div className='tb-body-row-st display-flex'>No lead list</div>
                 )}
               </div>
             </div>
@@ -309,6 +424,129 @@ function Leads() {
           </div>
         </div>
       </div>
+      {showModal && (
+        <div className="modal-overlay modal-overlay-position">
+          <div className="modal-container modal-overlay-position" style={{ width: "625px" }}>
+            <div className="modal-header">
+              <h5 className="mb-0 add-new-hdr">Create profile</h5>
+            </div>
+            <div className="modal-body">
+              <div className="commonst-select mb-3">
+                <label htmlFor="customerId" className="form-label">Customer ID</label>
+                <div className="comm-select-ba">
+                  <input
+                    type="text"
+                    id="customerId"
+                    name="customer_id"
+                    className="form-control location-ip-br"
+                    value={custID}
+                    readOnly
+                    style={{ fontWeight: 'bold', color: 'green' }}
+                  />
+                </div>
+              </div>
+
+              <div className="commonst-select mb-3">
+                <label htmlFor="nameInput" className="form-label">Name</label>
+                <div className="comm-select-ba">
+                  <input
+                    type="text"
+                    id="nameInput"
+                    name="name"
+                    className="form-control location-ip-br"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter name"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="commonst-select mb-3">
+                <label htmlFor="ageInput" className="form-label">Age</label>
+                <div className="comm-select-ba">
+                  <input
+                    type="number"
+                    id="ageInput"
+                    name="age"
+                    className="form-control location-ip-br"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="Enter age"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="commonst-select mb-3">
+                <label htmlFor="categoryInput" className="form-label">Gender</label>
+                <div className="comm-select-ba position-relative">
+                  <CommonSelect
+                    header="Select gender"
+                    placeholder="Select gender"
+                    name="gender"
+                    value={gender}
+                    onChange={setGender}
+                    options={TypeGender}
+                  />
+                </div>
+              </div>
+
+              <div className="commonst-select mb-3">
+                <label htmlFor="categoryInput" className="form-label">Category</label>
+                <div className="comm-select-ba position-relative">
+                  <CommonSelect
+                    header="Select category"
+                    placeholder="Select category"
+                    name="type"
+                    value={categoryList}
+                    onChange={setCategoryList}
+                    options={TypeOptions}
+                  />
+                </div>
+              </div>
+
+              <div className="commonst-select mb-3">
+                <label htmlFor="mobileInput" className="form-label">Mobile number</label>
+                <div className="comm-select-ba">
+                  <input
+                    type="text"
+                    id="mobileInput"
+                    name="mobile"
+                    className="form-control location-ip-br"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    placeholder="Enter mobile number"
+                    maxLength={10}
+                    pattern="[0-9]*"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="commonst-select mb-3">
+                <label htmlFor="emailInput" className="form-label">Email</label>
+                <div className="comm-select-ba">
+                  <input
+                    type="email"
+                    id="emailInput"
+                    name="email"
+                    className="form-control location-ip-br"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter email"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="cancel-button" onClick={() => setShowModal(false)}>Cancel</button>
+              <button className="next-button" onClick={handleAddProfile} >Add</button>
+            </div>
+          </div>
+        </div>
+      )}
       <ToastContainer
         position="top-right"
         autoClose={3000}

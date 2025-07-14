@@ -108,7 +108,7 @@ const CommonSelect = ({
         name={name}
         value={selectedOption}
         onChange={(selected) =>
-          onChange({ target: { name, value: selected?.value , code: selected?.code, id: selected?.id } })
+          onChange({ target: { name: selected?.label, value: selected?.value , code: selected?.code, id: selected?.id } })
         }
         options={options}
         styles={customStyles}

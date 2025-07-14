@@ -41,6 +41,7 @@ import Credits from './pages/credits/credits.jsx';
 import Payroll from './pages/payroll/payroll.jsx';
 import RandD from './pages/randd/randd.jsx';
 import AddToCart from './pages/leads/addtocart.jsx';
+import OrderForm from './pages/leads/order-form.jsx';
 
 function App() {
 
@@ -105,6 +106,7 @@ function App() {
         <Route element={<MainLayout menuItems={menuItems} />}>
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/leads" element={<PrivateRoute><Leads /></PrivateRoute>} />
+          <Route path="/leads/add-to-card" element={<PrivateRoute><AddToCart /></PrivateRoute>} />
           <Route path="/todo" element={<PrivateRoute><TodoList /></PrivateRoute>} />
           <Route path="/products" element={<PrivateRoute><Products /></PrivateRoute>} />
           <Route path="/employee" element={<Navigate to="/employee/list" replace />} />
@@ -132,7 +134,7 @@ function App() {
           <Route path="/credits" element={<PrivateRoute><Credits /></PrivateRoute>} />
           <Route path="/payroll" element={<PrivateRoute><Payroll /></PrivateRoute>} />
           <Route path="/randd" element={<PrivateRoute><RandD /></PrivateRoute>} />
-          <Route path="/lead/add-to-card" element={<PrivateRoute><AddToCart /></PrivateRoute>} />
+          <Route path="/leads/add-to-card/order-form" element={<PrivateRoute><OrderForm /></PrivateRoute>} />
         </Route>
 
         {/* 404 fallback route */}

@@ -34,7 +34,9 @@ const pathTitles = {
   '/payroll': 'Payroll',
   '/randd': 'R&D',
   '/orders-list': 'Orders',
-  '/directory': "Directory"
+  '/directory': "Directory",
+  '/leads/add-to-card': "Add to cart",
+  '/leads/add-to-card/order-form': "Add To Cart"
 };
 
 function MainLayout({ menuItems }) {

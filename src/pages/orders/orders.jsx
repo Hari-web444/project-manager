@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../../assets/styles/user-profile.css';
 import { useAuth } from '../../components/context/Authcontext.jsx';
 import { ToastContainer, toast } from 'react-toastify';
@@ -7,7 +7,6 @@ import axios from 'axios';
 import configModule from '../../../config.js';
 import SvgContent from '../../components/svgcontent.jsx';
 import Pagination from "../../components/Pagination/index.jsx";
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { PropagateLoader } from 'react-spinners';
 import viewicon from '../../assets/images/viewicon.svg';
@@ -17,6 +16,7 @@ import '../../assets/styles/orders.css';
 
 function Orders() {
   const { user } = useAuth();
+  const printRef = useRef();
   const [needLoading, setNeedLoading] = useState(false);
   const [orderDetails, setOrderDetails] = useState([]);
   const [nILeadDetails, setNILeadDetails] = useState([]);
@@ -26,7 +26,6 @@ function Orders() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showDateFilter, setShowDateFilter] = useState(false);
   const [isHistoryClicked, setIsHistoryClicked] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -36,13 +35,11 @@ function Orders() {
 
   const categories = ["Pending", "Approved"];
 
-  const getOrderDetails = async (objStatus = '') => {
+  const getOrderDetails = async () => {
     setNeedLoading(true);
 
     try {
-      const response = await axios.post(`${config.apiBaseUrl}getOrderDetails`, {
-        fileredData: objStatus
-      });
+      const response = await axios.get(`${config.apiBaseUrl}getOrderDetails`);
 
       const result = response.data;
 
@@ -103,8 +100,35 @@ function Orders() {
     getOrderDetails(status);
   };
 
-  const HistoryFunc = () => {
-    setIsHistoryClicked(true)
+  const handlePrint = (order) => {
+    setSelectedOrder(order); // set for the print component to update
+
+    setTimeout(() => {
+      const printContents = printRef.current?.innerHTML;
+      if (!printContents) return;
+
+      const printWindow = window.open('', '', 'width=900,height=700');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Order</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              h4 { margin-bottom: 8px; border-bottom: 1px solid #ccc; }
+              p { margin: 4px 0; }
+              img { max-width: 100%; border: 1px solid #ccc; margin-top: 10px; }
+            </style>
+          </head>
+          <body>
+            ${printContents}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }, 300);
   };
 
   return (
@@ -159,26 +183,8 @@ function Orders() {
             className="search-input-up"
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <div className="filter-container-up">
-            <button className="btn-top-up" onClick={toggleDropdown}>
-              <SvgContent svg_name="btn_filter" width={20} height={20} />
-              <span className="visible-label-up">Filter</span>
-            </button>
-
-            {showDropdown && (
-              <div className="dropdown-up">
-                <div className="dropdown-header-up">Filter</div>
-                <ul className="dropdown-list-up">
-                  {categories.map((option) => (
-                    <li key={option} onClick={() => handleSelect(option)} className="dropdown-item-up">
-                      {option}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          <button className="btn-top-up" onClick={HistoryFunc} >
+        
+          <button className="btn-top-up" >
             <SvgContent svg_name="history" width={20} height={20} />
             <span className='visible-label-up'>History</span>
           </button>
@@ -259,7 +265,7 @@ function Orders() {
                       {item.order_name}
                     </div>
                     <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
-                      {item.order_qty}
+                      {item.quantity}
                     </div>
                     <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
                       {item.order_value}
@@ -274,16 +280,25 @@ function Orders() {
                       {item.status}
                     </div>
                     <div className='w-10 p-2 d-flex justify-content-center align-items-center gap-3'>
-                      <img
-                        src={viewicon}
-                        alt="view"
+                      <button
                         onClick={() => {
                           setSelectedOrder(item);
                           setIsHistoryClicked(true);
                         }}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <img src={printer} alt="printer" />
+                        className="icon-button"
+                        aria-label="View Order"
+                      >
+                        <img src={viewicon} alt="view" />
+                      </button>
+
+                      <button
+                        onClick={() => handlePrint(item)}
+                        className="icon-button"
+                        aria-label="Print Order"
+                      >
+                        <img src={printer} alt="printer" />
+                      </button>
+
                     </div>
                   </div>
                 ))}
@@ -319,8 +334,14 @@ function Orders() {
       </div>
 
       {isHistoryClicked && selectedOrder && (
-        <OrderDetailModal order={selectedOrder} onClose={() => setIsHistoryClicked(false)} />
+        <OrderDetailModal order={selectedOrder} onClose={() => setIsHistoryClicked(false)} type="view" />
       )}
+
+      <div style={{ display: 'none' }}>
+        <div ref={printRef}>
+          <OrderDetailModal order={selectedOrder} onClose={() => { }} type="print" />
+        </div>
+      </div>
 
       <ToastContainer
         position="top-right"

@@ -103,3 +103,8 @@ input {
   height: 40px !important;
   border: 1px solid #ccc !important;
 }
+
+input[type="checkbox"] {
+  background-color: #fff !important;
+  background: #fff !important;
+}
