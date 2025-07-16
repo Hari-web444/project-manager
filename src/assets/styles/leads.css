@@ -136,3 +136,20 @@
   background: linear-gradient(3deg, #0B622F, #18934B) !important;
   color: #fff !important;
 }
+
+.calendar-submenu .react-datepicker {
+  border: none;
+  box-shadow: none;
+  max-width: 100%;
+}
+
+.calc-submenu-st {
+  position: absolute;
+  right: calc(100% + 35px);
+  top: 0;
+  background: white;
+  padding: 8px;
+  z-index: 999;
+}
+
+

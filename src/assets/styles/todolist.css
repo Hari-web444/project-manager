@@ -1,0 +1,12 @@
+.filter-btn-st {
+    background: white;
+    padding: 6px 24px;
+    border-radius: 6px;
+    color: #121212;
+    border: 1px solid #0B622F;
+}
+
+.filter-btn-st:hover , .bg-color-std {
+    background: linear-gradient(3deg, #0B622F, #18934b) !important;
+    color: #fff !important;
+}

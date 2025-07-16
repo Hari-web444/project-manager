@@ -8,6 +8,9 @@ import { PropagateLoader } from 'react-spinners';
 import Pagination from "../../components/Pagination/index.jsx";
 import { useNavigate } from 'react-router-dom';
 import CommonSelect from "../../components/common-select.jsx";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 function Leads() {
   const { user } = useAuth();
@@ -31,6 +34,11 @@ function Leads() {
   const [categoryList, setCategoryList] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
+  const [hoveredOption, setHoveredOption] = useState(null); // NEW: track which disposition is being hovered
+  const [hoveredLeadId, setHoveredLeadId] = useState(null); // NEW: track which lead is being hovered
+  const [showDatePickerFor, setShowDatePickerFor] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
+
 
   const clearSearch = () => {
     setSearchInput('');
@@ -95,15 +103,31 @@ function Leads() {
     }))
     : [];
 
+    function formatDateToMySQL(dateObj) {
+      const pad = (n) => String(n).padStart(2, '0');
+    
+      const year = dateObj.getFullYear();
+      const month = pad(dateObj.getMonth() + 1);
+      const day = pad(dateObj.getDate());
+      const hours = pad(dateObj.getHours());
+      const minutes = pad(dateObj.getMinutes());
+      const seconds = pad(dateObj.getSeconds());
+    
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+    
+
   const TypeGender = [{ label: "Male", value: "Male" }, { label: "Female", value: "Female" }];
 
-  const handleDispositionChange = async (leadId, newDisposition) => {
-    if (newDisposition === "Intereseted") {
+  const handleDispositionChange = async (leadId, newDisposition, followupDate = null) => {
+    if (newDisposition !== "Interested") {
       try {
         const response = await axios.post(`${config.apiBaseUrl}updateDisposition`, {
           key: newDisposition,
           id: leadId,
+          followup_date: formatDateToMySQL(followupDate)
         });
+
         if (response.status === 200) {
           toast.success("Disposition updated");
           getLeadsPage();
@@ -112,10 +136,8 @@ function Leads() {
         }
       } catch (error) {
         console.error("Error updating disposition:", error);
-        const errorMessage = error?.response?.data?.message || error.message || "Error updating disposition";
-        toast.error(errorMessage);
+        toast.error(error?.response?.data?.message || error.message || "Error updating disposition");
       }
-
     }
   };
 
@@ -313,71 +335,93 @@ function Leads() {
 
                             {editableDisposition[item.lead_id] === "__open__" && (
                               <div className="custom-dropdown-menu">
-                                {groupedOptions.base.map((option) => (
-                                  <div
-                                    role="button"
-                                    tabIndex={0}
-                                    key={option}
-                                    className="dropdown-item-ldst position-relative"
-                                    onClick={() => {
-                                      if (option !== "Interested") {
-                                        setEditableDisposition((prev) => ({
-                                          ...prev,
-                                          [item.lead_id]: option
-                                        }));
-                                        handleDispositionChange(item.lead_recid, option);
-                                      }
-                                    }}
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter" || e.key === " ") {
-                                        e.preventDefault();
-                                        if (option !== "Interested") {
+
+                                {groupedOptions.base.map((option) => {
+                                  const isFollowUpOrCallback = option === "Follow up" || option === "Call back";
+                                  const isInterested = option === "Interested";
+
+                                  return (
+                                    <div
+                                      role="button"
+                                      tabIndex={0}
+                                      key={option}
+                                      className="dropdown-item-ldst position-relative"
+                                      onMouseEnter={() => {
+                                        setHoveredLeadId(item.lead_id);
+                                        setHoveredOption(option);
+                                        if (isFollowUpOrCallback) {
+                                          setShowDatePickerFor(option);
+                                        } else {
+                                          setShowDatePickerFor(null);
+                                        }
+                                      }}
+                                      onMouseLeave={() => {
+                                        setHoveredLeadId(null);
+                                        setHoveredOption(null);
+                                        setShowDatePickerFor(null);
+                                      }}
+                                      onClick={() => {
+                                        if (!isInterested && !isFollowUpOrCallback) {
                                           setEditableDisposition((prev) => ({
                                             ...prev,
                                             [item.lead_id]: option
                                           }));
                                           handleDispositionChange(item.lead_recid, option);
                                         }
-                                      }
-                                    }}
-                                    onMouseEnter={() => {
-                                      if (option === "Interested") {
-                                        setHoveredParent(item.lead_id);
-                                      }
-                                    }}
-                                    onMouseLeave={() => {
-                                      if (option === "Interested") {
-                                        setHoveredParent(null);
-                                      }
-                                    }}
-                                  >
-                                    {option}
+                                      }}
+                                    >
+                                      {option}
 
-                                    {/* Submenu (can still be buttons) */}
-                                    {option === "Interested" && hoveredParent === item.lead_id && (
-                                      <div className="submenu">
-                                        {groupedOptions.Interested.map((sub) => (
-                                          <button
-                                            key={sub}
-                                            type="button"
-                                            className="dropdown-item-ldst"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              setEditableDisposition((prev) => ({
-                                                ...prev,
-                                                [item.lead_id]: sub
-                                              }));
-                                              handleDispositionSubChange(item);
-                                            }}
-                                          >
-                                            {sub}
-                                          </button>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
+                                      {/* Sales submenu */}
+                                      {isInterested && hoveredLeadId === item.lead_id && hoveredOption === "Interested" && (
+                                        <div className="submenu">
+                                          {groupedOptions.Interested.map((sub) => (
+                                            <button
+                                              key={sub}
+                                              type="button"
+                                              className="dropdown-item-ldst"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditableDisposition((prev) => ({
+                                                  ...prev,
+                                                  [item.lead_id]: sub
+                                                }));
+                                                handleDispositionSubChange(item);
+                                              }}
+                                            >
+                                              {sub}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      )}
 
-                                ))}
+                                      {/* Date picker calendar */}
+                                      {isFollowUpOrCallback &&
+                                        hoveredLeadId === item.lead_id &&
+                                        hoveredOption === option && (
+                                          <div className="p-2 w-100 calc-submenu-st">
+                                            <DatePicker
+                                              selected={selectedDate ? new Date(selectedDate) : null}
+                                              onChange={(date) => {
+                                                setSelectedDate(date);
+                                                const formattedDate = new Date(date).toLocaleString();
+                                                setEditableDisposition((prev) => ({
+                                                  ...prev,
+                                                  [item.lead_id]: `${option} (${formattedDate})`
+                                                }));
+                                                handleDispositionChange(item.lead_recid, option, date);
+                                                setHoveredLeadId(null);
+                                                setHoveredOption(null);
+                                                setShowDatePickerFor(null);
+                                              }}
+                                              inline
+                                            />
+                                          </div>
+                                        )}
+                                    </div>
+                                  );
+                                })}
+
                               </div>
                             )}
                           </div>

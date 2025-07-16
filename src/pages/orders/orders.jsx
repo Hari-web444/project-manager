@@ -22,7 +22,7 @@ function Orders() {
   const [nILeadDetails, setNILeadDetails] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const config = configModule.config();
-  const [status, setStatus] = useState("active");
+  const [status, setStatus] = useState("person");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,8 +30,9 @@ function Orders() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const isActive = status === "active";
+  const isActive = status === "person";
   const [showDropdown, setShowDropdown] = useState(false);
+  const currentList = status === "person" ? orderDetails: nILeadDetails ;
 
   const categories = ["Pending", "Approved"];
 
@@ -74,8 +75,8 @@ function Orders() {
     setCurrentPage(1);
   };
 
-  const filteredLeads = orderDetails.filter((item) => {
-    const matchSearch = `${item.order_id} ${item.order_name} ${item.order_qty} ${item.order_value} ${item.order_date} ${item.order_type} ${item.status} `
+  const filteredLeads = currentList.filter((item) => {
+    const matchSearch = `${item.order_id} ${item.order_name} ${item.order_qty} ${item.order_value} ${item.date_time} ${item.order_type} ${item.status} `
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
@@ -143,11 +144,11 @@ function Orders() {
           />
         </div>
       )}
-      <div className='header-div-el'>
+      <div className='header-div-order'>
         <div className='header-divpart-el gap-2'>
           <div className='d-flex align-items-center gap-2 flex-wrap'>
-            <p className='mb-0 header-titlecount-el'>Total orders : 1050</p>
-            <p className='mb-0 header-titlecount-el'>Pending approvals : 15 </p>
+            <p className='mb-0 header-titlecount-el'>Total orders : {nILeadDetails.length + orderDetails.length}</p>
+            <p className='mb-0 header-titlecount-el'>Pending approvals : {orderDetails.length} </p>
           </div>
           <div className="status-toggle-up">
             <label htmlFor="status-active" className="custom-radio">
@@ -155,8 +156,8 @@ function Orders() {
                 type="radio"
                 name="status"
                 id="status-active"
-                value="active"
-                checked={status === "active"}
+                value="person"
+                checked={status === "person"}
                 onChange={(e) => setStatus(e.target.value)}
               />
               <span className="radio-button"></span> Persons
@@ -167,8 +168,8 @@ function Orders() {
                 type="radio"
                 name="status"
                 id="status-inactive"
-                value="inactive"
-                checked={status === "inactive"}
+                value="shop"
+                checked={status === "shop"}
                 onChange={(e) => setStatus(e.target.value)}
               />
               <span className="radio-button"></span> Shops
@@ -189,51 +190,6 @@ function Orders() {
             <span className='visible-label-up'>History</span>
           </button>
 
-        </div>
-      </div>
-
-      <div className='phone-header-div-el'>
-        <div className='d-flex justify-content-between align-items-center mb-2'>
-          <p className='mb-0 header-titlecount-el'>Total user profiles : 1050</p>
-          <div className='d-flex gap-2'>
-            <button className="btn-top-up"><SvgContent svg_name="btn_calendar" width={20} height={20} /></button>
-            <button className="btn-top-up"><SvgContent svg_name="btn_filter" width={20} height={20} /></button>
-            <button className="btn-top-up"><SvgContent svg_name="btn_upload" width={20} height={20} /></button>
-          </div>
-        </div>
-
-        <div className="search-add-wrapper justify-content-between mb-3">
-          <div className="status-toggle-up">
-            <label htmlFor="status-active-mobile" className="custom-radio">
-              <input
-                type="radio"
-                name="mbstatus"
-                id="status-active-mobile"
-                value="active"
-                checked={status === "active"}
-                onChange={(e) => setStatus(e.target.value)}
-              />
-              <span className="radio-button"></span> Active : 920
-            </label>
-
-            <label htmlFor="status-inactive-mobile" className="custom-radio">
-              <input
-                type="radio"
-                name="mbstatus"
-                id="status-inactive-mobile"
-                value="inactive"
-                checked={status === "inactive"}
-                onChange={(e) => setStatus(e.target.value)}
-              />
-              <span className="radio-button"></span> In-active : 130
-            </label>
-          </div>
-          <input
-            type="text"
-            placeholder="Search"
-            className="search-input"
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
         </div>
       </div>
 
@@ -271,10 +227,10 @@ function Orders() {
                       {item.order_value}
                     </div>
                     <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
-                      {formatDateTime(item.order_date)}
+                      {formatDateTime(item.date_time)}
                     </div>
                     <div className='w-10 p-2 d-flex justify-content-center align-items-center'>
-                      {item.order_type}
+                      {item.direct_pickup ? "Direct" : "Courier"}
                     </div>
                     <div className='w-12 p-2 d-flex justify-content-center align-items-center'>
                       {item.status}
@@ -334,7 +290,7 @@ function Orders() {
       </div>
 
       {isHistoryClicked && selectedOrder && (
-        <OrderDetailModal order={selectedOrder} onClose={() => setIsHistoryClicked(false)} type="view" />
+        <OrderDetailModal order={selectedOrder} onClose={() => { setIsHistoryClicked(false); getOrderDetails(); }} type="view" />
       )}
 
       <div style={{ display: 'none' }}>

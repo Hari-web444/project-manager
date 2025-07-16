@@ -1,0 +1,66 @@
+.header-div-tr {
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+}
+
+.body-div-tr {
+    height: calc(100% - 65px);
+    padding: 10px;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.tracking-modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .tracking-modal-content {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .tracking-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .tracking-modal-header h5 {
+    margin: 0;
+  }
+  
+  .tracking-modal-header button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  
+  .tracking-modal-body h6 {
+    margin-top: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+  }
+  
+  .tracking-modal-body p {
+    margin: 2px 0;
+  }
+  
