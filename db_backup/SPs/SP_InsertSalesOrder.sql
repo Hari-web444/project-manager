@@ -31,20 +31,28 @@ CREATE PROCEDURE SP_InsertSalesOrder(
     IN p_user_id INT(11),
     IN p_cat_id INT(11),
     IN p_qty INT(11),
-    IN rec_id VARCHAR(1000)
+    IN rec_id VARCHAR(1000),
+    IN stick_type VARCHAR(50)
 )
 BEGIN
      INSERT INTO sales (
         order_id, leads_id, direct_pickup, additional_number, address,
         district, state, country, courier, order_value, discount,
         approved_by, payment_mode, wallet, total_value, amount_to_pay,
-        medication_period, receipt_image_url, transaction_id, date_time, created_by, order_name, quantity, Product_id
+        medication_period, receipt_image_url, transaction_id, date_time, created_by, order_name, quantity, Product_id, stick_type
     ) VALUES (
         p_order_id, p_leads_id, p_direct_pickup, p_additional_number, p_address,
         p_district, p_state, p_country, p_courier, p_order_value, p_discount,
         p_approved_by, p_payment_mode, p_wallet, p_total_value, p_amount_to_pay,
-        p_medication_period, p_receipt_image_url, p_transaction_id, p_date_time, p_user_id , p_cat_id, p_qty, rec_id
+        p_medication_period, p_receipt_image_url, p_transaction_id, p_date_time, p_user_id , p_cat_id, p_qty, rec_id, stick_type
     );
+
+     SET SQL_SAFE_UPDATES = 0;
+        UPDATE leads 
+        SET disposition = "Interested"
+        WHERE created_by = p_user_id AND lead_id = p_leads_id;
+	SET SQL_SAFE_UPDATES = 1;
+    
 
 END //
 

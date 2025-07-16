@@ -124,9 +124,9 @@ exports.uploadBulkLeads = async (req, res) => {
 };
 
 exports.updateDisposition = async (req, res) => {
-    const { key, id } = req.body;
+    const { key, id , followup_date } = req.body;
 
-    const sqlPg = `CALL SP_UpdateDisposition('${key}', ${id})`;
+    const sqlPg = `CALL SP_UpdateDisposition('${key}', ${id} , '${followup_date}')`;
 
     try {
         db.query(sqlPg, (errPg, resultPg) => {
@@ -205,8 +205,10 @@ exports.insertSalesOrder = async (req, res) => {
         address, district, state, country, courier,
         order_value, discount, approved_by, payment_mode,
         wallet, total_value, amount_to_pay, medication_period,
-        receipt_image_url, transaction_id, date_time, catagory_id, quantity,  user_id , rec_id
+        transaction_id, date_time, catagory_id, quantity, user_id, rec_id, stick_type
     } = data;
+
+    const imagePath = req.file?.key || null;
 
     const sql = `
         CALL SP_InsertSalesOrder(
@@ -214,7 +216,7 @@ exports.insertSalesOrder = async (req, res) => {
             '${address}', '${district}', '${state}', '${country}', '${courier}',
             ${order_value}, ${discount || 0}, '${approved_by}', '${payment_mode}',
             ${wallet || 0}, ${total_value}, ${amount_to_pay}, '${medication_period}',
-            '${receipt_image_url}', '${transaction_id}',  '${date_time}', ${user_id}, ${catagory_id}, ${quantity}, '${rec_id}'
+            '${imagePath}', '${transaction_id}',  '${date_time}', ${user_id}, ${catagory_id}, ${quantity}, '${rec_id}', '${stick_type}'
         )
     `;
 
@@ -249,4 +251,25 @@ exports.getLatestOrderId = async (req, res) => {
 
         res.status(200).json({ nextOrderId });
     });
+};
+
+exports.getadminbranchlist = async (req, res) => {
+    const { userId } = req.body;
+
+    const sqlPg = `CALL SP_GetAllAdBranchList(${userId})`;
+
+    try {
+        db.query(sqlPg, (errPg, resultPg) => {
+            if (errPg) {
+                console.error('Error getting leads:', errPg);
+                return res.status(500).json({ message: 'Failed to get leads' });
+            }
+            res.status(200).json({
+                data: resultPg[0]
+            });
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
 };

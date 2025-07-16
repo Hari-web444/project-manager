@@ -19,7 +19,7 @@ BEGIN
     ,SL.country         AS  country
     ,SL.courier         AS  courier
     ,SL.order_id            AS  order_id
-    ,CT.category_name          AS  order_name
+    ,CT.lead_name          AS  order_name
     ,SL.order_value         AS  order_value
     ,SL.discount            AS  discount
     ,SL.approved_by         AS  approved_by
@@ -34,9 +34,12 @@ BEGIN
     ,SL.date_time           AS  date_time
     ,SL.status          AS  status
     ,SL.created_by          AS  created_by
+    ,CT.mobile_number       AS mobile_number
+    ,CT.lead_id       AS lead_id
+    ,SL.product_id     AS product_id
 FROM
     sales AS SL
-    LEFT JOIN categories AS CT ON CT.category_id = SL.order_name
+    LEFT JOIN leads AS CT ON CT.lead_id = SL.leads_id
     WHERE status = "Pending";
 END//
 DELIMITER ;
