@@ -239,3 +239,27 @@ button:hover {
     justify-content: center;
     backdrop-filter: blur(5px);
 }
+
+.logout-cont {
+    position: absolute;
+    bottom: 35px;
+    left: 32px;
+    z-index: 99999;
+    box-shadow: 0px 0px 28px 3px #5b27ba;
+    border-radius: 50%;
+}
+
+.img-cont-lg {
+    width: 52px;
+    border-radius: 50%;
+}
+
+.zoom-animation {
+    animation: zoomInOut 3s ease-in-out infinite;
+  }
+  
+  @keyframes zoomInOut {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }

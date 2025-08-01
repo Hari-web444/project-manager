@@ -7,10 +7,13 @@ import configModule from '../../config.js';
 import SvgContent from '../components/svgcontent.jsx';
 import AddEmployeeModal from './AddEmployeeModal';
 import { jwtDecode } from 'jwt-decode';
+import power from '../assets/images/power.png';
+import { useNavigate } from 'react-router-dom';
 
 function ProjectManager() {
   const [currentDataList, setCurrentDataList] = useState([]);
   const [needLoading, setNeedLoading] = useState(false);
+  const navigate = useNavigate();
   const config = configModule.config();
   const [showModal, setShowModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -111,8 +114,8 @@ function ProjectManager() {
     e.preventDefault();
 
     try {
-        const url = `${config.apiBaseUrl}deleteEmployee`;
-      
+      const url = `${config.apiBaseUrl}deleteEmployee`;
+
       const response = await axios.post(url, {
         emp_id: selectedItems.emp_id,
         emp_name: selectedItems.emp_name
@@ -120,7 +123,7 @@ function ProjectManager() {
 
       if (response.status === 200) {
         toast.success(`Employee deleted successfully!`);
-        
+
         setTimeout(() => setDeleteConfirmPopup(false), 2000);
         getEmployeeList();
       } else {
@@ -264,7 +267,7 @@ function ProjectManager() {
             <p>Are you sure to delete</p>
 
             <div className='foot-empst mt-3'>
-              <button type="button" className='cancel-st-emp' onClick={()=> setDeleteConfirmPopup(false)}>Cancel</button>
+              <button type="button" className='cancel-st-emp' onClick={() => setDeleteConfirmPopup(false)}>Cancel</button>
               <button type="submit" onClick={handleDeleteToConfirm}>Delete</button>
             </div>
           </div>
@@ -283,6 +286,15 @@ function ProjectManager() {
         pauseOnHover
         theme="colored"
       />
+
+      <div className='logout-cont zoom-animation' onClick={() => {
+        localStorage.removeItem("authToken");
+        navigate("/");
+      }} >
+        <img src={power} className='img-cont-lg' alt='power' />
+      </div>
+
+
     </div>
   );
 }
