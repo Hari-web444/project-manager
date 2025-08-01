@@ -9,12 +9,9 @@ import "@fontsource/montserrat/700.css";
 import "@fontsource/montserrat/800.css";
 
 import App from './App.jsx';
-import { AuthProvider } from './components/context/Authcontext.jsx'; 
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
-      <AuthProvider> 
         <App />
-      </AuthProvider>
     </BrowserRouter>
 );

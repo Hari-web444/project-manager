@@ -1,0 +1,116 @@
+.inner-luser-st {
+    max-width: 90%;
+    padding: 18px;
+    display: flex;
+    max-height: 90%;
+    background: #3632f14a;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 5px 10px -5px #3a38b9;
+}
+
+.main-luser-st {
+    background-image: url('../images/lg_bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.display-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.view-st {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+}
+
+.view-font-st {
+    color: white;
+    font-weight: 800;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.view-font-st:hover {
+    transform: translateY(-3px);
+    text-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.login-form-container {
+    text-align: center;
+    min-width: 542px;
+    max-width: 90%;
+    padding: 18px;
+    max-height: 90%;
+    background: #3632f14a;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 5px 10px -5px #3a38b9;
+}
+
+.login-form input {
+    display: block;
+    padding: 8px;
+    width: 80%;
+    background: #ffffff;
+    border: none;
+    color: #121212;
+    height: 45px;
+    border-radius: 8px;
+}
+
+.login-form button {
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.foot-form-st {
+    width: 80%;
+}
+
+.login-btn-st {
+    border-radius: 6px;
+    border: none;
+    padding: 8px 28px !important;
+    background: linear-gradient(135deg, #3b16e3, #5958e0);
+    box-shadow: 0px 6px 5px -5px #000000;
+}
+
+.back-btn-st {
+    border-radius: 6px;
+    border: 1px solid #3b16e3;
+    padding: 8px 28px !important;
+    color: #3b16e3;
+    background: #d2d2fa;
+    box-shadow: 0px 6px 5px -5px #000000;
+}
+
+.login-btn-st:hover,
+.back-btn-st:hover {
+    box-shadow: none !important;
+}
+
+.pwd-wd-st {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pwd-input-st {
+    padding-right: 35px !important;
+}
+
+.eys-st {
+    position: absolute;
+    right: 60px;
+    top: 10px;
+    cursor: pointer;
+    color: rgb(153, 153, 153);
+}
