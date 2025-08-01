@@ -1,16 +1,10 @@
 const express = require('express');
-const empcontroller = require('../controller/employeecontroller');
 const router = express.Router();
-const setupS3Uploader = require('../appMiddlewares/s3Upload');
+const empController = require('../controllers/employeecontroller');
 
-setupS3Uploader().then(upload => {
-router.get('/getDesignationList', empcontroller.getDesignationList);
-router.post('/getLastEmpID', empcontroller.getLastEmpID);
-router.post('/saveEmpDetails', upload.single('image_url') , empcontroller.saveEmpDetails);
-router.post('/getEmployeeList', empcontroller.getEmployeeList);
-router.post('/updateEmpDetails', upload.single('image_url'), empcontroller.updateEmployee);
-router.post('/deleteSelEmployee', empcontroller.deleteSelEmployee);
-router.post('/assignTaskToOther', empcontroller.assignTaskToOther);
-});
+router.get('/getEmployeeData', empController.getemployee);
+router.post('/saveEmployees', empController.saveemployee);
+router.post('/updateEmployee', empController.updateEmployee);
+router.post('/deleteEmployee', empController.deleteEmployee);
 
 module.exports = router;
