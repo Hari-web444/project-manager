@@ -9,6 +9,7 @@ import AddEmployeeModal from './AddEmployeeModal';
 import { jwtDecode } from 'jwt-decode';
 import power from '../assets/images/power.png';
 import { useNavigate } from 'react-router-dom';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 function ProjectManager() {
   const [currentDataList, setCurrentDataList] = useState([]);
@@ -96,8 +97,8 @@ function ProjectManager() {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setDecodedToken(decoded.username);  // Store in state
-        console.log('Decoded Token:', decoded); // Optional: log it
+        setDecodedToken(decoded.username);  
+        console.log('Decoded Token:', decoded); 
       } catch (err) {
         console.error('Invalid token:', err);
         toast.error('Invalid auth token');
@@ -162,18 +163,26 @@ function ProjectManager() {
         </div>
 
         <div className='d-flex gap-2 align-items-center'>
-          <select
-            className="filter-select-st mb-0"
-            value={departmentFilter}
-            onChange={(e) => setDepartmentFilter(e.target.value)}
-          >
-            <option value="">All Departments</option>
-            {[...new Set(currentDataList.map(emp => emp.department))].map(dep => (
-              <option key={dep} value={dep}>{dep}</option>
-            ))}
-          </select>
+          <FormControl size="small" style={{ minWidth: 180 }}>
+            <InputLabel id="department-select-label">Department</InputLabel>
+            <Select
+              labelId="department-select-label"
+              value={departmentFilter}
+              label="Department"
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+            >
+              <MenuItem value="">All Departments</MenuItem>
+              {[...new Set(currentDataList.map(emp => emp.department))].map(dep => (
+                <MenuItem key={dep} value={dep}>
+                  {dep}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           {decodedToken === "Admin" && (<button className="add-button-st" style={{ minWidth: "120px" }} onClick={handleOpen}>Add new</button>)}
-        </div>
+
+         </div>
       </div>
       <div className='body-div-el'>
         <div className='h-100 w-100 p-2 pb-0'>
@@ -234,10 +243,10 @@ function ProjectManager() {
                     {decodedToken === "Admin" && (
                       <div className="brcommon-col-st gap-2 display-flex w-14 position-relative">
                         <div className="three-dot-btn" onClick={() => handleEdit(item)}>
-                          <SvgContent svg_name="edit" width={24} height={24} />
+                          <SvgContent svg_name="edit" width={22} height={22} />
                         </div>
                         <div className="three-dot-btn" onClick={() => handleDelete(item)}>
-                          <SvgContent svg_name="delete" width={24} height={24} />
+                          <SvgContent svg_name="delete" width={22} height={22} />
                         </div>
                       </div>
                     )}
@@ -287,11 +296,11 @@ function ProjectManager() {
         theme="colored"
       />
 
-      <div className='logout-cont zoom-animation' onClick={() => {
+      <div className='logout-cont zoom-animation' title='logout' onClick={() => {
         localStorage.removeItem("authToken");
         navigate("/");
       }} >
-        <img src={power} className='img-cont-lg' alt='power' />
+        <SvgContent svg_name="logout" className="p-2" width={42} height={42} />
       </div>
 
 

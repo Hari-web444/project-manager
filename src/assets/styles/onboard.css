@@ -1,12 +1,13 @@
 .inner-luser-st {
     max-width: 90%;
-    padding: 18px;
+    padding: 62px;
     display: flex;
     max-height: 90%;
-    background: #3632f14a;
+    background: linear-gradient(160deg, #340b7c, #995fff);
     border-radius: 24px;
     backdrop-filter: blur(10px);
-    box-shadow: 0px 5px 10px -5px #3a38b9;
+    box-shadow: 0px 0px 35px -9px #3a38b9;
+    opacity: 0.95;
 }
 
 .main-luser-st {
@@ -78,7 +79,7 @@
     border-radius: 6px;
     border: none;
     padding: 8px 28px !important;
-    background: linear-gradient(135deg, #3b16e3, #5958e0);
+    background: linear-gradient(160deg, #4e07cd, #8752e3);
     box-shadow: 0px 6px 5px -5px #000000;
 }
 
@@ -113,4 +114,8 @@
     top: 10px;
     cursor: pointer;
     color: rgb(153, 153, 153);
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
 }
