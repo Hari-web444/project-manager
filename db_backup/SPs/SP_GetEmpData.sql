@@ -14,7 +14,7 @@
         created_by,
         created_at
     FROM
-        project_manager.employee WHERE isDeleted = 0 ;
+        employee WHERE isDeleted = 0 ;
      
  END//
  DELIMITER ;

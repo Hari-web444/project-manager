@@ -3,9 +3,19 @@ const db = require('../database/db');
 exports.getemployee = async (req, res) => {
   try {
     const sql = 'CALL SP_GetEmpData()';
+    const sqlNot = 'CALL SP_GetNotificationData()';
+
     db.query(sql, (err, result) => {
       if (err) return res.status(500).json({ message: 'Server error' });
-      res.status(200).json({ data: result[0] });
+
+      db.query(sqlNot, (err, resultNotify) => {
+        if (err) return res.status(500).json({ message: 'Server error' });
+
+        res.status(200).json({
+          data: result[0],
+          dataNotify: resultNotify[0]
+        });
+      });
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -31,35 +41,67 @@ exports.saveemployee = async (req, res) => {
 
 exports.updateEmployee = async (req, res) => {
   const { emp_id, emp_name, department, email, phone } = req.body;
+
   try {
-    const sql = 'UPDATE employee SET emp_name = ?, department = ?, email = ?, phone = ? WHERE emp_id = ?';
-    db.query(sql, [emp_name, department, email, phone, emp_id], (err, result) => {
-      if (err) return res.status(500).json({ message: 'Server error' });
+    const updateSql = 'UPDATE employee SET emp_name = ?, department = ?, email = ?, phone = ? WHERE emp_id = ?';
+    const insertNotifSql = 'INSERT INTO notification (type, notification, created_by) VALUES (?, ?, ?)';
 
-      const io = req.app.get('io');
-      io.emit('project-notification', { message: `✏️ Employee "${emp_name}" was updated` });
+    db.query(updateSql, [emp_name, department, email, phone, emp_id], (err, result) => {
+      if (err) {
+        console.error('Update Error:', err);
+        return res.status(500).json({ message: 'Server error while updating employee' });
+      }
 
-      res.status(200).json({ message: 'Employee updated successfully' });
+      const notifMessage = `${emp_name} successfully updated.`;
+      db.query(insertNotifSql, ['Update', notifMessage, 1], (notifErr) => {
+        if (notifErr) {
+          console.error('Notification Error:', notifErr);
+        }
+
+        const io = req.app.get('io');
+        io.emit('project-notification', {
+          message: `✏️ Employee "${emp_name}" was updated`,
+        });
+
+        return res.status(200).json({ message: 'Employee updated successfully' });
+      });
     });
+
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Unexpected Error:', error);
+    res.status(500).json({ message: 'Unexpected server error' });
   }
 };
 
+
 exports.deleteEmployee = async (req, res) => {
-  const { emp_id , emp_name } = req.body;
+  const { emp_id, emp_name } = req.body;
+  const deleteSql = 'UPDATE employee SET isDeleted = 1 WHERE emp_id = ?';
+  const insertNotifSql = 'INSERT INTO notification (type, notification, created_by) VALUES (?, ?, ?)';
 
   try {
-    const sql = 'UPDATE employee SET isDeleted = 1 WHERE emp_id = ?';
-    db.query(sql, [emp_id], (err, result) => {
-      if (err) return res.status(500).json({ message: 'Server error' });
+    db.query(deleteSql, [emp_id], (err, result) => {
+      if (err) {
+        console.error('Delete Error:', err);
+        return res.status(500).json({ message: 'Server error during deletion' });
+      }
 
-      const io = req.app.get('io');
-      io.emit('project-notification', { message: `✏️ Employee "${emp_name}" was deleted` });
+      const notifMessage = `${emp_name} was deleted.`;
+      db.query(insertNotifSql, ['Delete', notifMessage, 1], (notifErr) => {
+        if (notifErr) {
+          console.error('Notification Insert Error:', notifErr);
+        }
 
-      res.status(200).json({ message: 'Employee deleted successfully' });
+        const io = req.app.get('io');
+        io.emit('project-notification', {
+          message: `🗑️ Employee "${emp_name}" was deleted`,
+        });
+
+        return res.status(200).json({ message: 'Employee deleted successfully' });
+      });
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Unexpected Error:', error);
+    res.status(500).json({ message: 'Unexpected server error' });
   }
 };
