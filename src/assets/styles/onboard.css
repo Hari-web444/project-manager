@@ -119,3 +119,19 @@
 .cursor-pointer {
     cursor: pointer !important;
 }
+
+.body-notification-st {
+    max-height: 242px;
+    overflow: auto;
+}
+
+.not-containe-st {
+    padding: 0px 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0e7ff;
+}
+
+.not-head-st {
+    padding: 8px 12px;
+    margin-bottom: 2px !important;
+}

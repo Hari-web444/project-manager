@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PropagateLoader } from 'react-spinners';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import configModule from '../../config.js';
@@ -13,6 +13,7 @@ import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 function ProjectManager() {
   const [currentDataList, setCurrentDataList] = useState([]);
+  const [currentNotifyList, setCurrentNotifyList] = useState([]);
   const [needLoading, setNeedLoading] = useState(false);
   const navigate = useNavigate();
   const config = configModule.config();
@@ -25,6 +26,8 @@ function ProjectManager() {
   const [decodedToken, setDecodedToken] = useState(null);
   const [selectedItems, setSelectedItems] = useState('');
   const [deleteConfirmPopup, setDeleteConfirmPopup] = useState(false);
+  const [confirmLogoutpp, setConfirmLogoutpp] = useState(false);
+  const [openNotification, setOpenNotification] = useState(false);
 
 
   useEffect(() => {
@@ -54,6 +57,15 @@ function ProjectManager() {
     getEmployeeList();
   }
 
+  function formatDateToCustom(dateStr) {
+    const date = new Date(dateStr);
+
+    const options = { month: 'short', day: '2-digit', year: 'numeric' };
+    const formatted = date.toLocaleDateString('en-US', options).replace(',', '');
+
+    return formatted.replace(/^(\w+)\s(\d{2})\s(\d{4})$/, '$1, $2 $3');
+  }
+
   const getEmployeeList = async () => {
     setNeedLoading(true);
     try {
@@ -62,6 +74,7 @@ function ProjectManager() {
       const result = response.data;
       if (response.status === 200) {
         setCurrentDataList(result.data);
+        setCurrentNotifyList(result.dataNotify);
       } else {
         toast.error("Failed to fetch branch details: " + result.message);
         console.error("Failed to fetch branch details: " + result.message);
@@ -97,8 +110,8 @@ function ProjectManager() {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setDecodedToken(decoded.username);  
-        console.log('Decoded Token:', decoded); 
+        setDecodedToken(decoded.username);
+        console.log('Decoded Token:', decoded);
       } catch (err) {
         console.error('Invalid token:', err);
         toast.error('Invalid auth token');
@@ -109,6 +122,11 @@ function ProjectManager() {
   const handleDelete = (item) => {
     setSelectedItems(item);
     setDeleteConfirmPopup(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    localStorage.removeItem("authToken");
+    navigate("/");
   };
 
   const handleDeleteToConfirm = async (e) => {
@@ -182,7 +200,13 @@ function ProjectManager() {
 
           {decodedToken === "Admin" && (<button className="add-button-st" style={{ minWidth: "120px" }} onClick={handleOpen}>Add new</button>)}
 
-         </div>
+          <div
+            className={`curosr-pointer ${openNotification ? 'custom-not-st' : ''}`}
+            onClick={() => setOpenNotification(true)}
+          >
+            <SvgContent svg_name="bell" className='cursor-pointer' width={35} height={35} />
+          </div>
+        </div>
       </div>
       <div className='body-div-el'>
         <div className='h-100 w-100 p-2 pb-0'>
@@ -283,26 +307,49 @@ function ProjectManager() {
         </div>
       )}
 
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+      {confirmLogoutpp && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h4 className='mb-3'>Logout</h4>
+            <p>Are you sure to logout?</p>
 
-      <div className='logout-cont zoom-animation' title='logout' onClick={() => {
-        localStorage.removeItem("authToken");
-        navigate("/");
-      }} >
+            <div className='foot-empst mt-3'>
+              <button type="button" className='cancel-st-emp' onClick={() => setConfirmLogoutpp(false)}>Cancel</button>
+              <button type="submit" onClick={handleLogoutConfirm}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {openNotification && (
+        <div className="modal-overlay">
+          <div className="modal-box modal-box-nt">
+            <h4 className='mb-3 pb-0 not-head-st fw-semibold' style={{ color: "#5b27ba" }} >Notification</h4>
+            <div className='body-notification-st'>
+              {currentNotifyList && currentNotifyList.map((item, idx) => (
+                <div key={idx} className='not-containe-st pt-2'>
+                  <p className="mb-2 fw-semibold" >{item.type}</p>
+                  <p className='mb-2'>{item.notification}</p>
+                  <p className='mb-2'>{formatDateToCustom(item.created_at)}</p>
+                </div>
+              ))}
+            </div>
+            <div className='foot-empst mt-3'>
+              <button
+                type="button"
+                className='cancel-st-emp'
+                onClick={() => setOpenNotification(false)}
+              >
+                close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className='logout-cont zoom-animation' title='logout' onClick={() => setConfirmLogoutpp(true)} >
         <SvgContent svg_name="logout" className="p-2" width={42} height={42} />
       </div>
-
 
     </div>
   );

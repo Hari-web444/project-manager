@@ -37,6 +37,7 @@
     "react-time-picker": "^7.0.0",
     "react-toastify": "^11.0.5",
     "socket.io-client": "^4.8.1",
+    "sweetalert2": "^11.22.2",
     "xls": "^0.5.1",
     "xlsx": "^0.18.5"
   },

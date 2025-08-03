@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/styles/home.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import configModule from '../../config.js';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function OnboardControll() {
@@ -116,7 +116,7 @@ function OnboardControll() {
         </div>
       )}
 
-      <ToastContainer
+    {/*   <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -127,7 +127,7 @@ function OnboardControll() {
         draggable
         pauseOnHover
         theme="colored"
-      />
+      /> */}
     </div>
   );
 }

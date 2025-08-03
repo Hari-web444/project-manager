@@ -145,7 +145,7 @@ select {
 
 .modal-box {
     background: white;
-    padding: 20px;
+    padding: 5px;
     border-radius: 10px;
     width: 400px;
 }
@@ -161,14 +161,15 @@ select {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    padding: 8px;
     gap: 12px;
 }
 
 .cancel-st-emp {
     background: white !important;
-    color: #5b27ba;
-    border: 1px solid #5b27ba;
-    padding: 7px 22px !important;
+    color: #ba2727;
+    border: 1px solid #c82f2f;
+    padding: 4px 12px !important;
 }
 
 button:hover {
@@ -260,6 +261,20 @@ button:hover {
 
 .zoom-animation {
     animation: zoomInOut 3s ease-in-out infinite;
+}
+
+.modal-box-nt {
+    position: absolute;
+    right: 30px;
+    top: 90px;
+    border-radius: 20px 0px;
+}
+
+.custom-not-st {
+    z-index: 9999;
+    position: relative;
+    top: 62px;
+    right: 4px;
 }
 
 @keyframes zoomInOut {

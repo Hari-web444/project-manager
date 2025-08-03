@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import configModule from '../../config.js';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function AddEmployeeModal({ onClose, initialData = null, onSuccess }) {
@@ -104,7 +104,7 @@ function AddEmployeeModal({ onClose, initialData = null, onSuccess }) {
           </div>
         </form>
       </div>
-
+{/* 
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -116,7 +116,7 @@ function AddEmployeeModal({ onClose, initialData = null, onSuccess }) {
         draggable
         pauseOnHover
         theme="colored"
-      />
+      /> */}
     </div>
   );
 }
