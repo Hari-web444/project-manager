@@ -198,7 +198,7 @@ BEGIN
         p_phone
     );
 
-    INSERT INTO notification ( type, notification, created_by) VALUES ("Add", CONCAT(emp_name," successfully inserted."), 1);
+    INSERT INTO notification ( type, notification, created_by) VALUES ("Add", CONCAT(p_emp_name," successfully inserted."), 1);
     SELECT * FROM employee WHERE emp_id = LAST_INSERT_ID();
 END ;;
 DELIMITER ;
