@@ -8,7 +8,7 @@
      SELECT 
         not_recid, type, notification, created_at, created_by
     FROM
-        notification ;
+        notification ORDER BY 1 DESC;
      
  END//
  DELIMITER ;
